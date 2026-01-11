@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TIP ULM 2025 - Portal Agronity</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap');
+        
+        :root {
+            --yellow-glow: #eab308;
+            --dark-bg: #050505;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--dark-bg);
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+
+        .glass {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-link.active {
+            background: rgba(234, 179, 8, 0.1);
+            color: var(--yellow-glow);
+            border-right: 4px solid var(--yellow-glow);
+        }
+
+        .cyber-button {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .cyber-button:active { transform: scale(0.95); }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: #050505; }
+        ::-webkit-scrollbar-thumb { background: #eab308; border-radius: 10px; }
+
+        .page-section { display: none; }
+        .page-section.active { display: block; animation: fadeIn 0.5s ease-out; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .text-glow { text-shadow: 0 0 10px rgba(234, 179, 8, 0.5); }
+    </style>
+</head>
+<body class="flex min-h-screen">
+
+    <nav class="w-20 md:w-64 glass border-r border-white/10 flex flex-col fixed h-full z-50">
+        <div class="p-6 flex flex-col items-center md:items-start gap-3">
+            <div class="w-12 h-12 bg-yellow-500 rounded-xl flex items-center justify-center font-black text-black shadow-[0_0_20px_rgba(234,179,8,0.4)]">TIP</div>
+            <span class="hidden md:block font-black text-xl tracking-tighter text-yellow-500">ULM 2025</span>
+        </div>
+
+        <div class="flex-1 mt-6 space-y-2 px-2 overflow-y-auto">
+            <button onclick="showPage('mengenal')" class="sidebar-link active w-full flex items-center gap-4 p-4 rounded-xl hover:bg-white/5 transition">
+                <i class="fa-solid fa-info-circle w-6"></i> <span class="hidden md:block text-sm font-bold">Mengenal TIP</span>
+            </button>
+            <button onclick="showPage('mahasiswa')" class="sidebar-link w-full flex items-center gap-4 p-4 rounded-xl hover:bg-white/5 transition">
+                <i class="fa-solid fa-user-graduate w-6"></i> <span class="hidden md:block text-sm font-bold">Mahasiswa</span>
+            </button>
+            <button onclick="window.open('https://simari.ulm.ac.id/login/', '_blank')" class="sidebar-link w-full flex items-center gap-4 p-4 rounded-xl hover:bg-white/5 transition">
+                <i class="fa-solid fa-university w-6"></i> <span class="hidden md:block text-sm font-bold">SIMARI</span>
+            </button>
+            <button onclick="window.open('https://agrohub.faperta.ulm.ac.id/', '_blank')" class="sidebar-link w-full flex items-center gap-4 p-4 rounded-xl hover:bg-white/5 transition">
+                <i class="fa-solid fa-envelope-open-text w-6"></i> <span class="hidden md:block text-sm font-bold">Pengurusan Surat</span>
+            </button>
+            <button onclick="showPage('fitur')" class="sidebar-link w-full flex items-center gap-4 p-4 rounded-xl hover:bg-white/5 transition">
+                <i class="fa-solid fa-bolt w-6 text-yellow-500"></i> <span class="hidden md:block text-sm font-bold">Fitur Lanjutan</span>
+            </button>
+        </div>
+
+        <div class="p-4 border-t border-white/5 text-[9px] text-gray-500 font-bold uppercase tracking-widest hidden md:block">
+            <div class="flex items-center gap-2 mb-2">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/ASIIN_Logo.png" class="h-4 grayscale hover:grayscale-0 transition" alt="ASIIN">
+                <span>ASIIN ACCREDITED</span>
+            </div>
+            <p class="text-yellow-500/50 mb-1">DIPERSEMBAHKAN OLEH AGRONITY25</p>
+            <p class="leading-tight">Website ini Tidak Terafilasi dengan HIMA atau Apapun</p>
+        </div>
+    </nav>
+
+    <main class="flex-1 ml-20 md:ml-64 p-4 md:p-10">
+
+        <section id="mengenal" class="page-section active">
+            <div class="glass p-8 rounded-[2rem] relative overflow-hidden min-h-[400px] flex flex-col justify-end mb-10 shadow-2xl">
+                <div class="absolute inset-0 -z-10 opacity-40">
+                    <img src="https://images.unsplash.com/photo-1586771107445-d3ca888129ff?auto=format&fit=crop&q=80&w=1200" class="w-full h-full object-cover">
+                    <div class="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/80 to-transparent"></div>
+                </div>
+                <div class="relative z-10">
+                    <div class="flex gap-2 mb-4">
+                        <span class="bg-yellow-500 text-black px-3 py-1 rounded text-[10px] font-black uppercase">BAN-PT: UNGGUL</span>
+                        <span class="bg-blue-600 text-white px-3 py-1 rounded text-[10px] font-black uppercase">ASIIN Accredited</span>
+                    </div>
+                    <h1 class="text-4xl md:text-7xl font-black mb-4 leading-tight text-glow">Teknologi Industri <br> <span class="text-yellow-500">Pertanian</span></h1>
+                    <p class="text-gray-300 max-w-2xl mb-8 leading-relaxed text-sm md:text-base">Membangun masa depan agroindustri berkelanjutan dengan integrasi teknologi modern di Universitas Lambung Mangkurat.</p>
+                    <button onclick="window.open('https://pmb.ulm.ac.id/', '_blank')" class="bg-yellow-500 text-black px-8 py-4 rounded-2xl font-black hover:bg-yellow-400 transition shadow-lg shadow-yellow-500/30 text-xs md:text-sm cyber-button uppercase italic">
+                        Daftar Sekarang Melalui Jalur SNBP/SNBT
+                    </button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                
+                <div class="lg:col-span-8 space-y-10">
+                    
+                    <div class="glass p-8 rounded-3xl">
+                        <h2 class="text-2xl font-black mb-6 text-yellow-500 border-b border-white/10 pb-2">1. Profil Program Studi</h2>
+                        <div class="space-y-4 text-gray-300 leading-relaxed text-sm">
+                            <p>Program Studi Teknologi Industri Pertanian (TIP) merupakan bagian dari <span class="text-white font-bold">Fakultas Pertanian, Universitas Lambung Mangkurat</span>. Kami berfokus pada integrasi ilmu pertanian dengan teknik industri dan manajemen untuk menciptakan nilai tambah pada hasil pertanian.</p>
+                            <p>Berdiri di jantung Kalimantan Selatan, TIP ULM memiliki keunggulan spesifik dalam pengembangan <span class="italic text-yellow-500">Agroindustri Lahan Basah</span>, menjadikannya institusi yang relevan dalam menjawab tantangan pangan dan industri berkelanjutan di masa depan.</p>
+                        </div>
+                    </div>
+
+                    <div class="glass p-8 rounded-3xl">
+                        <h2 class="text-2xl font-black mb-6 text-yellow-500 border-b border-white/10 pb-2">3. Visi & Misi</h2>
+                        <div class="space-y-8">
+                            <div class="bg-white/5 p-6 rounded-2xl border-l-4 border-yellow-500">
+                                <h3 class="font-black text-sm uppercase text-yellow-500 mb-2 italic">Visi</h3>
+                                <p class="text-sm italic">"Menjadi program studi yang unggul dan kompetitif di tingkat internasional dalam pengembangan ilmu pengetahuan dan teknologi agroindustri, khususnya pada lingkungan lahan basah yang berkelanjutan."</p>
+                            </div>
+                            <div>
+                                <h3 class="font-black text-sm uppercase text-yellow-500 mb-4 italic">Misi</h3>
+                                <ul class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <li class="bg-white/5 p-4 rounded-xl text-xs"><b class="text-white block mb-1">Pendidikan:</b> Menyelenggarakan pendidikan berkualitas tinggi menghasilkan sarjana profesional, inovatif, dan berjiwa entrepreneur.</li>
+                                    <li class="bg-white/5 p-4 rounded-xl text-xs"><b class="text-white block mb-1">Penelitian:</b> Mengembangkan riset agroindustri berbasis potensi lokal dan teknologi tepat guna.</li>
+                                    <li class="bg-white/5 p-4 rounded-xl text-xs"><b class="text-white block mb-1">Pengabdian:</b> Menerapkan hasil inovasi teknologi untuk kesejahteraan masyarakat dan industri.</li>
+                                    <li class="bg-white/5 p-4 rounded-xl text-xs"><b class="text-white block mb-1">Kerjasama:</b> Membangun jejaring strategis dengan pemerintah, industri, dan institusi global.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="glass p-8 rounded-3xl">
+                        <h2 class="text-2xl font-black mb-6 text-yellow-500 border-b border-white/10 pb-2">4. Keunggulan Kurikulum</h2>
+                        <p class="text-xs text-gray-400 mb-6 italic">Kurikulum dirancang untuk membekali mahasiswa dengan tiga pilar utama: Teknologi Proses, Sistem & Manajemen Industri, serta Lingkungan.</p>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="space-y-4">
+                                <h4 class="text-sm font-bold text-white border-l-2 border-yellow-500 pl-3">Fokus Lahan Basah</h4>
+                                <p class="text-xs text-gray-400">Pembelajaran spesifik pengolahan komoditas karet, kelapa sawit, kayu, dan pangan lokal.</p>
+                            </div>
+                            <div class="space-y-4">
+                                <h4 class="text-sm font-bold text-white border-l-2 border-yellow-500 pl-3">Mata Kuliah Unggulan</h4>
+                                <ul class="text-[11px] space-y-2 text-gray-300">
+                                    <li><i class="fa-solid fa-check text-yellow-500 mr-2"></i> Rekayasa Bioproses & Mikrobiologi Industri.</li>
+                                    <li><i class="fa-solid fa-check text-yellow-500 mr-2"></i> Manajemen Mutu & Standarisasi (ISO, HACCP, Halal).</li>
+                                    <li><i class="fa-solid fa-check text-yellow-500 mr-2"></i> Analisis Strategi & Kelayakan Industri.</li>
+                                    <li><i class="fa-solid fa-check text-yellow-500 mr-2"></i> Teknologi Kelapa Sawit & Hilirisasi Produk.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-4 space-y-10">
+                    
+                    <div class="glass p-6 rounded-3xl">
+                        <h2 class="text-lg font-black mb-4 text-yellow-500">2. Akreditasi</h2>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-[10px] text-left border-collapse">
+                                <thead>
+                                    <tr class="bg-white/10">
+                                        <th class="p-2">Jenis</th>
+                                        <th class="p-2">Status</th>
+                                        <th class="p-2">Lembaga</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="border-b border-white/5">
+                                        <td class="p-2">Nasional</td>
+                                        <td class="p-2 text-yellow-500 font-black">UNGGUL</td>
+                                        <td class="p-2">BAN-PT</td>
+                                    </tr>
+                                    <tr class="border-b border-white/5">
+                                        <td class="p-2">Internasional</td>
+                                        <td class="p-2 text-blue-400 font-black">TERAKREDITASI</td>
+                                        <td class="p-2">ASIIN (Jerman)</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <p class="text-[9px] text-gray-500 mt-3 italic">Catatan: Akreditasi ASIIN membuktikan kurikulum kami diakui secara global sesuai standar internasional s.d 2029.</p>
+                    </div>
+
+                    <div class="glass p-6 rounded-3xl">
+                        <h2 class="text-lg font-black mb-4 text-yellow-500">5. Prospek Karir</h2>
+                        <p class="text-[10px] font-bold mb-4">Gelar: Sarjana Teknologi Pertanian (S.T.P.)</p>
+                        <div class="space-y-4">
+                            <div class="flex items-start gap-3">
+                                <i class="fa-solid fa-industry text-yellow-500 mt-1"></i>
+                                <div><b class="text-[11px] block">Sektor Industri</b><p class="text-[10px] text-gray-400">QA/QC, Production Control, R&D.</p></div>
+                            </div>
+                            <div class="flex items-start gap-3">
+                                <i class="fa-solid fa-landmark text-yellow-500 mt-1"></i>
+                                <div><b class="text-[11px] block">Sektor Publik</b><p class="text-[10px] text-gray-400">Kementan, BRIN, BPOM.</p></div>
+                            </div>
+                            <div class="flex items-start gap-3">
+                                <i class="fa-solid fa-rocket text-yellow-500 mt-1"></i>
+                                <div><b class="text-[11px] block">Technopreneur</b><p class="text-[10px] text-gray-400">Wirausaha produk inovatif.</p></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="glass p-6 rounded-3xl">
+                        <h2 class="text-lg font-black mb-4 text-yellow-500">6. Fasilitas</h2>
+                        <div class="space-y-3">
+                            <img src="https://images.unsplash.com/photo-1576086213369-97a306d36557?auto=format&fit=crop&q=80&w=400" class="w-full h-24 object-cover rounded-xl grayscale hover:grayscale-0 transition" alt="Lab">
+                            <ul class="text-[10px] space-y-2 text-gray-400">
+                                <li>● Lab. Teknologi Proses & Bio-industri</li>
+                                <li>● Lab. Analisis Mutu & Kimia Industri</li>
+                                <li>● Lab. Rekayasa Sistem & Manajemen</li>
+                                <li>● Lahan Eksperimental Terpadu</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            
+            <div class="mt-20 border-t border-white/5 pt-10 pb-10 text-center">
+                <p class="text-yellow-500 font-black italic text-sm tracking-tighter">DIPERSEMBAHKAN OLEH AGRONITY25 (ANGKATAN TEKNOLOGI INDUSTRI PERTANIAN 2025)</p>
+                <p class="text-gray-600 text-[10px] mt-2 uppercase tracking-widest font-bold">Website ini Tidak Terafilasi dengan HIMA atau Apapun</p>
+            </div>
+        </section>
+
+        <section id="mahasiswa" class="page-section">
+            <div id="login-area" class="max-w-md mx-auto mt-20">
+                <div class="glass p-8 rounded-3xl border border-yellow-500/20 shadow-2xl">
+                    <h2 class="text-2xl font-black mb-2 text-center italic tracking-tighter">STUDENT LOGIN</h2>
+                    <p class="text-gray-500 text-[10px] text-center mb-8 uppercase tracking-widest">Gunakan Nama & Tgl Lahir (YYYY-MM-DD)</p>
+                    <div class="space-y-4">
+                        <input type="text" id="login-name" placeholder="NAMA LENGKAP" class="w-full bg-white/5 border border-white/10 p-4 rounded-xl outline-none focus:border-yellow-500 transition font-bold uppercase text-sm">
+                        <input type="password" id="login-pass" placeholder="TANGGAL LAHIR (YYYY-MM-DD)" class="w-full bg-white/5 border border-white/10 p-4 rounded-xl outline-none focus:border-yellow-500 transition font-bold text-sm">
+                        <button onclick="handleLogin()" class="w-full bg-yellow-500 text-black py-4 rounded-xl font-black hover:bg-yellow-400 shadow-lg shadow-yellow-500/20 cyber-button uppercase text-xs italic tracking-widest">Akses Database</button>
+                    </div>
+                    <p id="login-error" class="text-red-500 text-[10px] mt-4 text-center hidden font-black italic">DATABASE ERROR: DATA TIDAK DITEMUKAN!</p>
+                </div>
+            </div>
+
+            <div id="data-area" class="hidden">
+                <div class="flex justify-between items-end mb-8">
+                    <h2 class="text-3xl font-black italic tracking-tighter">MAHASISWA <span class="text-yellow-500">ACTIVE</span></h2>
+                    <button onclick="logout()" class="text-red-500 text-[10px] font-black border border-red-500/20 px-4 py-2 rounded-lg hover:bg-red-500/10 transition uppercase">Logout System</button>
+                </div>
+                <div class="glass rounded-3xl overflow-hidden border border-white/10 shadow-2xl">
+                    <table class="w-full text-left">
+                        <thead>
+                            <tr class="bg-white/5 text-yellow-500 text-[10px] font-black uppercase tracking-widest">
+                                <th class="p-6">Index</th>
+                                <th class="p-6">Nama Lengkap</th>
+                                <th class="p-6">Tempat Lahir</th>
+                                <th class="p-6">Auth Key (DOB)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="student-table-body" class="text-sm"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <section id="fitur" class="page-section">
+            <div class="max-w-4xl mx-auto">
+                <div class="flex flex-col items-center mb-10 text-center">
+                    <div class="w-44 h-44 rounded-full border-8 border-yellow-500 flex flex-col items-center justify-center bg-black/50 shadow-[0_0_40px_rgba(234,179,8,0.3)] mb-6">
+                        <span id="display-ipk" class="text-5xl font-black text-yellow-400 italic">0.00</span>
+                        <span class="text-[9px] font-black text-gray-600 uppercase tracking-widest">Current GPA</span>
+                    </div>
+                    <div id="roast-zone" class="bg-yellow-500/10 border border-yellow-500/30 px-6 py-2 rounded-full text-yellow-500 text-[11px] font-black italic uppercase mb-4">
+                        STATUS: WAITING FOR NEURAL INJECTION
+                    </div>
+                    <p id="roast-msg" class="text-gray-400 italic text-sm max-w-sm">"Masukkan nilai kuliah Anda untuk melihat seberapa keras sistem akan menghina Anda."</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="glass p-8 rounded-3xl">
+                        <h3 class="font-black text-xs uppercase mb-6 tracking-widest flex items-center gap-2">
+                            <i class="fa-solid fa-keyboard text-yellow-500"></i> Manual Input
+                        </h3>
+                        <div class="space-y-4">
+                            <input type="text" id="mk-name" placeholder="NAMA MATA KULIAH" class="w-full bg-white/5 border border-white/10 p-4 rounded-xl outline-none focus:border-yellow-500 text-xs font-bold uppercase">
+                            <div class="grid grid-cols-2 gap-4">
+                                <select id="mk-sks" class="bg-white/5 border border-white/10 p-4 rounded-xl outline-none focus:border-yellow-500 text-xs font-bold text-yellow-500">
+                                    <option value="1">1 SKS</option>
+                                    <option value="2" selected>2 SKS</option>
+                                    <option value="3">3 SKS</option>
+                                    <option value="4">4 SKS</option>
+                                </select>
+                                <input type="number" id="mk-score" placeholder="SKOR (0-100)" class="bg-white/5 border border-white/10 p-4 rounded-xl outline-none focus:border-yellow-500 text-xs font-bold">
+                            </div>
+                            <button onclick="addGrade()" class="w-full bg-yellow-500 text-black py-4 rounded-xl font-black uppercase text-[10px] italic shadow-lg cyber-button">Synchronize Score</button>
+                        </div>
+                    </div>
+                    <div class="glass p-8 rounded-3xl">
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="font-black text-xs uppercase tracking-widest italic">Data Terinjeksi</h3>
+                            <button onclick="clearGrades()" class="text-red-500 text-[10px] font-black uppercase hover:underline">Purge All</button>
+                        </div>
+                        <div id="grade-list" class="space-y-3 max-h-[250px] overflow-y-auto pr-2 text-xs"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        // DATA LOGIC
+        let students = [];
+        let grades = [];
+
+        window.onload = () => {
+            const csvData = `"Cap waktu","Nama ","Tempat Lahir","Tanggal Lahir"
+"2025/10/27 4:07:40 PM GMT+8","Muhammad Nabil Rafif Firdaus ","Sampit","2006-04-11"
+"2025/10/27 4:10:16 PM GMT+8","Ahmad Faris Alzabar","Tanjung selor","2007-01-23"
+"2025/10/27 4:18:21 PM GMT+8","AHMAD YUSUF DANDY","Palangka Raya","2007-09-08"
+"2025/10/27 4:18:31 PM GMT+8","Munawwarah ","Banjarmasin ","2006-08-16"
+"2025/10/27 4:18:51 PM GMT+8","FAUZIA NAZWA RAMADHINA ","Bogor","2006-10-03"
+"2025/10/27 4:19:06 PM GMT+8","Abed Richardo Simaremare ","TANAH LAUT","2007-05-14"
+"2025/10/27 4:19:18 PM GMT+8","Fajar dama yusron ","Tanah laut, Pelaihari ","2006-03-20"
+"2025/10/29 7:02:22 PM GMT+8","Halimatus Sa'adiah ","Bontang ","2007-01-23"
+"2025/10/29 7:02:46 PM GMT+8","Sorta Romauli Silitonga ","Kota Baru","2006-09-21"
+"2025/10/29 7:03:00 PM GMT+8","Muhammad Iqbal Muharram Alfarisy ","banjarmasin ","2007-01-20"
+"2025/10/29 7:03:31 PM GMT+8","Dini octavia az zahra ","Kotabaru ","2007-10-26"
+"2025/10/29 7:09:27 PM GMT+8","Nur Ramadhani ","Kuala Kapuas","2007-09-23"
+"2025/10/29 7:10:37 PM GMT+8","Farah Iqrima Mutia Rahmah","Barabai","2006-07-25"
+"2025/10/29 7:10:42 PM GMT+8","anita rahmatiyah","banjarbaru ","2006-03-25"`;
+
+            Papa.parse(csvData, {
+                header: true,
+                skipEmptyLines: true,
+                complete: function(results) {
+                    students = results.data;
+                    renderStudents();
+                }
+            });
+        };
+
+        function showPage(pageId) {
+            document.querySelectorAll('.page-section').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+
+        // LOGIN SYSTEM
+        function handleLogin() {
+            const name = document.getElementById('login-name').value.trim().toLowerCase();
+            const pass = document.getElementById('login-pass').value.trim();
+            const error = document.getElementById('login-error');
+
+            const user = students.find(s => 
+                s["Nama "].trim().toLowerCase() === name && 
+                s["Tanggal Lahir"].trim() === pass
+            );
+
+            if (user) {
+                document.getElementById('login-area').classList.add('hidden');
+                document.getElementById('data-area').classList.remove('hidden');
+                error.classList.add('hidden');
+            } else {
+                error.classList.remove('hidden');
+            }
+        }
+
+        function logout() {
+            document.getElementById('login-area').classList.remove('hidden');
+            document.getElementById('data-area').classList.add('hidden');
+        }
+
+        function renderStudents() {
+            const body = document.getElementById('student-table-body');
+            body.innerHTML = students.map((s, i) => `
+                <tr class="border-t border-white/5 hover:bg-white/5 transition">
+                    <td class="p-6 text-gray-600 font-mono text-[10px]">${i + 1}</td>
+                    <td class="p-6 font-bold uppercase text-white">${s["Nama "]}</td>
+                    <td class="p-6 text-gray-400">${s["Tempat Lahir"]}</td>
+                    <td class="p-6 font-mono text-yellow-500/50">${s["Tanggal Lahir"]}</td>
+                </tr>
+            `).join('');
+        }
+
+        // GPA ROAST SYSTEM
+        const GRADE_SCALE = [
+            { min: 80, letter: 'A', weight: 4.00, color: 'text-yellow-400' },
+            { min: 77, letter: 'A-', weight: 3.75, color: 'text-yellow-500' },
+            { min: 75, letter: 'B+', weight: 3.50, color: 'text-blue-400' },
+            { min: 70, letter: 'B', weight: 3.00, color: 'text-blue-500' },
+            { min: 67, letter: 'B-', weight: 2.75, color: 'text-cyan-400' },
+            { min: 64, letter: 'C+', weight: 2.50, color: 'text-orange-400' },
+            { min: 60, letter: 'C', weight: 2.00, color: 'text-orange-500' },
+            { min: 50, letter: 'D+', weight: 1.50, color: 'text-orange-600' },
+            { min: 40, letter: 'D', weight: 1.00, color: 'text-red-500' },
+            { min: 0, letter: 'E', weight: 0.00, color: 'text-red-600' },
+        ];
+
+        function getGradeAttr(score) {
+            return GRADE_SCALE.find(g => score >= g.min) || GRADE_SCALE[GRADE_SCALE.length-1];
+        }
+
+        function addGrade() {
+            const name = document.getElementById('mk-name').value || "Mata Kuliah Unidentified";
+            const sks = parseInt(document.getElementById('mk-sks').value);
+            const score = parseFloat(document.getElementById('mk-score').value);
+
+            if (isNaN(score)) return;
+
+            const attr = getGradeAttr(score);
+            grades.push({ name, sks, score, weight: attr.weight, letter: attr.letter, color: attr.color });
+            
+            updateGPA();
+            renderGrades();
+            document.getElementById('mk-name').value = '';
+            document.getElementById('mk-score').value = '';
+        }
+
+        function updateGPA() {
+            const totalSKS = grades.reduce((acc, curr) => acc + curr.sks, 0);
+            const totalQP = grades.reduce((acc, curr) => acc + (curr.sks * curr.weight), 0);
+            const gpa = totalSKS === 0 ? 0 : totalQP / totalSKS;
+
+            document.getElementById('display-ipk').innerText = gpa.toFixed(2);
+            
+            const zone = document.getElementById('roast-zone');
+            const msg = document.getElementById('roast-msg');
+            
+            if (gpa >= 3.75) { zone.innerText = "ZONA: DEWA / IDAMAN MERTUA"; msg.innerText = "Anda manusia atau robot? Sedikit lagi menuju kesempurnaan hakiki!"; }
+            else if (gpa >= 3.00) { zone.innerText = "ZONA: STANDAR GORENGAN"; msg.innerText = "IPK segini mah aman, tapi ingat, di luar sana persaingan lebih keras dari batu!"; }
+            else if (gpa >= 2.00) { zone.innerText = "ZONA: TIKTOK ENTHUSIAST"; msg.innerText = "Cukup segini? Kayaknya isi kepala lu isinya cuma scroll FYP doang."; }
+            else if (gpa > 0) { zone.innerText = "ZONA: BEBAN KELUARGA"; msg.innerText = "Mending berhenti kuliah terus jadi beban keluarga secara full-time, lebih produktif."; }
+        }
+
+        function renderGrades() {
+            const list = document.getElementById('grade-list');
+            list.innerHTML = grades.map((g, i) => `
+                <div class="flex items-center justify-between p-4 bg-white/5 rounded-xl border border-white/5 animate-in slide-in-from-right-2">
+                    <div>
+                        <div class="text-[9px] font-black text-yellow-500 uppercase">${g.sks} SKS</div>
+                        <div class="font-bold text-white uppercase text-[11px]">${g.name}</div>
+                    </div>
+                    <div class="text-xl font-black italic ${g.color}">${g.letter}</div>
+                </div>
+            `).join('');
+        }
+
+        function clearGrades() {
+            grades = [];
+            updateGPA();
+            renderGrades();
+        }
+    </script>
+</body>
+</html>
