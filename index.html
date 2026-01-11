@@ -1,464 +1,855 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TIP ULM 2025 - Portal Agronity</title>
+    <title>Portal TIP ULM 2025 - Agricultural Technology</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap');
-        
-        :root {
-            --yellow-glow: #eab308;
-            --dark-bg: #050505;
-        }
+    
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        tipBlack: '#0a0a0a',
+                        tipDark: '#121212',
+                        tipYellow: '#eab308', // Yellow-500
+                        tipGlow: '#facc15',   // Yellow-400
+                    },
+                    fontFamily: {
+                        sans: ['Poppins', 'sans-serif'],
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'glow': 'glow 2s ease-in-out infinite alternate',
+                    },
+                    keyframes: {
+                        glow: {
+                            '0%': { boxShadow: '0 0 5px #eab308, 0 0 10px #eab308' },
+                            '100%': { boxShadow: '0 0 20px #eab308, 0 0 30px #eab308' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
         body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: var(--dark-bg);
-            color: #ffffff;
+            background-color: #0a0a0a;
+            color: #e5e5e5;
             overflow-x: hidden;
         }
 
-        .glass {
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .sidebar-link.active {
-            background: rgba(234, 179, 8, 0.1);
-            color: var(--yellow-glow);
-            border-right: 4px solid var(--yellow-glow);
-        }
-
-        .cyber-button {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .cyber-button:active { transform: scale(0.95); }
-
         /* Scrollbar */
-        ::-webkit-scrollbar { width: 5px; }
-        ::-webkit-scrollbar-track { background: #050505; }
-        ::-webkit-scrollbar-thumb { background: #eab308; border-radius: 10px; }
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1a1a1a; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #eab308; 
+            border-radius: 4px;
+        }
 
-        .page-section { display: none; }
-        .page-section.active { display: block; animation: fadeIn 0.5s ease-out; }
+        /* Glassmorphism Classes */
+        .glass-panel {
+            background: rgba(20, 20, 20, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(234, 179, 8, 0.2);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .glass-panel:hover {
+            border-color: rgba(234, 179, 8, 0.6);
+            box-shadow: 0 0 15px rgba(234, 179, 8, 0.3);
+        }
+
+        /* Text Glow */
+        .text-glow {
+            text-shadow: 0 0 10px rgba(234, 179, 8, 0.7);
+        }
+
+        /* Fire Particle Effect */
+        .particle {
+            position: absolute;
+            pointer-events: none;
+            background: radial-gradient(circle, #facc15 0%, #eab308 100%);
+            border-radius: 50%;
+            animation: fadeOut 1s forwards;
+        }
+
+        @keyframes fadeOut {
+            0% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(3); opacity: 0; }
+        }
+
+        /* Tab Transition */
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.5s ease-out;
+        }
+        .tab-content.active {
+            display: block;
+        }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
+            from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        .text-glow { text-shadow: 0 0 10px rgba(234, 179, 8, 0.5); }
+        /* Custom Input */
+        .custom-input {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid #333;
+            color: white;
+            transition: all 0.3s;
+        }
+        .custom-input:focus {
+            border-color: #eab308;
+            outline: none;
+            box-shadow: 0 0 10px rgba(234, 179, 8, 0.5);
+        }
     </style>
 </head>
-<body class="flex min-h-screen">
+<body class="relative min-h-screen">
 
-    <nav class="w-20 md:w-64 glass border-r border-white/10 flex flex-col fixed h-full z-50">
-        <div class="p-6 flex flex-col items-center md:items-start gap-3">
-            <div class="w-12 h-12 bg-yellow-500 rounded-xl flex items-center justify-center font-black text-black shadow-[0_0_20px_rgba(234,179,8,0.4)]">TIP</div>
-            <span class="hidden md:block font-black text-xl tracking-tighter text-yellow-500">ULM 2025</span>
-        </div>
+    <div id="particles-container" class="fixed inset-0 pointer-events-none z-50"></div>
 
-        <div class="flex-1 mt-6 space-y-2 px-2 overflow-y-auto">
-            <button onclick="showPage('mengenal')" class="sidebar-link active w-full flex items-center gap-4 p-4 rounded-xl hover:bg-white/5 transition">
-                <i class="fa-solid fa-info-circle w-6"></i> <span class="hidden md:block text-sm font-bold">Mengenal TIP</span>
-            </button>
-            <button onclick="showPage('mahasiswa')" class="sidebar-link w-full flex items-center gap-4 p-4 rounded-xl hover:bg-white/5 transition">
-                <i class="fa-solid fa-user-graduate w-6"></i> <span class="hidden md:block text-sm font-bold">Mahasiswa</span>
-            </button>
-            <button onclick="window.open('https://simari.ulm.ac.id/login/', '_blank')" class="sidebar-link w-full flex items-center gap-4 p-4 rounded-xl hover:bg-white/5 transition">
-                <i class="fa-solid fa-university w-6"></i> <span class="hidden md:block text-sm font-bold">SIMARI</span>
-            </button>
-            <button onclick="window.open('https://agrohub.faperta.ulm.ac.id/', '_blank')" class="sidebar-link w-full flex items-center gap-4 p-4 rounded-xl hover:bg-white/5 transition">
-                <i class="fa-solid fa-envelope-open-text w-6"></i> <span class="hidden md:block text-sm font-bold">Pengurusan Surat</span>
-            </button>
-            <button onclick="showPage('fitur')" class="sidebar-link w-full flex items-center gap-4 p-4 rounded-xl hover:bg-white/5 transition">
-                <i class="fa-solid fa-bolt w-6 text-yellow-500"></i> <span class="hidden md:block text-sm font-bold">Fitur Lanjutan</span>
-            </button>
-        </div>
-
-        <div class="p-4 border-t border-white/5 text-[9px] text-gray-500 font-bold uppercase tracking-widest hidden md:block">
-            <div class="flex items-center gap-2 mb-2">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/ASIIN_Logo.png" class="h-4 grayscale hover:grayscale-0 transition" alt="ASIIN">
-                <span>ASIIN ACCREDITED</span>
-            </div>
-            <p class="text-yellow-500/50 mb-1">DIPERSEMBAHKAN OLEH AGRONITY25</p>
-            <p class="leading-tight">Website ini Tidak Terafilasi dengan HIMA atau Apapun</p>
-        </div>
-    </nav>
-
-    <main class="flex-1 ml-20 md:ml-64 p-4 md:p-10">
-
-        <section id="mengenal" class="page-section active">
-            <div class="glass p-8 rounded-[2rem] relative overflow-hidden min-h-[400px] flex flex-col justify-end mb-10 shadow-2xl">
-                <div class="absolute inset-0 -z-10 opacity-40">
-                    <img src="https://images.unsplash.com/photo-1586771107445-d3ca888129ff?auto=format&fit=crop&q=80&w=1200" class="w-full h-full object-cover">
-                    <div class="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/80 to-transparent"></div>
-                </div>
-                <div class="relative z-10">
-                    <div class="flex gap-2 mb-4">
-                        <span class="bg-yellow-500 text-black px-3 py-1 rounded text-[10px] font-black uppercase">BAN-PT: UNGGUL</span>
-                        <span class="bg-blue-600 text-white px-3 py-1 rounded text-[10px] font-black uppercase">ASIIN Accredited</span>
+    <nav class="fixed top-0 w-full z-40 glass-panel border-b-0 border-b-tipYellow/20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <div class="flex-shrink-0 flex items-center gap-3 cursor-pointer" onclick="switchTab('beranda')">
+                    <i class="fa-solid fa-wheat-awn text-tipYellow text-3xl animate-pulse"></i>
+                    <div>
+                        <h1 class="font-bold text-xl tracking-wider text-white">TIP <span class="text-tipYellow text-glow">ULM</span></h1>
+                        <p class="text-[10px] text-gray-400 tracking-[0.2em]">TEKNOLOGI INDUSTRI PERTANIAN</p>
                     </div>
-                    <h1 class="text-4xl md:text-7xl font-black mb-4 leading-tight text-glow">Teknologi Industri <br> <span class="text-yellow-500">Pertanian</span></h1>
-                    <p class="text-gray-300 max-w-2xl mb-8 leading-relaxed text-sm md:text-base">Membangun masa depan agroindustri berkelanjutan dengan integrasi teknologi modern di Universitas Lambung Mangkurat.</p>
-                    <button onclick="window.open('https://pmb.ulm.ac.id/', '_blank')" class="bg-yellow-500 text-black px-8 py-4 rounded-2xl font-black hover:bg-yellow-400 transition shadow-lg shadow-yellow-500/30 text-xs md:text-sm cyber-button uppercase italic">
-                        Daftar Sekarang Melalui Jalur SNBP/SNBT
+                </div>
+                
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <button onclick="switchTab('beranda')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-tipYellow hover:bg-white/5 transition-all">Beranda</button>
+                        <button onclick="switchTab('mengenal')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-tipYellow hover:bg-white/5 transition-all">Mengenal TIP</button>
+                        <button onclick="switchTab('mahasiswa')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-tipYellow hover:bg-white/5 transition-all">Mahasiswa</button>
+                        <button onclick="switchTab('jadwal')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-tipYellow hover:bg-white/5 transition-all">Jadwal</button>
+                        <button onclick="switchTab('simulasi')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-tipYellow hover:bg-white/5 transition-all">Simulasi IPK</button>
+                        <button onclick="switchTab('links')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-tipYellow hover:bg-white/5 transition-all">Tautan</button>
+                    </div>
+                </div>
+
+                <div class="-mr-2 flex md:hidden">
+                    <button onclick="toggleMobileMenu()" class="inline-flex items-center justify-center p-2 rounded-md text-tipYellow hover:text-white focus:outline-none">
+                        <i class="fa-solid fa-bars text-2xl"></i>
                     </button>
                 </div>
             </div>
+        </div>
+        
+        <div id="mobile-menu" class="hidden md:hidden glass-panel absolute w-full">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <button onclick="switchTab('beranda')" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-tipYellow hover:bg-white/5">Beranda</button>
+                <button onclick="switchTab('mengenal')" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-tipYellow hover:bg-white/5">Mengenal TIP</button>
+                <button onclick="switchTab('mahasiswa')" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-tipYellow hover:bg-white/5">Mahasiswa</button>
+                <button onclick="switchTab('jadwal')" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-tipYellow hover:bg-white/5">Jadwal</button>
+                <button onclick="switchTab('simulasi')" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-tipYellow hover:bg-white/5">Simulasi IPK</button>
+                <button onclick="switchTab('links')" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-tipYellow hover:bg-white/5">Tautan & Sosmed</button>
+            </div>
+        </div>
+    </nav>
 
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-                
-                <div class="lg:col-span-8 space-y-10">
-                    
-                    <div class="glass p-8 rounded-3xl">
-                        <h2 class="text-2xl font-black mb-6 text-yellow-500 border-b border-white/10 pb-2">1. Profil Program Studi</h2>
-                        <div class="space-y-4 text-gray-300 leading-relaxed text-sm">
-                            <p>Program Studi Teknologi Industri Pertanian (TIP) merupakan bagian dari <span class="text-white font-bold">Fakultas Pertanian, Universitas Lambung Mangkurat</span>. Kami berfokus pada integrasi ilmu pertanian dengan teknik industri dan manajemen untuk menciptakan nilai tambah pada hasil pertanian.</p>
-                            <p>Berdiri di jantung Kalimantan Selatan, TIP ULM memiliki keunggulan spesifik dalam pengembangan <span class="italic text-yellow-500">Agroindustri Lahan Basah</span>, menjadikannya institusi yang relevan dalam menjawab tantangan pangan dan industri berkelanjutan di masa depan.</p>
-                        </div>
-                    </div>
+    <main id="app" class="pt-24 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto min-h-screen">
 
-                    <div class="glass p-8 rounded-3xl">
-                        <h2 class="text-2xl font-black mb-6 text-yellow-500 border-b border-white/10 pb-2">3. Visi & Misi</h2>
-                        <div class="space-y-8">
-                            <div class="bg-white/5 p-6 rounded-2xl border-l-4 border-yellow-500">
-                                <h3 class="font-black text-sm uppercase text-yellow-500 mb-2 italic">Visi</h3>
-                                <p class="text-sm italic">"Menjadi program studi yang unggul dan kompetitif di tingkat internasional dalam pengembangan ilmu pengetahuan dan teknologi agroindustri, khususnya pada lingkungan lahan basah yang berkelanjutan."</p>
-                            </div>
-                            <div>
-                                <h3 class="font-black text-sm uppercase text-yellow-500 mb-4 italic">Misi</h3>
-                                <ul class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <li class="bg-white/5 p-4 rounded-xl text-xs"><b class="text-white block mb-1">Pendidikan:</b> Menyelenggarakan pendidikan berkualitas tinggi menghasilkan sarjana profesional, inovatif, dan berjiwa entrepreneur.</li>
-                                    <li class="bg-white/5 p-4 rounded-xl text-xs"><b class="text-white block mb-1">Penelitian:</b> Mengembangkan riset agroindustri berbasis potensi lokal dan teknologi tepat guna.</li>
-                                    <li class="bg-white/5 p-4 rounded-xl text-xs"><b class="text-white block mb-1">Pengabdian:</b> Menerapkan hasil inovasi teknologi untuk kesejahteraan masyarakat dan industri.</li>
-                                    <li class="bg-white/5 p-4 rounded-xl text-xs"><b class="text-white block mb-1">Kerjasama:</b> Membangun jejaring strategis dengan pemerintah, industri, dan institusi global.</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="glass p-8 rounded-3xl">
-                        <h2 class="text-2xl font-black mb-6 text-yellow-500 border-b border-white/10 pb-2">4. Keunggulan Kurikulum</h2>
-                        <p class="text-xs text-gray-400 mb-6 italic">Kurikulum dirancang untuk membekali mahasiswa dengan tiga pilar utama: Teknologi Proses, Sistem & Manajemen Industri, serta Lingkungan.</p>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div class="space-y-4">
-                                <h4 class="text-sm font-bold text-white border-l-2 border-yellow-500 pl-3">Fokus Lahan Basah</h4>
-                                <p class="text-xs text-gray-400">Pembelajaran spesifik pengolahan komoditas karet, kelapa sawit, kayu, dan pangan lokal.</p>
-                            </div>
-                            <div class="space-y-4">
-                                <h4 class="text-sm font-bold text-white border-l-2 border-yellow-500 pl-3">Mata Kuliah Unggulan</h4>
-                                <ul class="text-[11px] space-y-2 text-gray-300">
-                                    <li><i class="fa-solid fa-check text-yellow-500 mr-2"></i> Rekayasa Bioproses & Mikrobiologi Industri.</li>
-                                    <li><i class="fa-solid fa-check text-yellow-500 mr-2"></i> Manajemen Mutu & Standarisasi (ISO, HACCP, Halal).</li>
-                                    <li><i class="fa-solid fa-check text-yellow-500 mr-2"></i> Analisis Strategi & Kelayakan Industri.</li>
-                                    <li><i class="fa-solid fa-check text-yellow-500 mr-2"></i> Teknologi Kelapa Sawit & Hilirisasi Produk.</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
+        <section id="beranda" class="tab-content active">
+            <div class="relative rounded-3xl overflow-hidden glass-panel h-[80vh] flex items-center justify-center text-center p-6 border-tipYellow/50 shadow-[0_0_50px_rgba(234,179,8,0.1)]">
+                <div class="absolute inset-0 z-0">
+                    <img src="https://images.unsplash.com/photo-1530836369250-ef72a3f5cda8?q=80&w=2070&auto=format&fit=crop" class="w-full h-full object-cover opacity-30" alt="Agriculture Tech">
+                    <div class="absolute inset-0 bg-gradient-to-t from-tipBlack via-tipBlack/80 to-transparent"></div>
                 </div>
 
-                <div class="lg:col-span-4 space-y-10">
-                    
-                    <div class="glass p-6 rounded-3xl">
-                        <h2 class="text-lg font-black mb-4 text-yellow-500">2. Akreditasi</h2>
+                <div class="relative z-10 max-w-4xl mx-auto space-y-6">
+                    <div class="inline-block px-4 py-1 rounded-full border border-tipYellow/50 bg-tipYellow/10 text-tipYellow text-sm font-semibold tracking-wide mb-4 animate-pulse">
+                        PENERIMAAN MAHASISWA BARU 2025
+                    </div>
+                    <h1 class="text-5xl md:text-7xl font-extrabold text-white tracking-tight">
+                        MEMBANGUN <span class="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-yellow-600 text-glow">AGROINDUSTRI</span><br> MASA DEPAN
+                    </h1>
+                    <p class="text-lg md:text-xl text-gray-300 max-w-2xl mx-auto">
+                        Program Studi Teknologi Industri Pertanian Universitas Lambung Mangkurat. Unggul dalam Inovasi Lahan Basah.
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center mt-8">
+                        <button onclick="switchTab('mengenal')" class="px-8 py-3 rounded-xl bg-tipYellow text-black font-bold text-lg hover:bg-yellow-400 hover:shadow-[0_0_20px_rgba(234,179,8,0.6)] transition-all transform hover:-translate-y-1">
+                            Jelajahi TIP
+                        </button>
+                        <a href="http://pmb.ulm.ac.id" target="_blank" class="px-8 py-3 rounded-xl glass-panel text-white font-bold text-lg hover:bg-white/10 hover:border-tipYellow transition-all transform hover:-translate-y-1 flex items-center justify-center gap-2">
+                            Daftar Sekarang <i class="fa-solid fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+                <div class="glass-panel p-6 rounded-2xl text-center hover:scale-105 transition-transform duration-300">
+                    <div class="text-4xl font-bold text-tipYellow mb-2">UNGGUL</div>
+                    <p class="text-gray-400">Akreditasi Nasional BAN-PT</p>
+                </div>
+                <div class="glass-panel p-6 rounded-2xl text-center hover:scale-105 transition-transform duration-300">
+                    <div class="text-4xl font-bold text-tipYellow mb-2">ASIIN</div>
+                    <p class="text-gray-400">Akreditasi Internasional (Jerman)</p>
+                </div>
+                <div class="glass-panel p-6 rounded-2xl text-center hover:scale-105 transition-transform duration-300">
+                    <div class="text-4xl font-bold text-tipYellow mb-2">60+</div>
+                    <p class="text-gray-400">Mahasiswa Baru 2025</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="mengenal" class="tab-content">
+            <div class="space-y-12">
+                <div class="glass-panel p-8 rounded-3xl relative overflow-hidden">
+                    <div class="absolute top-0 right-0 p-4 opacity-20">
+                        <i class="fa-solid fa-seedling text-9xl text-tipYellow"></i>
+                    </div>
+                    <h2 class="text-3xl font-bold text-tipYellow mb-4 border-b border-gray-700 pb-2">Selayang Pandang</h2>
+                    <p class="text-gray-300 leading-relaxed text-lg">
+                        Program Studi Teknologi Industri Pertanian (TIP) merupakan bagian dari Fakultas Pertanian, Universitas Lambung Mangkurat. Kami berfokus pada integrasi ilmu pertanian dengan teknik industri dan manajemen untuk menciptakan nilai tambah pada hasil pertanian. Berdiri di jantung Kalimantan Selatan, TIP ULM memiliki keunggulan spesifik dalam pengembangan Agroindustri Lahan Basah, menjadikannya institusi yang relevan dalam menjawab tantangan pangan dan industri berkelanjutan di masa depan.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div class="glass-panel p-8 rounded-3xl">
+                        <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+                            <i class="fa-solid fa-certificate text-tipYellow"></i> Akreditasi
+                        </h2>
                         <div class="overflow-x-auto">
-                            <table class="w-full text-[10px] text-left border-collapse">
-                                <thead>
-                                    <tr class="bg-white/10">
-                                        <th class="p-2">Jenis</th>
-                                        <th class="p-2">Status</th>
-                                        <th class="p-2">Lembaga</th>
+                            <table class="w-full text-left text-sm text-gray-400">
+                                <thead class="bg-white/5 text-tipYellow uppercase">
+                                    <tr>
+                                        <th class="px-4 py-3">Jenis</th>
+                                        <th class="px-4 py-3">Status</th>
+                                        <th class="px-4 py-3">Lembaga</th>
                                     </tr>
                                 </thead>
-                                <tbody>
-                                    <tr class="border-b border-white/5">
-                                        <td class="p-2">Nasional</td>
-                                        <td class="p-2 text-yellow-500 font-black">UNGGUL</td>
-                                        <td class="p-2">BAN-PT</td>
+                                <tbody class="divide-y divide-gray-700">
+                                    <tr>
+                                        <td class="px-4 py-3">Nasional</td>
+                                        <td class="px-4 py-3 font-bold text-green-400">UNGGUL</td>
+                                        <td class="px-4 py-3">BAN-PT</td>
                                     </tr>
-                                    <tr class="border-b border-white/5">
-                                        <td class="p-2">Internasional</td>
-                                        <td class="p-2 text-blue-400 font-black">TERAKREDITASI</td>
-                                        <td class="p-2">ASIIN (Jerman)</td>
+                                    <tr>
+                                        <td class="px-4 py-3">Internasional</td>
+                                        <td class="px-4 py-3 font-bold text-blue-400">Full Accredited</td>
+                                        <td class="px-4 py-3">ASIIN (Jerman)</td>
                                     </tr>
                                 </tbody>
                             </table>
                         </div>
-                        <p class="text-[9px] text-gray-500 mt-3 italic">Catatan: Akreditasi ASIIN membuktikan kurikulum kami diakui secara global sesuai standar internasional s.d 2029.</p>
-                    </div>
-
-                    <div class="glass p-6 rounded-3xl">
-                        <h2 class="text-lg font-black mb-4 text-yellow-500">5. Prospek Karir</h2>
-                        <p class="text-[10px] font-bold mb-4">Gelar: Sarjana Teknologi Pertanian (S.T.P.)</p>
-                        <div class="space-y-4">
-                            <div class="flex items-start gap-3">
-                                <i class="fa-solid fa-industry text-yellow-500 mt-1"></i>
-                                <div><b class="text-[11px] block">Sektor Industri</b><p class="text-[10px] text-gray-400">QA/QC, Production Control, R&D.</p></div>
-                            </div>
-                            <div class="flex items-start gap-3">
-                                <i class="fa-solid fa-landmark text-yellow-500 mt-1"></i>
-                                <div><b class="text-[11px] block">Sektor Publik</b><p class="text-[10px] text-gray-400">Kementan, BRIN, BPOM.</p></div>
-                            </div>
-                            <div class="flex items-start gap-3">
-                                <i class="fa-solid fa-rocket text-yellow-500 mt-1"></i>
-                                <div><b class="text-[11px] block">Technopreneur</b><p class="text-[10px] text-gray-400">Wirausaha produk inovatif.</p></div>
-                            </div>
+                        <div class="mt-4 p-4 bg-yellow-900/20 border-l-4 border-tipYellow rounded-r-lg">
+                            <p class="text-sm italic text-gray-300">
+                                "Akreditasi ASIIN membuktikan kurikulum dan lulusan kami diakui secara global sesuai standar kompetensi internasional."
+                            </p>
                         </div>
                     </div>
 
-                    <div class="glass p-6 rounded-3xl">
-                        <h2 class="text-lg font-black mb-4 text-yellow-500">6. Fasilitas</h2>
-                        <div class="space-y-3">
-                            <img src="https://images.unsplash.com/photo-1576086213369-97a306d36557?auto=format&fit=crop&q=80&w=400" class="w-full h-24 object-cover rounded-xl grayscale hover:grayscale-0 transition" alt="Lab">
-                            <ul class="text-[10px] space-y-2 text-gray-400">
-                                <li>● Lab. Teknologi Proses & Bio-industri</li>
-                                <li>● Lab. Analisis Mutu & Kimia Industri</li>
-                                <li>● Lab. Rekayasa Sistem & Manajemen</li>
-                                <li>● Lahan Eksperimental Terpadu</li>
+                    <div class="glass-panel p-8 rounded-3xl">
+                        <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+                            <i class="fa-solid fa-compass text-tipYellow"></i> Visi & Misi
+                        </h2>
+                        <div class="mb-4">
+                            <h3 class="font-bold text-tipYellow mb-1">VISI</h3>
+                            <p class="text-sm text-gray-300 italic">"Menjadi program studi yang unggul dan kompetitif di tingkat internasional dalam pengembangan ilmu pengetahuan dan teknologi agroindustri, khususnya pada lingkungan lahan basah yang berkelanjutan."</p>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-tipYellow mb-1">MISI</h3>
+                            <ul class="list-disc list-inside text-sm text-gray-300 space-y-1">
+                                <li><strong class="text-white">Pendidikan:</strong> Menghasilkan sarjana profesional, inovatif & entrepreneur.</li>
+                                <li><strong class="text-white">Penelitian:</strong> Riset agroindustri berbasis potensi lokal.</li>
+                                <li><strong class="text-white">Pengabdian:</strong> Penerapan inovasi teknologi untuk masyarakat.</li>
+                                <li><strong class="text-white">Kerjasama:</strong> Membangun jejaring global & industri.</li>
                             </ul>
                         </div>
                     </div>
-
-                </div>
-            </div>
-            
-            <div class="mt-20 border-t border-white/5 pt-10 pb-10 text-center">
-                <p class="text-yellow-500 font-black italic text-sm tracking-tighter">DIPERSEMBAHKAN OLEH AGRONITY25 (ANGKATAN TEKNOLOGI INDUSTRI PERTANIAN 2025)</p>
-                <p class="text-gray-600 text-[10px] mt-2 uppercase tracking-widest font-bold">Website ini Tidak Terafilasi dengan HIMA atau Apapun</p>
-            </div>
-        </section>
-
-        <section id="mahasiswa" class="page-section">
-            <div id="login-area" class="max-w-md mx-auto mt-20">
-                <div class="glass p-8 rounded-3xl border border-yellow-500/20 shadow-2xl">
-                    <h2 class="text-2xl font-black mb-2 text-center italic tracking-tighter">STUDENT LOGIN</h2>
-                    <p class="text-gray-500 text-[10px] text-center mb-8 uppercase tracking-widest">Gunakan Nama & Tgl Lahir (YYYY-MM-DD)</p>
-                    <div class="space-y-4">
-                        <input type="text" id="login-name" placeholder="NAMA LENGKAP" class="w-full bg-white/5 border border-white/10 p-4 rounded-xl outline-none focus:border-yellow-500 transition font-bold uppercase text-sm">
-                        <input type="password" id="login-pass" placeholder="TANGGAL LAHIR (YYYY-MM-DD)" class="w-full bg-white/5 border border-white/10 p-4 rounded-xl outline-none focus:border-yellow-500 transition font-bold text-sm">
-                        <button onclick="handleLogin()" class="w-full bg-yellow-500 text-black py-4 rounded-xl font-black hover:bg-yellow-400 shadow-lg shadow-yellow-500/20 cyber-button uppercase text-xs italic tracking-widest">Akses Database</button>
-                    </div>
-                    <p id="login-error" class="text-red-500 text-[10px] mt-4 text-center hidden font-black italic">DATABASE ERROR: DATA TIDAK DITEMUKAN!</p>
-                </div>
-            </div>
-
-            <div id="data-area" class="hidden">
-                <div class="flex justify-between items-end mb-8">
-                    <h2 class="text-3xl font-black italic tracking-tighter">MAHASISWA <span class="text-yellow-500">ACTIVE</span></h2>
-                    <button onclick="logout()" class="text-red-500 text-[10px] font-black border border-red-500/20 px-4 py-2 rounded-lg hover:bg-red-500/10 transition uppercase">Logout System</button>
-                </div>
-                <div class="glass rounded-3xl overflow-hidden border border-white/10 shadow-2xl">
-                    <table class="w-full text-left">
-                        <thead>
-                            <tr class="bg-white/5 text-yellow-500 text-[10px] font-black uppercase tracking-widest">
-                                <th class="p-6">Index</th>
-                                <th class="p-6">Nama Lengkap</th>
-                                <th class="p-6">Tempat Lahir</th>
-                                <th class="p-6">Auth Key (DOB)</th>
-                            </tr>
-                        </thead>
-                        <tbody id="student-table-body" class="text-sm"></tbody>
-                    </table>
-                </div>
-            </div>
-        </section>
-
-        <section id="fitur" class="page-section">
-            <div class="max-w-4xl mx-auto">
-                <div class="flex flex-col items-center mb-10 text-center">
-                    <div class="w-44 h-44 rounded-full border-8 border-yellow-500 flex flex-col items-center justify-center bg-black/50 shadow-[0_0_40px_rgba(234,179,8,0.3)] mb-6">
-                        <span id="display-ipk" class="text-5xl font-black text-yellow-400 italic">0.00</span>
-                        <span class="text-[9px] font-black text-gray-600 uppercase tracking-widest">Current GPA</span>
-                    </div>
-                    <div id="roast-zone" class="bg-yellow-500/10 border border-yellow-500/30 px-6 py-2 rounded-full text-yellow-500 text-[11px] font-black italic uppercase mb-4">
-                        STATUS: WAITING FOR NEURAL INJECTION
-                    </div>
-                    <p id="roast-msg" class="text-gray-400 italic text-sm max-w-sm">"Masukkan nilai kuliah Anda untuk melihat seberapa keras sistem akan menghina Anda."</p>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div class="glass p-8 rounded-3xl">
-                        <h3 class="font-black text-xs uppercase mb-6 tracking-widest flex items-center gap-2">
-                            <i class="fa-solid fa-keyboard text-yellow-500"></i> Manual Input
-                        </h3>
-                        <div class="space-y-4">
-                            <input type="text" id="mk-name" placeholder="NAMA MATA KULIAH" class="w-full bg-white/5 border border-white/10 p-4 rounded-xl outline-none focus:border-yellow-500 text-xs font-bold uppercase">
-                            <div class="grid grid-cols-2 gap-4">
-                                <select id="mk-sks" class="bg-white/5 border border-white/10 p-4 rounded-xl outline-none focus:border-yellow-500 text-xs font-bold text-yellow-500">
-                                    <option value="1">1 SKS</option>
-                                    <option value="2" selected>2 SKS</option>
-                                    <option value="3">3 SKS</option>
-                                    <option value="4">4 SKS</option>
-                                </select>
-                                <input type="number" id="mk-score" placeholder="SKOR (0-100)" class="bg-white/5 border border-white/10 p-4 rounded-xl outline-none focus:border-yellow-500 text-xs font-bold">
-                            </div>
-                            <button onclick="addGrade()" class="w-full bg-yellow-500 text-black py-4 rounded-xl font-black uppercase text-[10px] italic shadow-lg cyber-button">Synchronize Score</button>
-                        </div>
+                     <div class="glass-panel p-6 rounded-3xl hover:border-tipYellow transition-colors">
+                        <h3 class="text-xl font-bold text-tipYellow mb-4">Kurikulum Unggulan</h3>
+                        <ul class="space-y-3">
+                            <li class="flex items-start gap-3">
+                                <i class="fa-solid fa-flask text-green-400 mt-1"></i>
+                                <span class="text-gray-300">Rekayasa Bioproses & Mikrobiologi Industri</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <i class="fa-solid fa-box-open text-blue-400 mt-1"></i>
+                                <span class="text-gray-300">Teknologi Pengemasan & Penyimpanan</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <i class="fa-solid fa-check-double text-purple-400 mt-1"></i>
+                                <span class="text-gray-300">Manajemen Mutu (ISO, HACCP, Halal)</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <i class="fa-brands fa-envira text-green-500 mt-1"></i>
+                                <span class="text-gray-300">Teknologi Kelapa Sawit & Hilirisasi</span>
+                            </li>
+                        </ul>
                     </div>
-                    <div class="glass p-8 rounded-3xl">
-                        <div class="flex justify-between items-center mb-6">
-                            <h3 class="font-black text-xs uppercase tracking-widest italic">Data Terinjeksi</h3>
-                            <button onclick="clearGrades()" class="text-red-500 text-[10px] font-black uppercase hover:underline">Purge All</button>
+
+                    <div class="glass-panel p-6 rounded-3xl">
+                        <h3 class="text-xl font-bold text-tipYellow mb-4">Fasilitas Laboratorium</h3>
+                        <div class="grid grid-cols-2 gap-2">
+                            <img src="https://images.unsplash.com/photo-1576086213369-97a306d36557?q=80&w=500&auto=format&fit=crop" class="rounded-lg object-cover h-32 w-full hover:opacity-80 transition-opacity" alt="Lab 1">
+                            <img src="https://images.unsplash.com/photo-1532094349884-543bc11b234d?q=80&w=500&auto=format&fit=crop" class="rounded-lg object-cover h-32 w-full hover:opacity-80 transition-opacity" alt="Lab 2">
                         </div>
-                        <div id="grade-list" class="space-y-3 max-h-[250px] overflow-y-auto pr-2 text-xs"></div>
+                        <p class="text-xs text-center mt-2 text-gray-500">Laboratorium Terpadu & Rekayasa Sistem</p>
                     </div>
                 </div>
+
+                <div class="glass-panel p-8 rounded-3xl text-center">
+                    <h2 class="text-2xl font-bold text-white mb-6">Prospek Karir (S.T.P.)</h2>
+                    <div class="flex flex-wrap justify-center gap-4">
+                        <span class="px-4 py-2 rounded-full bg-white/5 border border-tipYellow/30 text-tipYellow font-semibold">Quality Assurance (QA/QC)</span>
+                        <span class="px-4 py-2 rounded-full bg-white/5 border border-tipYellow/30 text-tipYellow font-semibold">R&D Manager</span>
+                        <span class="px-4 py-2 rounded-full bg-white/5 border border-tipYellow/30 text-tipYellow font-semibold">Technopreneur</span>
+                        <span class="px-4 py-2 rounded-full bg-white/5 border border-tipYellow/30 text-tipYellow font-semibold">Konsultan Agroindustri</span>
+                        <span class="px-4 py-2 rounded-full bg-white/5 border border-tipYellow/30 text-tipYellow font-semibold">ASN (Kementan/BRIN)</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="mahasiswa" class="tab-content">
+            <div class="max-w-md mx-auto mt-10">
+                <div id="login-container" class="glass-panel p-8 rounded-3xl border-t-4 border-t-tipYellow shadow-2xl">
+                    <div class="text-center mb-8">
+                        <i class="fa-solid fa-user-graduate text-5xl text-tipYellow mb-4 animate-bounce"></i>
+                        <h2 class="text-2xl font-bold text-white">Login Mahasiswa</h2>
+                        <p class="text-sm text-gray-400">Akses data akademik Anda</p>
+                    </div>
+                    
+                    <form onsubmit="handleLogin(event)" class="space-y-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Nama Lengkap</label>
+                            <input type="text" id="username" placeholder="Sesuai Data Pendaftaran" class="w-full px-4 py-3 rounded-xl custom-input" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Tanggal Lahir</label>
+                            <input type="date" id="password" class="w-full px-4 py-3 rounded-xl custom-input" required>
+                            <p class="text-xs text-gray-500 mt-1">Format: YYYY-MM-DD</p>
+                        </div>
+                        <button type="submit" class="w-full bg-tipYellow text-black font-bold py-3 rounded-xl hover:bg-yellow-400 hover:shadow-[0_0_20px_rgba(234,179,8,0.5)] transition-all">
+                            LOGIN
+                        </button>
+                    </form>
+                    <p id="login-error" class="text-red-500 text-sm text-center mt-4 hidden">Data tidak ditemukan!</p>
+                </div>
+
+                <div id="profile-card" class="hidden glass-panel p-0 rounded-3xl overflow-hidden shadow-[0_0_30px_rgba(234,179,8,0.2)] animate-[fadeIn_0.5s_ease-out]">
+                    <div class="bg-gradient-to-r from-yellow-600 to-tipYellow h-32 relative">
+                        <div class="absolute -bottom-12 left-1/2 transform -translate-x-1/2">
+                            <div class="w-24 h-24 rounded-full bg-black border-4 border-tipYellow flex items-center justify-center overflow-hidden">
+                                <i class="fa-solid fa-user text-4xl text-gray-400"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="pt-16 pb-8 px-6 text-center">
+                        <h2 id="profile-name" class="text-2xl font-bold text-white uppercase mb-1">Nama Mahasiswa</h2>
+                        <p class="text-tipYellow font-semibold tracking-widest">TEKNOLOGI INDUSTRI PERTANIAN</p>
+                        <p class="text-gray-500 text-sm mb-6">Angkatan 2025</p>
+
+                        <div class="grid grid-cols-2 gap-4 text-left bg-white/5 p-4 rounded-xl">
+                            <div>
+                                <p class="text-xs text-gray-500">Tempat Lahir</p>
+                                <p id="profile-pob" class="font-medium text-white">Banjarmasin</p>
+                            </div>
+                            <div>
+                                <p class="text-xs text-gray-500">Tanggal Lahir</p>
+                                <p id="profile-dob" class="font-medium text-white">2007-01-01</p>
+                            </div>
+                            <div>
+                                <p class="text-xs text-gray-500">Status</p>
+                                <p class="font-medium text-green-400">Aktif <i class="fa-solid fa-circle-check"></i></p>
+                            </div>
+                        </div>
+                        
+                        <button onclick="handleLogout()" class="mt-6 w-full py-2 border border-red-500/50 text-red-400 rounded-lg hover:bg-red-500/10 transition-colors">
+                            Logout
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="jadwal" class="tab-content">
+            <h2 class="text-3xl font-bold text-center text-tipYellow mb-8 text-glow">Jadwal Perkuliahan</h2>
+            
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                <button onclick="showSchedule(1)" class="p-4 glass-panel rounded-xl hover:bg-tipYellow hover:text-black transition-all font-bold group">
+                    Semester 1 <i class="fa-solid fa-arrow-right float-right opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                </button>
+                <button class="p-4 glass-panel rounded-xl opacity-50 cursor-not-allowed">Semester 2</button>
+                <button class="p-4 glass-panel rounded-xl opacity-50 cursor-not-allowed">Semester 3</button>
+                <button class="p-4 glass-panel rounded-xl opacity-50 cursor-not-allowed">Semester 4</button>
+                <button class="p-4 glass-panel rounded-xl opacity-50 cursor-not-allowed">Semester 5</button>
+                <button class="p-4 glass-panel rounded-xl opacity-50 cursor-not-allowed">Semester 6</button>
+                <button class="p-4 glass-panel rounded-xl opacity-50 cursor-not-allowed">Semester 7</button>
+                <button class="p-4 glass-panel rounded-xl opacity-50 cursor-not-allowed">Semester 8</button>
+            </div>
+
+            <div id="schedule-display" class="hidden">
+                <div class="glass-panel rounded-2xl overflow-hidden">
+                    <div class="bg-tipYellow p-4 flex justify-between items-center text-black">
+                        <h3 class="font-bold text-xl">Jadwal Semester 1 (Ganjil 2025/2026)</h3>
+                        <i class="fa-regular fa-calendar-days text-xl"></i>
+                    </div>
+                    <div class="p-6 grid gap-6 md:grid-cols-2">
+                        <div class="bg-white/5 rounded-xl p-4 border-l-4 border-blue-500">
+                            <h4 class="font-bold text-lg mb-3">Senin</h4>
+                            <ul class="space-y-3">
+                                <li class="flex justify-between border-b border-gray-700 pb-2">
+                                    <span>08:50 - 10:30</span>
+                                    <span class="text-right">Kimia Dasar<br><small class="text-gray-400">R. Kalalayu</small></span>
+                                </li>
+                                <li class="flex justify-between border-b border-gray-700 pb-2">
+                                    <span>10:30 - 11:20</span>
+                                    <span class="text-right">Pengantar Teknologi<br><small class="text-gray-400">R. Hambawang</small></span>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="bg-white/5 rounded-xl p-4 border-l-4 border-purple-500">
+                            <h4 class="font-bold text-lg mb-3">Selasa</h4>
+                            <ul class="space-y-3">
+                                <li class="flex justify-between border-b border-gray-700 pb-2">
+                                    <span>07:10 - 08:50</span>
+                                    <span class="text-right">Matematika Dasar<br><small class="text-gray-400">R. Kalalayu</small></span>
+                                </li>
+                                <li class="flex justify-between border-b border-gray-700 pb-2">
+                                    <span>10:30 - 12:10</span>
+                                    <span class="text-right">Praktikum Kimia<br><small class="text-gray-400">Lab. Dasar</small></span>
+                                </li>
+                                <li class="flex justify-between border-b border-gray-700 pb-2">
+                                    <span>13:00 - 14:40</span>
+                                    <span class="text-right">Ekonomi Teknik<br><small class="text-gray-400">R. Hambawang</small></span>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="bg-white/5 rounded-xl p-4 border-l-4 border-green-500">
+                            <h4 class="font-bold text-lg mb-3">Rabu</h4>
+                            <ul class="space-y-3">
+                                <li class="flex justify-between border-b border-gray-700 pb-2">
+                                    <span>08:50 - 10:30</span>
+                                    <span class="text-right">Rekayasa Bioproses<br><small class="text-gray-400">R. Kenanga</small></span>
+                                </li>
+                                <li class="flex justify-between border-b border-gray-700 pb-2">
+                                    <span>10:30 - 12:10</span>
+                                    <span class="text-right">Agama<br><small class="text-gray-400">R. Pampaken</small></span>
+                                </li>
+                                <li class="flex justify-between border-b border-gray-700 pb-2">
+                                    <span>14:40 - 16:20</span>
+                                    <span class="text-right">Bahasa Indonesia<br><small class="text-gray-400">R. Kemuning</small></span>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="bg-white/5 rounded-xl p-4 border-l-4 border-yellow-500">
+                            <h4 class="font-bold text-lg mb-3">Kamis</h4>
+                            <ul class="space-y-3">
+                                <li class="flex justify-between border-b border-gray-700 pb-2">
+                                    <span>08:50 - 10:30</span>
+                                    <span class="text-right">Matematika Lanjut<br><small class="text-gray-400">R. Kenanga</small></span>
+                                </li>
+                                <li class="flex justify-between border-b border-gray-700 pb-2">
+                                    <span>13:00 - 14:40</span>
+                                    <span class="text-right">Pancasila<br><small class="text-gray-400">R. Pampaken</small></span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="simulasi" class="tab-content">
+            <div class="max-w-2xl mx-auto glass-panel p-6 rounded-3xl shadow-[0_0_40px_rgba(234,179,8,0.15)]">
+                <div class="flex items-center gap-4 mb-6">
+                    <i class="lucide-calculator w-10 h-10 text-tipYellow"></i>
+                    <div>
+                        <h2 class="text-2xl font-bold text-white">Simulator IPK</h2>
+                        <p class="text-xs text-gray-400">Prediksi nasib akademikmu di sini.</p>
+                    </div>
+                </div>
+
+                <div class="bg-white/5 p-4 rounded-xl mb-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-xs text-gray-400 mb-1">Nama Matkul</label>
+                        <input type="text" id="courseName" placeholder="Contoh: Kimia" class="w-full bg-black border border-gray-700 rounded px-3 py-2 text-sm focus:border-tipYellow outline-none text-white">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-gray-400 mb-1">SKS</label>
+                        <input type="number" id="courseSks" placeholder="2" class="w-full bg-black border border-gray-700 rounded px-3 py-2 text-sm focus:border-tipYellow outline-none text-white">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-gray-400 mb-1">Nilai</label>
+                        <select id="courseGrade" class="w-full bg-black border border-gray-700 rounded px-3 py-2 text-sm focus:border-tipYellow outline-none text-white">
+                            <option value="4.00">A (4.00)</option>
+                            <option value="3.75">A- (3.75)</option>
+                            <option value="3.50">B+ (3.50)</option>
+                            <option value="3.00">B (3.00)</option>
+                            <option value="2.75">B- (2.75)</option>
+                            <option value="2.50">C+ (2.50)</option>
+                            <option value="2.00">C (2.00)</option>
+                            <option value="1.00">D (1.00)</option>
+                            <option value="0.00">E (0.00)</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <button onclick="addCourse()" class="w-full border border-tipYellow text-tipYellow hover:bg-tipYellow hover:text-black font-semibold py-2 rounded-lg transition-all mb-6">
+                    <i class="fa-solid fa-plus"></i> Tambah Matkul
+                </button>
+
+                <div class="mb-6">
+                    <table class="w-full text-sm text-left text-gray-400">
+                        <thead class="text-xs uppercase bg-white/5 text-tipYellow">
+                            <tr>
+                                <th class="px-3 py-2">Matkul</th>
+                                <th class="px-3 py-2">SKS</th>
+                                <th class="px-3 py-2">Nilai</th>
+                                <th class="px-3 py-2">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="courseTableBody">
+                            </tbody>
+                    </table>
+                </div>
+
+                <div class="border-t border-gray-700 pt-6 text-center">
+                    <button onclick="calculateIPK()" class="bg-gradient-to-r from-yellow-600 to-yellow-400 text-black font-bold px-8 py-3 rounded-full shadow-[0_0_15px_rgba(250,204,21,0.5)] hover:scale-105 transition-transform">
+                        HITUNG IPK
+                    </button>
+                    
+                    <div id="resultArea" class="mt-8 hidden animate-bounce">
+                        <div class="text-6xl font-black text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-400" id="finalIpk">0.00</div>
+                        <div class="text-sm text-gray-500 uppercase tracking-widest mb-4">Indeks Prestasi Kumulatif</div>
+                        
+                        <div class="glass-panel p-4 rounded-xl border-l-4 border-red-500 bg-red-900/10">
+                            <h4 class="text-red-400 font-bold mb-1">ROASTING AI:</h4>
+                            <p id="roastMessage" class="text-gray-300 italic">"..."</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="links" class="tab-content">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                <a href="https://simari.ulm.ac.id/login/" target="_blank" class="group glass-panel p-8 rounded-3xl flex flex-col items-center justify-center text-center hover:bg-blue-900/20 transition-all border-l-8 border-blue-500">
+                    <i class="fa-solid fa-graduation-cap text-5xl text-blue-400 mb-4 group-hover:scale-110 transition-transform"></i>
+                    <h3 class="text-2xl font-bold text-white">SIMARI ULM</h3>
+                    <p class="text-sm text-gray-400 mt-2">Sistem Informasi Akademik Terpadu</p>
+                </a>
+
+                <a href="https://agrohub.faperta.ulm.ac.id/" target="_blank" class="group glass-panel p-8 rounded-3xl flex flex-col items-center justify-center text-center hover:bg-green-900/20 transition-all border-l-8 border-green-500">
+                    <i class="fa-solid fa-file-signature text-5xl text-green-400 mb-4 group-hover:scale-110 transition-transform"></i>
+                    <h3 class="text-2xl font-bold text-white">FAPERTA HUB</h3>
+                    <p class="text-sm text-gray-400 mt-2">Layanan Persuratan & Administrasi</p>
+                </a>
+
+                <a href="https://www.instagram.com/agronity.25" target="_blank" class="group glass-panel p-6 rounded-3xl flex items-center gap-6 hover:bg-white/5 transition-all relative overflow-hidden">
+                    <div class="absolute inset-0 bg-gradient-to-r from-purple-500 via-pink-500 to-yellow-500 opacity-10 group-hover:opacity-20 transition-opacity"></div>
+                    <i class="fa-brands fa-instagram text-5xl text-white z-10"></i>
+                    <div class="z-10">
+                        <h3 class="text-xl font-bold text-white">@agronity.25</h3>
+                        <p class="text-xs text-gray-300">Official Instagram Angkatan 2025</p>
+                    </div>
+                </a>
+
+                <a href="#" class="group glass-panel p-6 rounded-3xl flex items-center gap-6 hover:bg-white/5 transition-all relative overflow-hidden">
+                    <div class="absolute inset-0 bg-gradient-to-r from-cyan-500 to-red-500 opacity-10 group-hover:opacity-20 transition-opacity"></div>
+                    <i class="fa-brands fa-tiktok text-5xl text-white z-10"></i>
+                    <div class="z-10">
+                        <h3 class="text-xl font-bold text-white">TikTok TIP</h3>
+                        <p class="text-xs text-gray-300">Dokumentasi Kegiatan & Keseruan</p>
+                    </div>
+                </a>
             </div>
         </section>
 
     </main>
 
+    <footer class="glass-panel mt-12 py-8 text-center text-gray-500 text-sm border-t border-tipYellow/20">
+        <p>&copy; 2025 Teknologi Industri Pertanian - Universitas Lambung Mangkurat.</p>
+        <p class="mt-2 text-xs">Developed with <i class="fa-solid fa-bolt text-tipYellow"></i> by TIP IT Division</p>
+    </footer>
+
     <script>
-        // DATA LOGIC
-        let students = [];
-        let grades = [];
+        // --- 1. DATA MAHASISWA (DATABASE) ---
+        const students = [
+            { name: "Muhammad Nabil Rafif Firdaus", dob: "2006-04-11", pob: "Sampit" },
+            { name: "Ahmad Faris Alzabar", dob: "2007-01-23", pob: "Tanjung selor" },
+            { name: "AHMAD YUSUF DANDY", dob: "2007-09-08", pob: "Palangka Raya" },
+            { name: "Munawwarah", dob: "2006-08-16", pob: "Banjarmasin" },
+            { name: "FAUZIA NAZWA RAMADHINA", dob: "2006-10-03", pob: "Bogor" },
+            { name: "Abed Richardo Simaremare", dob: "2007-05-14", pob: "TANAH LAUT" },
+            { name: "Fajar dama yusron", dob: "2006-03-20", pob: "Tanah laut, Pelaihari" },
+            { name: "Aulia desmitha winney", dob: "2006-12-26", pob: "Sampit" },
+            { name: "CATUR INDAH APRIANI", dob: "2006-04-27", pob: "JELAPAT 1" },
+            { name: "Muhammad Fathan Maulana", dob: "2007-03-18", pob: "Kuaro, kab. Paser" },
+            { name: "Muhammad Balya Isroie", dob: "2007-08-11", pob: "Martapura" },
+            { name: "Ahmad Rifky Jailani", dob: "2007-03-27", pob: "SAMPIT" },
+            { name: "Suaidi Azmi Bintang Pamungkas", dob: "2007-09-28", pob: "Hulu Sungai Tengah" },
+            { name: "Muhammad Azwar Faisal", dob: "2006-06-08", pob: "Tanah Bumbu" },
+            { name: "Finda Risma Nurdiana", dob: "2007-02-27", pob: "Kotabaru" },
+            { name: "Muhammad Faisal Adjka Pratama", dob: "2006-07-17", pob: "Martapura" },
+            { name: "Awfa Azkia", dob: "2007-11-06", pob: "Banjarmasin" },
+            { name: "Fasha Reza Saputra", dob: "2007-01-17", pob: "Banjarmasin" },
+            { name: "Nayla Cynthia Renanata", dob: "2007-03-30", pob: "Landasan Ulin" },
+            { name: "Gwen Arla Sabryna", dob: "2007-11-16", pob: "Banjarmasin" },
+            { name: "Maulidya Sari", dob: "2007-04-07", pob: "Palangka Raya" },
+            { name: "Naila Khansa Maulina", dob: "2007-03-30", pob: "Banjarmasin" },
+            { name: "Hidayatul Munawaroh", dob: "2007-12-17", pob: "Rantau Bujur" },
+            { name: "Nur Agrisa Yundari", dob: "2007-08-21", pob: "Pendang" },
+            { name: "Muhammad iqbal fauzan", dob: "2007-01-03", pob: "Paringin" },
+            { name: "Nur'Aisyah", dob: "2007-07-13", pob: "Binuang" },
+            { name: "Siti Kamalia", dob: "2007-06-09", pob: "Martapura" },
+            { name: "Muhammad Risqi", dob: "2007-05-27", pob: "Tabalong" },
+            { name: "EVA KUSUMA SARI", dob: "2008-02-29", pob: "Sungai langsat" },
+            { name: "May Ardhita Sari", dob: "2007-05-13", pob: "Banjarbaru" },
+            { name: "arfiana resfa julia", dob: "2007-07-16", pob: "tanah laut" },
+            { name: "Nite Sa Kurueh", dob: "2007-01-31", pob: "Nanga tebidah" },
+            { name: "Halimatus Sa'adiah", dob: "2007-01-23", pob: "Bontang" },
+            { name: "Muhammad Chandra iriawan", dob: "2006-10-30", pob: "jakarta" },
+            { name: "Sorta Romauli Silitonga", dob: "2006-09-21", pob: "Kotabaru" },
+            { name: "Rizki Juanda Yudistira", dob: "2006-12-15", pob: "Barito Kuala" },
+            { name: "Rizqizia Marsha Nafanda", dob: "2007-03-02", pob: "Banjarmasin" },
+            { name: "Eka Nabila Rahmawati", dob: "2006-11-09", pob: "Banjarbaru" },
+            { name: "Muhammad Reygan", dob: "2007-07-16", pob: "Muara Teweh" },
+            { name: "Aditya Ramadhani", dob: "2006-10-12", pob: "Banjarmasin" },
+            { name: "Ratna", dob: "2006-03-23", pob: "Sejahtera" },
+            { name: "Muhammad Taufikur Rahman", dob: "2007-12-18", pob: "Banjarbaru" },
+            { name: "Muhammad Iqbal Muharram Alfarisy", dob: "2007-01-20", pob: "banjarmasin" },
+            { name: "Dini octavia az zahra", dob: "2007-10-26", pob: "Kotabaru" },
+            { name: "Nur Ramadhani", dob: "2007-09-23", pob: "Kuala Kapuas" },
+            { name: "Farah Iqrima Mutia Rahmah", dob: "2006-07-25", pob: "Barabai" },
+            { name: "anita rahmatiyah", dob: "2006-03-25", pob: "banjarbaru" },
+            { name: "Amelia Qalsyum.J", dob: "2006-12-18", pob: "Kotabaru" },
+            { name: "Naufal Muzakkie", dob: "2006-07-18", pob: "Semarang" },
+            { name: "Billa Salsa Az-zahra Akbar", dob: "2007-01-04", pob: "Cirebon" },
+            { name: "Muhammad Rezki Rahim", dob: "2006-05-23", pob: "Kandangan" },
+            { name: "CAHAYA ZUHROH", dob: "2007-01-24", pob: "BANJARMASIN" },
+            { name: "Muhammad Risky Aulia", dob: "2006-11-30", pob: "Banjarmasin" },
+            { name: "Muhammad Luqman al Khanza", dob: "2007-09-22", pob: "Barabai" },
+            { name: "Hanim Amani Rahman", dob: "2007-07-09", pob: "Banjarmasin" },
+            { name: "Nadhifa Dzahwa Nur Rizqa", dob: "2006-10-27", pob: "Tabalong" },
+            { name: "Nadia Zahra", dob: "2007-05-28", pob: "Hulu Sungai Tengah" }
+        ];
 
-        window.onload = () => {
-            const csvData = `"Cap waktu","Nama ","Tempat Lahir","Tanggal Lahir"
-"2025/10/27 4:07:40 PM GMT+8","Muhammad Nabil Rafif Firdaus ","Sampit","2006-04-11"
-"2025/10/27 4:10:16 PM GMT+8","Ahmad Faris Alzabar","Tanjung selor","2007-01-23"
-"2025/10/27 4:18:21 PM GMT+8","AHMAD YUSUF DANDY","Palangka Raya","2007-09-08"
-"2025/10/27 4:18:31 PM GMT+8","Munawwarah ","Banjarmasin ","2006-08-16"
-"2025/10/27 4:18:51 PM GMT+8","FAUZIA NAZWA RAMADHINA ","Bogor","2006-10-03"
-"2025/10/27 4:19:06 PM GMT+8","Abed Richardo Simaremare ","TANAH LAUT","2007-05-14"
-"2025/10/27 4:19:18 PM GMT+8","Fajar dama yusron ","Tanah laut, Pelaihari ","2006-03-20"
-"2025/10/29 7:02:22 PM GMT+8","Halimatus Sa'adiah ","Bontang ","2007-01-23"
-"2025/10/29 7:02:46 PM GMT+8","Sorta Romauli Silitonga ","Kota Baru","2006-09-21"
-"2025/10/29 7:03:00 PM GMT+8","Muhammad Iqbal Muharram Alfarisy ","banjarmasin ","2007-01-20"
-"2025/10/29 7:03:31 PM GMT+8","Dini octavia az zahra ","Kotabaru ","2007-10-26"
-"2025/10/29 7:09:27 PM GMT+8","Nur Ramadhani ","Kuala Kapuas","2007-09-23"
-"2025/10/29 7:10:37 PM GMT+8","Farah Iqrima Mutia Rahmah","Barabai","2006-07-25"
-"2025/10/29 7:10:42 PM GMT+8","anita rahmatiyah","banjarbaru ","2006-03-25"`;
-
-            Papa.parse(csvData, {
-                header: true,
-                skipEmptyLines: true,
-                complete: function(results) {
-                    students = results.data;
-                    renderStudents();
-                }
+        // --- 2. NAVIGATION SYSTEM ---
+        function switchTab(tabId) {
+            // Hide all sections
+            const contents = document.querySelectorAll('.tab-content');
+            contents.forEach(el => {
+                el.classList.remove('active');
+                setTimeout(() => {
+                    if(!el.classList.contains('active')) el.style.display = 'none';
+                }, 500); // Wait for fade out
             });
-        };
 
-        function showPage(pageId) {
-            document.querySelectorAll('.page-section').forEach(p => p.classList.remove('active'));
-            document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
-            document.getElementById(pageId).classList.add('active');
-            event.currentTarget.classList.add('active');
-        }
-
-        // LOGIN SYSTEM
-        function handleLogin() {
-            const name = document.getElementById('login-name').value.trim().toLowerCase();
-            const pass = document.getElementById('login-pass').value.trim();
-            const error = document.getElementById('login-error');
-
-            const user = students.find(s => 
-                s["Nama "].trim().toLowerCase() === name && 
-                s["Tanggal Lahir"].trim() === pass
-            );
-
-            if (user) {
-                document.getElementById('login-area').classList.add('hidden');
-                document.getElementById('data-area').classList.remove('hidden');
-                error.classList.add('hidden');
-            } else {
-                error.classList.remove('hidden');
+            // Show selected section
+            const selected = document.getElementById(tabId);
+            if(selected) {
+                selected.style.display = 'block';
+                // Small timeout to allow display:block to render before adding opacity class
+                setTimeout(() => selected.classList.add('active'), 10);
+            }
+            
+            // Close mobile menu if open
+            const menu = document.getElementById('mobile-menu');
+            if(!menu.classList.contains('hidden')) {
+                menu.classList.add('hidden');
             }
         }
 
-        function logout() {
-            document.getElementById('login-area').classList.remove('hidden');
-            document.getElementById('data-area').classList.add('hidden');
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
         }
 
-        function renderStudents() {
-            const body = document.getElementById('student-table-body');
-            body.innerHTML = students.map((s, i) => `
-                <tr class="border-t border-white/5 hover:bg-white/5 transition">
-                    <td class="p-6 text-gray-600 font-mono text-[10px]">${i + 1}</td>
-                    <td class="p-6 font-bold uppercase text-white">${s["Nama "]}</td>
-                    <td class="p-6 text-gray-400">${s["Tempat Lahir"]}</td>
-                    <td class="p-6 font-mono text-yellow-500/50">${s["Tanggal Lahir"]}</td>
-                </tr>
-            `).join('');
+        // --- 3. LOGIN SYSTEM ---
+        function handleLogin(e) {
+            e.preventDefault();
+            const inputName = document.getElementById('username').value.trim().toLowerCase();
+            const inputDob = document.getElementById('password').value; // yyyy-mm-dd
+            const errorMsg = document.getElementById('login-error');
+
+            const user = students.find(s => s.name.toLowerCase() === inputName && s.dob === inputDob);
+
+            if (user) {
+                // Success
+                document.getElementById('login-container').classList.add('hidden');
+                document.getElementById('profile-card').classList.remove('hidden');
+                
+                // Populate Data
+                document.getElementById('profile-name').innerText = user.name;
+                document.getElementById('profile-pob').innerText = user.pob;
+                document.getElementById('profile-dob').innerText = user.dob;
+                
+                errorMsg.classList.add('hidden');
+            } else {
+                // Fail
+                errorMsg.classList.remove('hidden');
+                // Shake effect
+                const container = document.getElementById('login-container');
+                container.classList.add('animate-pulse');
+                setTimeout(() => container.classList.remove('animate-pulse'), 500);
+            }
         }
 
-        // GPA ROAST SYSTEM
-        const GRADE_SCALE = [
-            { min: 80, letter: 'A', weight: 4.00, color: 'text-yellow-400' },
-            { min: 77, letter: 'A-', weight: 3.75, color: 'text-yellow-500' },
-            { min: 75, letter: 'B+', weight: 3.50, color: 'text-blue-400' },
-            { min: 70, letter: 'B', weight: 3.00, color: 'text-blue-500' },
-            { min: 67, letter: 'B-', weight: 2.75, color: 'text-cyan-400' },
-            { min: 64, letter: 'C+', weight: 2.50, color: 'text-orange-400' },
-            { min: 60, letter: 'C', weight: 2.00, color: 'text-orange-500' },
-            { min: 50, letter: 'D+', weight: 1.50, color: 'text-orange-600' },
-            { min: 40, letter: 'D', weight: 1.00, color: 'text-red-500' },
-            { min: 0, letter: 'E', weight: 0.00, color: 'text-red-600' },
-        ];
-
-        function getGradeAttr(score) {
-            return GRADE_SCALE.find(g => score >= g.min) || GRADE_SCALE[GRADE_SCALE.length-1];
+        function handleLogout() {
+            document.getElementById('login-container').classList.remove('hidden');
+            document.getElementById('profile-card').classList.add('hidden');
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
         }
 
-        function addGrade() {
-            const name = document.getElementById('mk-name').value || "Mata Kuliah Unidentified";
-            const sks = parseInt(document.getElementById('mk-sks').value);
-            const score = parseFloat(document.getElementById('mk-score').value);
+        // --- 4. SCHEDULE SYSTEM ---
+        function showSchedule(sem) {
+            if(sem === 1) {
+                const display = document.getElementById('schedule-display');
+                display.classList.remove('hidden');
+                display.scrollIntoView({ behavior: 'smooth' });
+            } else {
+                alert("Jadwal Semester " + sem + " belum tersedia / Anda belum memiliki akses.");
+            }
+        }
 
-            if (isNaN(score)) return;
+        // --- 5. IPK CALCULATOR ---
+        let courses = [];
 
-            const attr = getGradeAttr(score);
-            grades.push({ name, sks, score, weight: attr.weight, letter: attr.letter, color: attr.color });
+        function addCourse() {
+            const name = document.getElementById('courseName').value;
+            const sks = parseFloat(document.getElementById('courseSks').value);
+            const grade = parseFloat(document.getElementById('courseGrade').value);
+
+            if (!name || isNaN(sks)) {
+                alert("Isi nama matkul dan SKS dengan benar!");
+                return;
+            }
+
+            courses.push({ name, sks, grade });
+            renderCourses();
             
-            updateGPA();
-            renderGrades();
-            document.getElementById('mk-name').value = '';
-            document.getElementById('mk-score').value = '';
+            // Clear inputs
+            document.getElementById('courseName').value = '';
+            document.getElementById('courseSks').value = '';
         }
 
-        function updateGPA() {
-            const totalSKS = grades.reduce((acc, curr) => acc + curr.sks, 0);
-            const totalQP = grades.reduce((acc, curr) => acc + (curr.sks * curr.weight), 0);
-            const gpa = totalSKS === 0 ? 0 : totalQP / totalSKS;
-
-            document.getElementById('display-ipk').innerText = gpa.toFixed(2);
-            
-            const zone = document.getElementById('roast-zone');
-            const msg = document.getElementById('roast-msg');
-            
-            if (gpa >= 3.75) { zone.innerText = "ZONA: DEWA / IDAMAN MERTUA"; msg.innerText = "Anda manusia atau robot? Sedikit lagi menuju kesempurnaan hakiki!"; }
-            else if (gpa >= 3.00) { zone.innerText = "ZONA: STANDAR GORENGAN"; msg.innerText = "IPK segini mah aman, tapi ingat, di luar sana persaingan lebih keras dari batu!"; }
-            else if (gpa >= 2.00) { zone.innerText = "ZONA: TIKTOK ENTHUSIAST"; msg.innerText = "Cukup segini? Kayaknya isi kepala lu isinya cuma scroll FYP doang."; }
-            else if (gpa > 0) { zone.innerText = "ZONA: BEBAN KELUARGA"; msg.innerText = "Mending berhenti kuliah terus jadi beban keluarga secara full-time, lebih produktif."; }
+        function renderCourses() {
+            const tbody = document.getElementById('courseTableBody');
+            tbody.innerHTML = '';
+            courses.forEach((c, index) => {
+                const row = `
+                    <tr class="border-b border-gray-700 hover:bg-white/5">
+                        <td class="px-3 py-2 text-white">${c.name}</td>
+                        <td class="px-3 py-2">${c.sks}</td>
+                        <td class="px-3 py-2 font-bold text-tipYellow">${c.grade}</td>
+                        <td class="px-3 py-2">
+                            <button onclick="removeCourse(${index})" class="text-red-400 hover:text-red-600"><i class="fa-solid fa-trash"></i></button>
+                        </td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+            });
         }
 
-        function renderGrades() {
-            const list = document.getElementById('grade-list');
-            list.innerHTML = grades.map((g, i) => `
-                <div class="flex items-center justify-between p-4 bg-white/5 rounded-xl border border-white/5 animate-in slide-in-from-right-2">
-                    <div>
-                        <div class="text-[9px] font-black text-yellow-500 uppercase">${g.sks} SKS</div>
-                        <div class="font-bold text-white uppercase text-[11px]">${g.name}</div>
-                    </div>
-                    <div class="text-xl font-black italic ${g.color}">${g.letter}</div>
-                </div>
-            `).join('');
+        function removeCourse(index) {
+            courses.splice(index, 1);
+            renderCourses();
         }
 
-        function clearGrades() {
-            grades = [];
-            updateGPA();
-            renderGrades();
+        function calculateIPK() {
+            if (courses.length === 0) return;
+
+            let totalSks = 0;
+            let totalPoints = 0;
+
+            courses.forEach(c => {
+                totalSks += c.sks;
+                totalPoints += (c.sks * c.grade);
+            });
+
+            const ipk = (totalPoints / totalSks).toFixed(2);
+            const resultArea = document.getElementById('resultArea');
+            const finalIpk = document.getElementById('finalIpk');
+            const roastMsg = document.getElementById('roastMessage');
+
+            resultArea.classList.remove('hidden');
+            finalIpk.innerText = ipk;
+
+            // Roast Logic
+            if (ipk >= 4.00) {
+                roastMsg.innerText = "Dewa turun ke bumi! IPK Sempurna. Jangan lupa injak tanah ya.";
+            } else if (ipk >= 3.75) {
+                roastMsg.innerText = "Nyaris sempurna. Calon Menteri Pertanian masa depan!";
+            } else if (ipk >= 3.50) {
+                roastMsg.innerText = "Cumlaude di depan mata. Pertahankan atau nangis di pojokan semester depan.";
+            } else if (ipk >= 3.00) {
+                roastMsg.innerText = "Aman. Masih manusia biasa. Belum jadi beban keluarga, tapi jangan lengah.";
+            } else if (ipk >= 2.50) {
+                roastMsg.innerText = "Lampu kuning bro. Kurangi nongkrong, perbanyak doa dan belajar.";
+            } else if (ipk >= 2.00) {
+                roastMsg.innerText = "Hati-hati pinggir jurang! Dikit lagi DO melambai-lambai.";
+            } else {
+                roastMsg.innerText = "BEBAN KELUARGA DETECTED. Silakan login ulang kehidupan atau pindah jurusan.";
+            }
         }
+
+        // --- 6. FIRE CLICK EFFECT ---
+        document.addEventListener('click', (e) => {
+            const container = document.getElementById('particles-container');
+            const particleCount = 8;
+
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                
+                const size = Math.random() * 8 + 4; // 4px to 12px
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                particle.style.left = `${e.clientX}px`;
+                particle.style.top = `${e.clientY}px`;
+                
+                // Random direction
+                const xDir = (Math.random() - 0.5) * 100;
+                const yDir = (Math.random() - 0.5) * 100;
+                
+                particle.animate([
+                    { transform: 'translate(0, 0) scale(1)', opacity: 1 },
+                    { transform: `translate(${xDir}px, ${yDir}px) scale(0)`, opacity: 0 }
+                ], {
+                    duration: 600,
+                    easing: 'ease-out'
+                });
+
+                container.appendChild(particle);
+
+                // Cleanup
+                setTimeout(() => particle.remove(), 600);
+            }
+        });
+
+        // Initialize Home
+        switchTab('beranda');
+
     </script>
 </body>
 </html>
