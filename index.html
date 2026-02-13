@@ -35,6 +35,7 @@
                         'glow': 'glow 2s ease-in-out infinite alternate',
                         'float': 'float 3s ease-in-out infinite',
                         'pop-in': 'popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards',
+                        'spin-slow': 'spin 60s linear infinite',
                     },
                     keyframes: {
                         glow: {
@@ -61,6 +62,8 @@
             color: #e5e5e5;
             overflow-x: hidden;
             -webkit-tap-highlight-color: transparent;
+            /* Prevent pull-to-refresh on mobile to improve radial menu UX */
+            overscroll-behavior-y: contain; 
         }
 
         /* Scrollbar */
@@ -76,15 +79,6 @@
             border-radius: 4px;
         }
 
-        /* Hide Scrollbar for Mobile Nav */
-        .no-scrollbar::-webkit-scrollbar {
-            display: none;
-        }
-        .no-scrollbar {
-            -ms-overflow-style: none;  /* IE and Edge */
-            scrollbar-width: none;  /* Firefox */
-        }
-
         /* Glassmorphism Classes */
         .glass-panel {
             background: rgba(20, 20, 20, 0.6);
@@ -97,19 +91,6 @@
         .glass-panel:hover {
             border-color: rgba(234, 179, 8, 0.6);
             box-shadow: 0 0 15px rgba(234, 179, 8, 0.3);
-        }
-
-        /* Mobile Nav Box Styles */
-        .nav-box {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .nav-box:active {
-            transform: scale(0.9);
-        }
-        .nav-box.active-nav {
-            background: rgba(255, 255, 255, 0.15);
-            border-color: currentColor;
-            box-shadow: 0 0 15px currentColor;
         }
 
         /* Text Glow */
@@ -200,7 +181,6 @@
             box-shadow: 0 0 15px rgba(234, 179, 8, 0.4);
         }
         
-        /* Sprocket Holes effect simulation */
         .film-roll-btn::before, .film-roll-btn::after {
             content: '';
             position: absolute;
@@ -218,6 +198,23 @@
             transform: scale(1.03);
             box-shadow: 0 0 30px rgba(234, 179, 8, 0.8);
             border-color: #facc15;
+        }
+
+        /* RADIAL MENU SPECIFIC STYLES */
+        #radial-container {
+            touch-action: none; /* Prevent scrolling when touching the menu */
+        }
+        .radial-wheel {
+            transition: transform 0.1s ease-out;
+        }
+        .radial-item-active {
+            background: linear-gradient(to bottom, #facc15, #ca8a04);
+            color: black;
+            box-shadow: 0 0 25px rgba(234, 179, 8, 0.6);
+            transform: scale(1.2);
+        }
+        .knob-shadow {
+            box-shadow: 0 0 30px rgba(0,0,0,1);
         }
     </style>
 </head>
@@ -241,15 +238,12 @@
                         <button onclick="switchTab('beranda')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-tipYellow hover:bg-white/5 transition-all">Beranda</button>
                         <button onclick="switchTab('mengenal')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-tipYellow hover:bg-white/5 transition-all">Mengenal TIP</button>
                         <button onclick="switchTab('mahasiswa')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-tipYellow hover:bg-white/5 transition-all">Mahasiswa</button>
-                        
                         <button onclick="switchTab('agronews')" class="nav-btn px-3 py-2 rounded-md text-sm font-bold text-white bg-newsRed border border-red-500 shadow-[0_0_10px_rgba(204,0,0,0.5)] hover:shadow-[0_0_20px_rgba(204,0,0,0.7)] hover:scale-105 transition-all flex items-center gap-2">
                             <i class="fa-solid fa-newspaper"></i> AgroNEWS
                         </button>
-
                         <button onclick="switchTab('apresiasi')" class="nav-btn px-3 py-2 rounded-md text-sm font-bold text-black bg-gradient-to-r from-yellow-400 to-orange-500 shadow-[0_0_15px_rgba(234,179,8,0.4)] hover:shadow-[0_0_25px_rgba(234,179,8,0.6)] hover:scale-105 transition-all transform flex items-center gap-2">
                             <i class="fa-solid fa-trophy"></i> Apresiasi
                         </button>
-
                         <button onclick="switchTab('jadwal')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-tipYellow hover:bg-white/5 transition-all">Jadwal</button>
                         <button onclick="switchTab('simulasi')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-tipYellow hover:bg-white/5 transition-all">Simulasi IPK</button>
                         <button onclick="switchTab('dokumentasi')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-tipYellow hover:bg-white/5 transition-all">Dokumentasi Agronity</button>
@@ -260,54 +254,41 @@
         </div>
     </nav>
 
-    <div class="md:hidden fixed bottom-0 left-0 right-0 z-50 glass-panel border-t border-white/10 pb-1">
-        <div class="flex overflow-x-auto gap-3 p-4 no-scrollbar items-center">
-            
-            <button onclick="switchTab('beranda')" class="nav-box flex-shrink-0 flex flex-col items-center justify-center w-[75px] h-[75px] rounded-2xl bg-gradient-to-br from-cyan-900/40 to-cyan-500/10 border border-cyan-500/30 text-cyan-400 hover:text-cyan-200">
-                <i class="fa-solid fa-house text-2xl mb-1"></i>
-                <span class="text-[9px] font-bold tracking-wide">Beranda</span>
-            </button>
+    <div id="radial-container" class="md:hidden fixed z-[999]" style="bottom: 20px; right: 20px; width: 220px; height: 220px;">
+        
+        <div class="absolute inset-0 rounded-full border border-white/5 shadow-[0_0_50px_rgba(255,180,0,0.1)] pointer-events-none"></div>
+        <div class="absolute inset-2 rounded-full border border-dashed border-white/10 animate-spin-slow pointer-events-none"></div>
 
-            <button onclick="switchTab('agronews')" class="nav-box flex-shrink-0 flex flex-col items-center justify-center w-[75px] h-[75px] rounded-2xl bg-gradient-to-br from-red-900/40 to-red-500/10 border border-red-500/30 text-red-400 hover:text-red-200">
-                <i class="fa-solid fa-newspaper text-2xl mb-1"></i>
-                <span class="text-[9px] font-bold tracking-wide">News</span>
-            </button>
+        <div id="radial-wheel" class="absolute inset-0 w-full h-full rounded-full cursor-grab active:cursor-grabbing">
+            <div class="absolute inset-4 rounded-full bg-[#151515] backdrop-blur-xl border border-white/10 shadow-[inset_0_0_20px_rgba(0,0,0,0.8),0_10px_40px_rgba(0,0,0,0.5)] overflow-hidden">
+                <div class="absolute -top-[50%] -left-[50%] w-[200%] h-[200%] bg-gradient-to-br from-white/5 via-transparent to-transparent rotate-45 pointer-events-none"></div>
+                
+                <div id="radial-items-container" class="w-full h-full relative">
+                    </div>
+            </div>
+        </div>
 
-            <button onclick="switchTab('apresiasi')" class="nav-box flex-shrink-0 flex flex-col items-center justify-center w-[75px] h-[75px] rounded-2xl bg-gradient-to-br from-orange-900/40 to-orange-500/10 border border-orange-500/30 text-orange-400 hover:text-orange-200">
-                <i class="fa-solid fa-trophy text-2xl mb-1"></i>
-                <span class="text-[9px] font-bold tracking-wide">Prestasi</span>
-            </button>
+        <div id="radial-knob" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-20 h-20 rounded-full cursor-move z-20">
+            <div class="absolute inset-0 rounded-full bg-black knob-shadow"></div>
+            <div class="absolute inset-1 rounded-full bg-gradient-to-br from-[#2a2a2a] to-[#000] border border-white/10 flex items-center justify-center overflow-hidden">
+                <div class="absolute top-0 left-0 right-0 h-1/2 bg-gradient-to-b from-white/10 to-transparent rounded-t-full pointer-events-none"></div>
+                
+                <div id="knob-glow" class="absolute inset-0 rounded-full bg-yellow-500/10 blur-md transition-opacity duration-300 opacity-20 pointer-events-none"></div>
 
-            <button onclick="switchTab('mengenal')" class="nav-box flex-shrink-0 flex flex-col items-center justify-center w-[75px] h-[75px] rounded-2xl bg-gradient-to-br from-emerald-900/40 to-emerald-500/10 border border-emerald-500/30 text-emerald-400 hover:text-emerald-200">
-                <i class="fa-solid fa-seedling text-2xl mb-1"></i>
-                <span class="text-[9px] font-bold tracking-wide">Profil</span>
-            </button>
+                <div class="relative z-10 text-center flex flex-col items-center justify-center pointer-events-none">
+                    <div id="knob-label" class="text-[8px] uppercase tracking-[0.1em] text-yellow-500/60 font-bold hidden">MENU</div>
+                    <div id="knob-icon" class="text-white/30 transition-all duration-300">
+                        <i class="fa-solid fa-fingerprint text-2xl"></i>
+                    </div>
+                    <div id="knob-text" class="text-[10px] font-bold text-yellow-400 drop-shadow-[0_0_5px_rgba(255,215,0,0.5)] tracking-wide hidden"></div>
+                </div>
+            </div>
 
-            <button onclick="switchTab('mahasiswa')" class="nav-box flex-shrink-0 flex flex-col items-center justify-center w-[75px] h-[75px] rounded-2xl bg-gradient-to-br from-blue-900/40 to-blue-500/10 border border-blue-500/30 text-blue-400 hover:text-blue-200">
-                <i class="fa-solid fa-user-graduate text-2xl mb-1"></i>
-                <span class="text-[9px] font-bold tracking-wide">Data Mhs</span>
-            </button>
+            <div class="absolute -top-4 left-1/2 -translate-x-1/2 w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-b-[8px] border-b-yellow-500 drop-shadow-[0_0_5px_rgba(255,215,0,0.8)] pointer-events-none"></div>
+        </div>
 
-            <button onclick="switchTab('jadwal')" class="nav-box flex-shrink-0 flex flex-col items-center justify-center w-[75px] h-[75px] rounded-2xl bg-gradient-to-br from-violet-900/40 to-violet-500/10 border border-violet-500/30 text-violet-400 hover:text-violet-200">
-                <i class="fa-regular fa-calendar-days text-2xl mb-1"></i>
-                <span class="text-[9px] font-bold tracking-wide">Jadwal</span>
-            </button>
-
-            <button onclick="switchTab('simulasi')" class="nav-box flex-shrink-0 flex flex-col items-center justify-center w-[75px] h-[75px] rounded-2xl bg-gradient-to-br from-pink-900/40 to-pink-500/10 border border-pink-500/30 text-pink-400 hover:text-pink-200">
-                <i class="fa-solid fa-calculator text-2xl mb-1"></i>
-                <span class="text-[9px] font-bold tracking-wide">IPK</span>
-            </button>
-
-             <button onclick="switchTab('dokumentasi')" class="nav-box flex-shrink-0 flex flex-col items-center justify-center w-[75px] h-[75px] rounded-2xl bg-gradient-to-br from-yellow-900/40 to-yellow-500/10 border border-yellow-500/30 text-yellow-400 hover:text-yellow-200">
-                <i class="fa-solid fa-camera-retro text-2xl mb-1"></i>
-                <span class="text-[9px] font-bold tracking-wide">Dokumentasi Agronity</span>
-            </button>
-
-            <button onclick="switchTab('links')" class="nav-box flex-shrink-0 flex flex-col items-center justify-center w-[75px] h-[75px] rounded-2xl bg-gradient-to-br from-gray-800 to-gray-700/30 border border-gray-500/30 text-gray-300 hover:text-white">
-                <i class="fa-solid fa-link text-2xl mb-1"></i>
-                <span class="text-[9px] font-bold tracking-wide">Layanan Agronity</span>
-            </button>
-
+        <div class="absolute -bottom-6 w-full text-center text-[8px] text-white/30 tracking-widest uppercase pointer-events-none">
+            Drag Center to Move
         </div>
     </div>
 
@@ -881,6 +862,239 @@
     </footer>
 
     <script>
+        // --- RADIAL MENU LOGIC (VANILLA JS PORT) ---
+        (function() {
+            // Configuration
+            const menuItems = [
+                { name: 'HOME', icon: 'fa-solid fa-house', id: 'beranda' },
+                { name: 'NEWS', icon: 'fa-solid fa-newspaper', id: 'agronews' },
+                { name: 'PRESTASI', icon: 'fa-solid fa-trophy', id: 'apresiasi' },
+                { name: 'PROFIL', icon: 'fa-solid fa-seedling', id: 'mengenal' },
+                { name: 'MAHASISWA', icon: 'fa-solid fa-user-graduate', id: 'mahasiswa' },
+                { name: 'JADWAL', icon: 'fa-regular fa-calendar-days', id: 'jadwal' },
+                { name: 'IPK', icon: 'fa-solid fa-calculator', id: 'simulasi' },
+                { name: 'DOKUM', icon: 'fa-solid fa-camera-retro', id: 'dokumentasi' },
+                { name: 'LINKS', icon: 'fa-solid fa-link', id: 'links' },
+            ];
+
+            const sliceAngle = 360 / menuItems.length;
+            let rotation = 0;
+            let isDraggingRing = false;
+            let isDraggingKnob = false;
+            let activeItem = null;
+            let startAngle = 0;
+            let currentRotation = 0;
+            
+            // DOM Elements
+            const wheel = document.getElementById('radial-wheel');
+            const itemsContainer = document.getElementById('radial-items-container');
+            const knob = document.getElementById('radial-knob');
+            const container = document.getElementById('radial-container');
+            const knobText = document.getElementById('knob-text');
+            const knobIcon = document.getElementById('knob-icon');
+            const knobLabel = document.getElementById('knob-label');
+            const knobGlow = document.getElementById('knob-glow');
+
+            // Render Items
+            menuItems.forEach((item, index) => {
+                const rotateVal = index * sliceAngle;
+                const slice = document.createElement('div');
+                slice.className = 'absolute top-0 left-1/2 w-[40px] h-[50%] -ml-[20px] origin-bottom pt-2 flex justify-center group pointer-events-none';
+                slice.style.transform = `rotate(${rotateVal}deg)`;
+                
+                slice.innerHTML = `
+                    <div class="relative z-10 p-2 rounded-full transition-all duration-300 transform text-white/40 radial-item" data-id="${item.id}">
+                        <i class="${item.icon} text-lg transform transition-transform duration-300" style="transform: rotate(${-rotateVal}deg)"></i>
+                    </div>
+                `;
+                itemsContainer.appendChild(slice);
+            });
+
+            // Utils
+            const getCenter = (el) => {
+                const rect = el.getBoundingClientRect();
+                return { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
+            };
+
+            const getAngle = (clientX, clientY) => {
+                const center = getCenter(wheel);
+                const x = clientX - center.x;
+                const y = clientY - center.y;
+                return Math.atan2(y, x) * (180 / Math.PI);
+            };
+
+            const updateActiveItem = () => {
+                // Normalize rotation to 0-360
+                let normalizedRotation = rotation % 360;
+                if (normalizedRotation < 0) normalizedRotation += 360;
+                
+                // The item at the "top" ( -90 degrees visually, but 0 in our logic starts at right?)
+                // Actually, CSS top-center is -90deg.
+                // We want the item closest to -90deg (top).
+                // Formula to find index based on rotation:
+                // Rotation adds to item position. We need to find which item's (index * sliceAngle + rotation) is close to 0 (top/start) or specific angle.
+                // Let's simplify: Just detect clicked item or rough drag.
+                // For this implementation, we only highlight on click or when "snapped".
+            };
+
+            // Ring Rotation Logic
+            const handleStart = (e) => {
+                if(e.target.closest('#radial-knob')) return; // Ignore if knob
+                isDraggingRing = true;
+                const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+                startAngle = getAngle(clientX, clientY) - rotation;
+                e.preventDefault();
+            };
+
+            const handleMove = (e) => {
+                if (!isDraggingRing) return;
+                const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+                const angle = getAngle(clientX, clientY);
+                rotation = angle - startAngle;
+                wheel.style.transform = `rotate(${rotation}deg)`;
+                
+                // Counter-rotate icons to keep them upright
+                document.querySelectorAll('.radial-item i').forEach((icon) => {
+                    // Calculate parent rotation
+                    const parentRotation = parseFloat(icon.parentElement.parentElement.style.transform.replace('rotate(', '').replace('deg)', ''));
+                    icon.style.transform = `rotate(${-parentRotation - rotation}deg)`;
+                });
+                
+                e.preventDefault();
+            };
+
+            const handleEnd = () => {
+                isDraggingRing = false;
+            };
+
+            // Knob Drag Logic (Move Widget)
+            let knobStartX, knobStartY, containerStartX, containerStartY;
+
+            const handleKnobStart = (e) => {
+                isDraggingKnob = true;
+                const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+                
+                knobStartX = clientX;
+                knobStartY = clientY;
+                
+                const rect = container.getBoundingClientRect();
+                containerStartX = rect.left;
+                containerStartY = rect.top;
+                
+                // Highlight knob
+                knobGlow.classList.remove('opacity-20');
+                knobGlow.classList.add('opacity-100');
+                e.preventDefault();
+            };
+
+            const handleKnobMove = (e) => {
+                if (!isDraggingKnob) return;
+                const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+                
+                const dx = clientX - knobStartX;
+                const dy = clientY - knobStartY;
+                
+                // Set new position (fixed)
+                container.style.left = `${containerStartX + dx}px`;
+                container.style.top = `${containerStartY + dy}px`;
+                container.style.bottom = 'auto';
+                container.style.right = 'auto';
+                e.preventDefault();
+            };
+
+            const handleKnobEnd = () => {
+                isDraggingKnob = false;
+                knobGlow.classList.add('opacity-20');
+                knobGlow.classList.remove('opacity-100');
+            };
+
+            // Item Selection Logic (Click on Ring Areas)
+            // Since the wheel rotates, hit testing is tricky.
+            // Simplification: Calculate angle of click relative to center to determine item.
+            
+            const handleRingClick = (e) => {
+                if (isDraggingRing) return; // Prevent click if dragged significantly
+                
+                const rect = wheel.getBoundingClientRect();
+                const centerX = rect.left + rect.width / 2;
+                const centerY = rect.top + rect.height / 2;
+                const x = (e.touches ? e.changedTouches[0].clientX : e.clientX) - centerX;
+                const y = (e.touches ? e.changedTouches[0].clientY : e.clientY) - centerY;
+                
+                // Angle in degrees (0 to 360, clockwise from 3 o'clock usually, need adjustment)
+                let angle = Math.atan2(y, x) * (180 / Math.PI);
+                
+                // Adjust for rotation of the wheel
+                angle = angle - rotation;
+                
+                // Normalize to 0-360 positive
+                angle = (angle % 360 + 360) % 360;
+                
+                // CSS Rotate starts at 12 o'clock (270 deg in math) or 3 o'clock (0 deg).
+                // Our structure: top (12) is 0 deg CSS rotation.
+                // Math atan2: 0 is 3 o'clock. 
+                // So top (12) is -90 deg.
+                // Let's just iterate items and check visual match or use data attributes via elementFromPoint if simple.
+                // Re-calculating:
+                // An item index N is at CSS angle: N * 40.
+                // Mouse Angle relative to CSS 0 (top): 
+                let cssAngle = angle + 90; // Shift math angle to match CSS top-0
+                cssAngle = (cssAngle % 360 + 360) % 360;
+
+                const index = Math.floor(cssAngle / sliceAngle);
+                // Wrap index
+                const safeIndex = index % menuItems.length;
+                
+                selectItem(menuItems[safeIndex]);
+            };
+
+            function selectItem(item) {
+                if(!item) return;
+                activeItem = item;
+                
+                // Update Knob UI
+                knobText.innerText = item.name;
+                knobText.classList.remove('hidden');
+                knobLabel.classList.remove('hidden');
+                knobIcon.innerHTML = `<i class="${item.icon} text-2xl text-yellow-400"></i>`;
+                
+                // Highlight Item on Wheel
+                document.querySelectorAll('.radial-item').forEach(el => {
+                    el.classList.remove('radial-item-active');
+                    if(el.getAttribute('data-id') === item.id) {
+                        el.classList.add('radial-item-active');
+                    }
+                });
+
+                // Navigate
+                switchTab(item.id);
+            }
+
+            // Event Listeners
+            wheel.addEventListener('mousedown', handleStart);
+            window.addEventListener('mousemove', handleMove);
+            window.addEventListener('mouseup', handleEnd);
+            
+            wheel.addEventListener('touchstart', handleStart);
+            window.addEventListener('touchmove', handleMove);
+            window.addEventListener('touchend', handleEnd);
+
+            wheel.addEventListener('click', handleRingClick); // Fallback for simple clicks
+
+            knob.addEventListener('mousedown', handleKnobStart);
+            window.addEventListener('mousemove', handleKnobMove);
+            window.addEventListener('mouseup', handleKnobEnd);
+            
+            knob.addEventListener('touchstart', handleKnobStart);
+            window.addEventListener('touchmove', handleKnobMove);
+            window.addEventListener('touchend', handleKnobEnd);
+
+        })();
+
         // --- 0. AGRONEWS LOGIC (UPDATED TO CNN API STRUCTURE) ---
         
         // Data Fallback jika API Localhost tidak aktif
@@ -1317,7 +1531,7 @@
                         day: "Rabu",
                         color: "green",
                         courses: [
-                            { time: "14:40 - 16:20", name: "Pengantar Lingkungan Lahan Basah", room: "Ruang PAMPAKEN (2 SKS)" },
+                            { time: "14:40 - 16:20", name: "Pengantar Lingkungan Lahan Basah", room: "Ruang KEMUNING (2 SKS)" },
                             { time: "16:20 - 18:00", name: "Metode Statistika (Lanjutan)", room: "Ruang PAMPAKEN" }
                         ]
                     },
