@@ -35,6 +35,8 @@
                         'float': 'float 3s ease-in-out infinite',
                         'pop-in': 'popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards',
                         'spin-slow': 'spin 60s linear infinite',
+                        'swing': 'swing 3s ease-in-out infinite alternate',
+                        'twinkle': 'twinkle 2s ease-in-out infinite',
                     },
                     keyframes: {
                         glow: {
@@ -48,6 +50,14 @@
                         popIn: {
                             '0%': { opacity: 0, transform: 'scale(0.5)' },
                             '100%': { opacity: 1, transform: 'scale(1)' },
+                        },
+                        swing: {
+                            '0%': { transform: 'rotate(-5deg)' },
+                            '100%': { transform: 'rotate(5deg)' }
+                        },
+                        twinkle: {
+                            '0%, 100%': { opacity: 0.3, transform: 'scale(0.8)' },
+                            '50%': { opacity: 1, transform: 'scale(1.2)' }
                         }
                     }
                 }
@@ -496,40 +506,111 @@
             box-shadow: 0 0 8px #eab308;
         }
 
-        /* Social Media Photo Glow */
-        .profile-glow-box {
-            position: relative;
-            padding: 3px;
-            background: linear-gradient(45deg, #FFB800, #FF3300);
-            border-radius: 50%;
-            box-shadow: 0 0 15px rgba(255, 184, 0, 0.6);
+        /* Lantern Animation Styles */
+        .lantern {
+            transform-origin: top center;
+            animation: swing 3s ease-in-out infinite alternate;
         }
-        
-        .profile-img-container {
-            width: 64px;
-            height: 64px;
-            border-radius: 50%;
-            overflow: hidden;
-            border: 2px solid #000;
-            background-color: #222;
+
+        /* --- WhoBirthToday Feature Styles --- */
+        .ai-glow-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            border-radius: 0px; /* Full screen */
         }
-        
-        .verified-badge {
-            position: absolute;
-            bottom: -2px;
-            right: -2px;
-            background-color: #1DA1F2;
-            color: white;
+
+        .ai-glow-active {
+            opacity: 1;
+            animation: rainbow-border 5s linear forwards;
+        }
+
+        @keyframes rainbow-border {
+            0% {
+                box-shadow: inset 0 0 20px rgba(255, 0, 0, 0);
+            }
+            10% {
+                box-shadow: inset 0 0 30px rgba(255, 0, 150, 0.8), inset 0 0 60px rgba(0, 200, 255, 0.6);
+            }
+            50% {
+                box-shadow: inset 0 0 50px rgba(255, 255, 0, 0.8), inset 0 0 100px rgba(255, 0, 0, 0.6);
+            }
+            80% {
+                box-shadow: inset 0 0 30px rgba(0, 255, 255, 0.8), inset 0 0 60px rgba(100, 255, 100, 0.6);
+            }
+            100% {
+                box-shadow: inset 0 0 20px rgba(255, 0, 0, 0);
+                opacity: 0;
+            }
+        }
+
+        .birthday-result-modal {
+            position: fixed;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%) scale(0.8);
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(10px);
+            padding: 2rem;
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.2);
+            text-align: center;
+            z-index: 10000;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            min-width: 300px;
+        }
+
+        .birthday-result-active {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .floating-birth-btn {
+            position: fixed;
+            bottom: 100px; /* Above nav on mobile */
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #ff00cc, #3333ff);
             border-radius: 50%;
-            width: 20px;
-            height: 20px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 10px;
-            border: 2px solid #000;
+            box-shadow: 0 0 20px rgba(255, 0, 204, 0.5);
+            cursor: pointer;
+            z-index: 90;
+            transition: transform 0.3s;
+            animation: float 3s ease-in-out infinite;
         }
-
+        .floating-birth-btn:active {
+            transform: scale(0.9);
+        }
+        .birth-tooltip {
+            position: absolute;
+            right: 70px;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 10px;
+            font-size: 10px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+        .floating-birth-btn:hover .birth-tooltip {
+            opacity: 1;
+        }
+        @media (min-width: 768px) {
+            .floating-birth-btn {
+                bottom: 40px;
+                right: 40px;
+            }
+        }
     </style>
 </head>
 <body class="relative min-h-screen loading-active">
@@ -539,6 +620,59 @@
         <source src="https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3" type="audio/mpeg">
         Browser Anda tidak mendukung elemen audio.
     </audio>
+
+    <!-- WhoBirthToday Elements -->
+    <div id="ai-glow" class="ai-glow-overlay"></div>
+    
+    <div id="birthday-result" class="birthday-result-modal">
+        <div id="birthday-content">
+            <!-- Content Injected via JS -->
+        </div>
+    </div>
+
+    <button onclick="triggerBirthdayCheck()" class="floating-birth-btn group">
+        <i class="fa-solid fa-cake-candles text-white text-2xl"></i>
+        <span class="birth-tooltip">WhoBirthToday?</span>
+    </button>
+    <!-- End WhoBirthToday -->
+
+    <!-- RAMADAN DECORATIONS (SUBTLE) -->
+    <div class="fixed inset-0 pointer-events-none z-[5] overflow-hidden">
+        <!-- Lantern Top Left -->
+        <div class="absolute -top-10 left-4 w-20 md:w-32 lantern drop-shadow-[0_0_15px_rgba(234,179,8,0.5)]">
+            <svg viewBox="0 0 100 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <line x1="50" y1="0" x2="50" y2="50" stroke="#eab308" stroke-width="2"/>
+                <path d="M50 50 L30 70 L30 130 L50 150 L70 130 L70 70 Z" fill="rgba(0,0,0,0.6)" stroke="#eab308" stroke-width="2"/>
+                <circle cx="50" cy="100" r="10" fill="#eab308" class="animate-pulse"/>
+                <path d="M40 70 L60 70" stroke="#eab308" stroke-width="1" opacity="0.5"/>
+                <path d="M40 130 L60 130" stroke="#eab308" stroke-width="1" opacity="0.5"/>
+            </svg>
+        </div>
+        
+        <!-- Lantern Top Right (Smaller) -->
+        <div class="absolute -top-5 right-20 w-16 md:w-24 lantern drop-shadow-[0_0_15px_rgba(234,179,8,0.5)]" style="animation-delay: 1s;">
+             <svg viewBox="0 0 100 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <line x1="50" y1="0" x2="50" y2="40" stroke="#eab308" stroke-width="2"/>
+                <path d="M50 40 L35 55 L35 100 L50 115 L65 100 L65 55 Z" fill="rgba(0,0,0,0.6)" stroke="#eab308" stroke-width="2"/>
+                <circle cx="50" cy="80" r="8" fill="#eab308" class="animate-pulse"/>
+            </svg>
+        </div>
+    
+        <!-- Moon & Stars Top Right -->
+        <div class="absolute top-24 right-4 md:right-10 opacity-70">
+            <i class="fa-solid fa-moon text-4xl text-tipYellow drop-shadow-[0_0_20px_rgba(255,255,255,0.8)]"></i>
+        </div>
+        <div class="absolute top-32 right-16 animate-twinkle text-tipYellow text-xs"><i class="fa-solid fa-star"></i></div>
+        <div class="absolute top-20 right-28 animate-twinkle text-white text-xs" style="animation-delay: 0.5s"><i class="fa-solid fa-star"></i></div>
+        <div class="absolute top-40 right-8 animate-twinkle text-white text-[8px]" style="animation-delay: 1.5s"><i class="fa-solid fa-star"></i></div>
+    
+        <!-- Mosque Silhouette Bottom (Very subtle) -->
+        <div class="absolute bottom-0 left-0 w-full opacity-10 flex justify-between items-end px-0 pointer-events-none">
+             <i class="fa-solid fa-mosque text-[10rem] md:text-[15rem] text-white transform translate-y-10 md:translate-y-16 -ml-10"></i>
+             <i class="fa-solid fa-mosque text-[6rem] md:text-[10rem] text-white transform translate-y-4 md:translate-y-10"></i>
+             <i class="fa-solid fa-mosque text-[10rem] md:text-[18rem] text-white transform translate-y-10 md:translate-y-20 -mr-10"></i>
+        </div>
+    </div>
 
     <div class="intro-loader-wrapper" id="intro-loader">
         <div class="loader-screen">
@@ -708,6 +842,7 @@
     <main id="app" class="pt-24 pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto min-h-screen mb-16 md:mb-0">
 
         <section id="beranda" class="tab-content active">
+            <!-- Content Beranda -->
             <div class="relative rounded-3xl overflow-hidden glass-panel h-[80vh] flex items-center justify-center text-center p-6 border-tipYellow/50 shadow-[0_0_50px_rgba(234,179,8,0.1)]">
                 <div class="absolute inset-0 z-0">
                     <img src="https://image2url.com/r2/default/images/1770952078547-727f18b1-0d3e-4829-8283-b21986d79eb7.jpeg" class="w-full h-full object-cover opacity-30" alt="Agriculture Tech">
@@ -722,7 +857,7 @@
                         PORTAL <span class="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-yellow-600 text-glow">RESMI</span><br> AGRONITY25
                     </h1>
                     <p class="text-lg md:text-xl text-gray-300 max-w-2xl mx-auto">
-                        Program Studi Teknologi Industri Pertanian Universitas Lambung Mangkurat. kHUSUS aNGKATAN 2025.
+                        Program Studi Teknologi Industri Pertanian Universitas Lambung Mangkurat. KHUSUS ANGKATAN 2025.
                     </p>
                     <div class="flex flex-col sm:flex-row gap-4 justify-center mt-8">
                         <button onclick="switchTab('agronews')" class="px-8 py-3 rounded-xl bg-newsRed text-white font-bold text-lg hover:bg-red-700 hover:shadow-[0_0_20px_rgba(220,38,38,0.6)] transition-all transform hover:-translate-y-1 flex items-center gap-2 justify-center">
@@ -752,6 +887,7 @@
         </section>
 
         <section id="agronews" class="tab-content">
+             <!-- Content Agronews -->
             <div class="glass-panel border-b-2 border-newsRed mb-6 rounded-lg overflow-hidden flex items-center h-12 shadow-lg">
                 <div class="bg-newsRed h-full px-4 flex items-center font-bold text-white z-10 shrink-0 italic tracking-wider">
                     BREAKING NEWS
@@ -809,6 +945,7 @@
         </section>
 
         <section id="apresiasi" class="tab-content">
+             <!-- Content Apresiasi -->
             <div class="text-center mb-12 relative">
                 <h2 class="text-4xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-orange-400 to-red-500 mb-4 animate-pop-in">
                     Agronity APRESIASI
@@ -942,6 +1079,7 @@
         </section>
 
         <section id="mengenal" class="tab-content">
+             <!-- Content Mengenal -->
             <div class="space-y-12">
                 <div class="glass-panel p-8 rounded-3xl relative overflow-hidden">
                     <div class="absolute top-0 right-0 p-4 opacity-20">
@@ -1055,6 +1193,7 @@
         </section>
 
         <section id="mahasiswa" class="tab-content">
+             <!-- Content Mahasiswa -->
             <div class="max-w-md mx-auto mt-10">
                 <div id="login-container" class="glass-panel p-8 rounded-3xl border-t-4 border-t-tipYellow shadow-2xl">
                     <div class="text-center mb-8">
@@ -1117,14 +1256,17 @@
         </section>
 
         <section id="jadwal" class="tab-content">
+             <!-- Content Jadwal -->
             <h2 class="text-3xl font-bold text-center text-tipYellow mb-8 text-glow">Jadwal Perkuliahan</h2>
             
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
                 <button onclick="showSchedule(1)" class="p-4 glass-panel rounded-xl hover:bg-tipYellow hover:text-black transition-all font-bold group">
                     Semester 1 <i class="fa-solid fa-arrow-right float-right opacity-0 group-hover:opacity-100 transition-opacity"></i>
                 </button>
-                <button onclick="showSchedule(2)" class="p-4 glass-panel rounded-xl hover:bg-tipYellow hover:text-black transition-all font-bold group">
-                    Semester 2 <i class="fa-solid fa-arrow-right float-right opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                <button onclick="showSchedule(2)" class="p-4 glass-panel rounded-xl hover:bg-tipYellow hover:text-black transition-all font-bold group relative overflow-hidden">
+                    <span class="relative z-10">Semester 2</span> 
+                    <i class="fa-solid fa-moon absolute -top-1 -right-1 text-tipYellow/20 text-4xl z-0 rotate-12"></i>
+                    <i class="fa-solid fa-arrow-right float-right opacity-0 group-hover:opacity-100 transition-opacity z-10 relative"></i>
                 </button>
                 <button class="p-4 glass-panel rounded-xl opacity-50 cursor-not-allowed">Semester 3</button>
                 <button class="p-4 glass-panel rounded-xl opacity-50 cursor-not-allowed">Semester 4</button>
@@ -1139,6 +1281,7 @@
         </section>
 
         <section id="simulasi" class="tab-content">
+             <!-- Content Simulasi -->
             <div class="max-w-2xl mx-auto glass-panel p-6 rounded-3xl shadow-[0_0_40px_rgba(234,179,8,0.15)]">
                 <div class="flex items-center gap-4 mb-6">
                     <i class="lucide-calculator w-10 h-10 text-tipYellow"></i>
@@ -1211,6 +1354,7 @@
         </section>
         
         <section id="dokumentasi" class="tab-content">
+             <!-- Content Dokumentasi -->
             <div class="max-w-4xl mx-auto">
                 <h2 class="text-3xl font-bold text-center text-tipYellow mb-8 text-glow">DOKUMENTASI 2025</h2>
 
@@ -1258,6 +1402,7 @@
         </section>
 
         <section id="links" class="tab-content">
+             <!-- Content Link -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8 max-w-4xl mx-auto">
                 <a href="https://simari.ulm.ac.id/login/" target="_blank" class="group glass-panel p-8 rounded-3xl flex flex-col items-center justify-center text-center hover:bg-blue-900/20 transition-all border-l-8 border-blue-500">
                     <i class="fa-solid fa-graduation-cap text-5xl text-blue-400 mb-4 group-hover:scale-110 transition-transform"></i>
@@ -1803,41 +1948,41 @@
                 ]
             },
             2: {
-                title: "Semester 2 (Genap 2025/2026)",
+                title: "Semester 2 (Khusus Ramadan 1447H)",
                 days: [
                     {
                         day: "Senin",
                         color: "blue",
                         courses: [
-                            { time: "09:40 - 11:20", name: "Bahasa Inggris", room: "Ruang PAMPAKEN (3 SKS)" },
-                            { time: "13:00 - 14:40", name: "Manajemen Sumber Daya Manusia", room: "Ruang KENANGA (2 SKS)" },
-                            { time: "14:40 - 16:20", name: "Metode Statistika", room: "Ruang KEMUNING (3 SKS)" }
+                            { time: "09.30 - 10.50", name: "Bahasa Inggris", room: "Ruang Pampaken" },
+                            { time: "11.00 - 12.20", name: "Manajemen SDM", room: "Ruang Kenanga" },
+                            { time: "13.30 - 14.50", name: "Metode Statistika", room: "Ruang Kemuning" }
                         ]
                     },
                     {
                         day: "Selasa",
                         color: "purple",
                         courses: [
-                            { time: "08:00 - 09:40", name: "Manajemen Lingkungan Industri", room: "Ruang KALALAYU (2 SKS)" },
-                            { time: "09:40 - 11:20", name: "Bahasa Inggris (Lanjutan)", room: "Ruang PAMPAKEN" },
-                            { time: "13:00 - 14:40", name: "Dasar Teknik Proses", room: "Ruang KENANGA (2 SKS)" }
+                            { time: "08.00 - 09.20", name: "Manajemen Lingkungan Industri", room: "Ruang Kalalayu" },
+                            { time: "09.30 - 10.50", name: "Bahasa Inggris", room: "Ruang Pampaken" },
+                            { time: "11.00 - 12.20", name: "Dasar Teknik Proses", room: "Ruang Kenanga" }
                         ]
                     },
                     {
                         day: "Rabu",
                         color: "green",
                         courses: [
-                            { time: "14:40 - 16:20", name: "Pengantar Lingkungan Lahan Basah", room: "Ruang KEMUNING (2 SKS)" },
-                            { time: "16:20 - 18:00", name: "Metode Statistika (Lanjutan)", room: "Ruang PAMPAKEN" }
+                            { time: "13.30 - 14.50", name: "Pengetahuan Lingkungan Lahan Basah", room: "Ruang Kemuning" },
+                            { time: "15.00 - 16.20", name: "Metode Statistika", room: "Ruang Pampaken" }
                         ]
                     },
                     {
                         day: "Kamis",
                         color: "yellow",
                         courses: [
-                            { time: "08:00 - 09:40", name: "Kewarganegaraan", room: "Ruang PAMPAKEN (2 SKS)" },
-                            { time: "13:00 - 14:40", name: "Pengetahuan Bahan Agroindustri", room: "Ruang KEMUNING (2 SKS)" },
-                            { time: "16:20 - 18:00", name: "Kalkulus", room: "Ruang KEMUNING (2 SKS)" }
+                            { time: "08.00 - 09.20", name: "Kewarganegaraan", room: "Ruang Pampaken" },
+                            { time: "11.00 - 12.20", name: "Pengetahuan Bahan Agroindustry", room: "Ruang Kemuning" },
+                            { time: "15.00 - 16.20", name: "Kalkulus", room: "Ruang Kemuning" }
                         ]
                     }
                 ]
@@ -2003,6 +2148,50 @@
                 setTimeout(() => particle.remove(), 600);
             }
         });
+
+        // --- 7. WHO BIRTH TODAY LOGIC ---
+        function triggerBirthdayCheck() {
+            // 1. Activate Glow
+            const glow = document.getElementById('ai-glow');
+            glow.classList.remove('ai-glow-active');
+            void glow.offsetWidth; // trigger reflow
+            glow.classList.add('ai-glow-active');
+
+            // 2. Logic
+            const today = new Date();
+            const mm = String(today.getMonth() + 1).padStart(2, '0');
+            const dd = String(today.getDate()).padStart(2, '0');
+            const matchStr = `-${mm}-${dd}`; // Matches "-MM-DD" in "YYYY-MM-DD"
+
+            // Menggunakan data 'students' yang sudah ada di scope global
+            const birthdayStudents = students.filter(s => s.dob.endsWith(matchStr));
+            
+            const resultBox = document.getElementById('birthday-result');
+            const contentBox = document.getElementById('birthday-content');
+            
+            if(birthdayStudents.length > 0) {
+                let names = birthdayStudents.map(s => s.name).join('<br>');
+                contentBox.innerHTML = `
+                    <i class="fa-solid fa-cake-candles text-5xl text-pink-500 mb-4 animate-bounce"></i>
+                    <h3 class="text-2xl font-bold text-white mb-2">Happy Birthday!</h3>
+                    <p class="text-lg text-tipYellow font-bold leading-relaxed">${names}</p>
+                `;
+            } else {
+                contentBox.innerHTML = `
+                    <i class="fa-regular fa-calendar-xmark text-5xl text-gray-400 mb-4"></i>
+                    <h3 class="text-2xl font-bold text-white mb-2">Tidak ada yang ultah</h3>
+                    <p class="text-sm text-gray-400">Hari ini (${dd}-${mm}) sepi pesta.</p>
+                `;
+            }
+
+            // 3. Show Result
+            resultBox.classList.add('birthday-result-active');
+
+            // 4. Hide after 5 seconds
+            setTimeout(() => {
+                resultBox.classList.remove('birthday-result-active');
+            }, 5000);
+        }
 
     </script>
 </body>
