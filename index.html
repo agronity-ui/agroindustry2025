@@ -35,8 +35,6 @@
                         'float': 'float 3s ease-in-out infinite',
                         'pop-in': 'popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards',
                         'spin-slow': 'spin 60s linear infinite',
-                        'swing': 'swing 3s ease-in-out infinite alternate',
-                        'twinkle': 'twinkle 2s ease-in-out infinite',
                     },
                     keyframes: {
                         glow: {
@@ -50,14 +48,6 @@
                         popIn: {
                             '0%': { opacity: 0, transform: 'scale(0.5)' },
                             '100%': { opacity: 1, transform: 'scale(1)' },
-                        },
-                        swing: {
-                            '0%': { transform: 'rotate(-5deg)' },
-                            '100%': { transform: 'rotate(5deg)' }
-                        },
-                        twinkle: {
-                            '0%, 100%': { opacity: 0.3, transform: 'scale(0.8)' },
-                            '50%': { opacity: 1, transform: 'scale(1.2)' }
                         }
                     }
                 }
@@ -108,14 +98,14 @@
             pointer-events: none;
         }
 
-        /* SEQUENCE 1: PRE-LOADER (YELLOW BG) */
+        /* SEQUENCE 1: PRE-LOADER (BLACK BG WITH GIF) */
         .loader-screen {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: var(--brand-yellow);
+            background-color: var(--brand-black);
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -124,27 +114,12 @@
             transform-origin: top;
         }
 
-        /* The Oscillating Capsule */
-        .capsule-loader {
-            width: 60px;
-            height: 20px;
-            background-color: var(--brand-white);
-            border-radius: 20px;
-            animation: capsule-pingpong 1.2s var(--anim-curve) infinite alternate;
-            margin-bottom: 2rem;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        }
-
-        .loader-text {
-            font-size: 0.85rem;
-            letter-spacing: 2px;
-            font-weight: 600;
-            color: var(--brand-white);
-            text-transform: uppercase;
-            opacity: 0.9;
-            text-align: center;
-            padding: 0 20px;
-            animation: fade-pulse 2s ease-in-out infinite;
+        /* NEW: Pre-loader GIF Style */
+        .loader-gif {
+            max-width: 250px;
+            width: 80%;
+            height: auto;
+            object-fit: contain;
         }
 
         /* SEQUENCE 2: TRANSITION OVERLAY */
@@ -506,12 +481,6 @@
             box-shadow: 0 0 8px #eab308;
         }
 
-        /* Lantern Animation Styles */
-        .lantern {
-            transform-origin: top center;
-            animation: swing 3s ease-in-out infinite alternate;
-        }
-
         /* --- WhoBirthToday Feature Styles --- */
         .ai-glow-overlay {
             position: fixed;
@@ -636,48 +605,9 @@
     </button>
     <!-- End WhoBirthToday -->
 
-    <!-- RAMADAN DECORATIONS (SUBTLE) -->
-    <div class="fixed inset-0 pointer-events-none z-[5] overflow-hidden">
-        <!-- Lantern Top Left -->
-        <div class="absolute -top-10 left-4 w-20 md:w-32 lantern drop-shadow-[0_0_15px_rgba(234,179,8,0.5)]">
-            <svg viewBox="0 0 100 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <line x1="50" y1="0" x2="50" y2="50" stroke="#eab308" stroke-width="2"/>
-                <path d="M50 50 L30 70 L30 130 L50 150 L70 130 L70 70 Z" fill="rgba(0,0,0,0.6)" stroke="#eab308" stroke-width="2"/>
-                <circle cx="50" cy="100" r="10" fill="#eab308" class="animate-pulse"/>
-                <path d="M40 70 L60 70" stroke="#eab308" stroke-width="1" opacity="0.5"/>
-                <path d="M40 130 L60 130" stroke="#eab308" stroke-width="1" opacity="0.5"/>
-            </svg>
-        </div>
-        
-        <!-- Lantern Top Right (Smaller) -->
-        <div class="absolute -top-5 right-20 w-16 md:w-24 lantern drop-shadow-[0_0_15px_rgba(234,179,8,0.5)]" style="animation-delay: 1s;">
-             <svg viewBox="0 0 100 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <line x1="50" y1="0" x2="50" y2="40" stroke="#eab308" stroke-width="2"/>
-                <path d="M50 40 L35 55 L35 100 L50 115 L65 100 L65 55 Z" fill="rgba(0,0,0,0.6)" stroke="#eab308" stroke-width="2"/>
-                <circle cx="50" cy="80" r="8" fill="#eab308" class="animate-pulse"/>
-            </svg>
-        </div>
-    
-        <!-- Moon & Stars Top Right -->
-        <div class="absolute top-24 right-4 md:right-10 opacity-70">
-            <i class="fa-solid fa-moon text-4xl text-tipYellow drop-shadow-[0_0_20px_rgba(255,255,255,0.8)]"></i>
-        </div>
-        <div class="absolute top-32 right-16 animate-twinkle text-tipYellow text-xs"><i class="fa-solid fa-star"></i></div>
-        <div class="absolute top-20 right-28 animate-twinkle text-white text-xs" style="animation-delay: 0.5s"><i class="fa-solid fa-star"></i></div>
-        <div class="absolute top-40 right-8 animate-twinkle text-white text-[8px]" style="animation-delay: 1.5s"><i class="fa-solid fa-star"></i></div>
-    
-        <!-- Mosque Silhouette Bottom (Very subtle) -->
-        <div class="absolute bottom-0 left-0 w-full opacity-10 flex justify-between items-end px-0 pointer-events-none">
-             <i class="fa-solid fa-mosque text-[10rem] md:text-[15rem] text-white transform translate-y-10 md:translate-y-16 -ml-10"></i>
-             <i class="fa-solid fa-mosque text-[6rem] md:text-[10rem] text-white transform translate-y-4 md:translate-y-10"></i>
-             <i class="fa-solid fa-mosque text-[10rem] md:text-[18rem] text-white transform translate-y-10 md:translate-y-20 -mr-10"></i>
-        </div>
-    </div>
-
     <div class="intro-loader-wrapper" id="intro-loader">
         <div class="loader-screen">
-            <div class="capsule-loader"></div>
-            <div class="loader-text">Website TIP Angkatan 2025</div>
+            <img src="https://image2url.com/r2/default/gifs/1773502755799-16204232-7ee2-493a-8e19-8993ae17a67d.gif" class="loader-gif" alt="Loading Agronity">
         </div>
 
         <div class="wipe-overlay"></div>
