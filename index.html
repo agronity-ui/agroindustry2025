@@ -285,6 +285,44 @@
             100% { transform: scale(1); opacity: 1; }
         }
 
+        /* --- NEW DAY HIGHLIGHT --- */
+        @keyframes shimmer-bg {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .day-highlight {
+            background: linear-gradient(135deg, rgba(234, 179, 8, 0.1) 0%, rgba(234, 179, 8, 0.4) 50%, rgba(234, 179, 8, 0.1) 100%);
+            background-size: 200% 200%;
+            animation: shimmer-bg 3s ease infinite;
+            border-color: #facc15 !important;
+            border-width: 2px !important;
+            box-shadow: 0 0 25px rgba(234, 179, 8, 0.4);
+            position: relative;
+        }
+        .day-highlight::before {
+            content: "HARI INI";
+            position: absolute;
+            top: -12px;
+            right: 15px;
+            background: #eab308;
+            color: #000;
+            font-size: 10px;
+            font-weight: 900;
+            padding: 2px 8px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px #eab308;
+            z-index: 10;
+        }
+
+        .widget-gold-shimmer {
+            background: linear-gradient(135deg, #facc15 0%, #fef08a 50%, #facc15 100%);
+            background-size: 200% 200%;
+            animation: shimmer-bg 3s ease infinite;
+            border: 2px solid #ffffff;
+            box-shadow: 0 0 40px rgba(234, 179, 8, 0.7), inset 0 0 20px rgba(255,255,255,0.6);
+        }
+
         /* Animation Trigger Classes */
         body.start-wipe .wipe-overlay { animation: wipe-up 1s var(--anim-curve) forwards; }
         body.start-wipe .loader-screen { animation: fade-out 0.5s ease 0.8s forwards; }
@@ -772,7 +810,50 @@
     <main id="app" class="pt-24 pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto min-h-screen mb-16 md:mb-0">
 
         <section id="beranda" class="tab-content active">
-            <!-- Content Beranda -->
+            
+            <!-- WIDGET JADWAL / PENGINGAT MATKUL (Dipindah Paling Atas) -->
+            <div class="mb-8 widget-gold-shimmer rounded-3xl p-6 md:p-8 relative overflow-hidden text-black">
+                <div class="relative z-10">
+                    <!-- Header -->
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+                        <div class="flex flex-wrap items-center gap-3">
+                            <div class="flex items-center gap-2 bg-black/10 border border-black/20 px-4 py-2 rounded-full text-sm font-bold text-gray-900 shadow-inner">
+                                <i class="fa-solid fa-location-dot text-black animate-bounce"></i> Universitas Lambung Mangkurat
+                            </div>
+                            <div id="widget-date" class="text-sm font-extrabold text-black px-2 tracking-wide drop-shadow-sm">
+                                Memuat tanggal...
+                            </div>
+                        </div>
+                        <div class="hidden md:flex w-14 h-14 rounded-2xl bg-black shadow-[0_0_20px_rgba(0,0,0,0.3)] items-center justify-center transition-transform hover:scale-110">
+                            <i class="fa-solid fa-clock text-tipYellow text-3xl"></i>
+                        </div>
+                    </div>
+
+                    <!-- Content -->
+                    <div class="mb-4">
+                        <h4 id="widget-status" class="text-gray-800 font-bold tracking-widest text-sm uppercase mb-2">MENDETEKSI JADWAL...</h4>
+                        <h2 id="widget-course" class="text-4xl md:text-5xl font-black text-black mb-2 leading-tight drop-shadow-md">Memuat Data</h2>
+                        <p id="widget-ongoing-text" class="text-black text-sm font-bold italic border-l-4 border-black pl-3">...</p>
+                    </div>
+
+                    <!-- Timer -->
+                    <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mt-6">
+                        <div id="widget-countdown" class="text-6xl md:text-7xl font-bold text-black tracking-tighter drop-shadow-md" style="font-family: 'Poppins', sans-serif;">
+                            --:--:-- <span class="text-2xl md:text-3xl text-gray-800 tracking-normal font-bold">lagi</span>
+                        </div>
+                        <div id="widget-time-label" class="text-black font-bold text-lg bg-black/10 px-4 py-2 rounded-xl border border-black/20 backdrop-blur-sm shadow-inner">
+                            --:--
+                        </div>
+                    </div>
+
+                    <!-- Progress Bar -->
+                    <div class="w-full h-2 bg-black/20 rounded-full mt-6 overflow-hidden relative shadow-inner">
+                        <div id="widget-progress-bar" class="absolute top-0 left-0 h-full bg-black w-0 transition-all duration-1000 ease-linear shadow-[0_0_15px_rgba(0,0,0,0.5)]"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Content Beranda (Hero Banner) -->
             <div class="relative rounded-3xl overflow-hidden glass-panel h-[80vh] flex items-center justify-center text-center p-6 border-tipYellow/50 shadow-[0_0_50px_rgba(234,179,8,0.1)]">
                 <div class="absolute inset-0 z-0">
                     <img src="https://image2url.com/r2/default/images/1770952078547-727f18b1-0d3e-4829-8283-b21986d79eb7.jpeg" class="w-full h-full object-cover opacity-30" alt="Agriculture Tech">
@@ -1434,6 +1515,10 @@
                     loaderWrapper.style.display = 'none';
                 }, 1000);
             }, TIMING.exitLoader);
+
+            // Inisialisasi Widget Hitung Mundur Jadwal
+            setInterval(updateClassCountdown, 1000);
+            updateClassCountdown();
         });
 
         // --- 0. AGRONEWS LOGIC (UPDATED TO CNN API STRUCTURE) ---
@@ -1878,41 +1963,41 @@
                 ]
             },
             2: {
-                title: "Semester 2 (Khusus Ramadan 1447H)",
+                title: "Semester 2 (Genap 2025/2026)",
                 days: [
                     {
                         day: "Senin",
                         color: "blue",
                         courses: [
-                            { time: "09.30 - 10.50", name: "Bahasa Inggris", room: "Ruang Pampaken" },
-                            { time: "11.00 - 12.20", name: "Manajemen SDM", room: "Ruang Kenanga" },
-                            { time: "13.30 - 14.50", name: "Metode Statistika", room: "Ruang Kemuning" }
+                            { time: "09.40 - 11.20", name: "Bahasa Inggris", room: "Ruang Pampaken" },
+                            { time: "13.00 - 14.40", name: "Manajemen Sumber Daya Manusia", room: "Ruang Kenanga" },
+                            { time: "14.40 - 16.20", name: "Metode Statistika", room: "Ruang Kemuning" }
                         ]
                     },
                     {
                         day: "Selasa",
                         color: "purple",
                         courses: [
-                            { time: "08.00 - 09.20", name: "Manajemen Lingkungan Industri", room: "Ruang Kalalayu" },
-                            { time: "09.30 - 10.50", name: "Bahasa Inggris", room: "Ruang Pampaken" },
-                            { time: "11.00 - 12.20", name: "Dasar Teknik Proses", room: "Ruang Kenanga" }
+                            { time: "08.00 - 09.40", name: "Manajemen Lingkungan Industri", room: "Ruang Kalalayu" },
+                            { time: "09.40 - 11.20", name: "Bahasa Inggris", room: "Ruang Pampaken" },
+                            { time: "13.00 - 14.40", name: "Dasar Teknik Proses", room: "Ruang Kenanga" }
                         ]
                     },
                     {
                         day: "Rabu",
                         color: "green",
                         courses: [
-                            { time: "13.30 - 14.50", name: "Pengetahuan Lingkungan Lahan Basah", room: "Ruang Kemuning" },
-                            { time: "15.00 - 16.20", name: "Metode Statistika", room: "Ruang Pampaken" }
+                            { time: "14.40 - 16.20", name: "Pengantar Lingkungan Lahan Basah", room: "Ruang Culan" },
+                            { time: "16.20 - 18.00", name: "Metode Statistika", room: "Ruang Pampaken" }
                         ]
                     },
                     {
                         day: "Kamis",
                         color: "yellow",
                         courses: [
-                            { time: "08.00 - 09.20", name: "Kewarganegaraan", room: "Ruang Pampaken" },
-                            { time: "11.00 - 12.20", name: "Pengetahuan Bahan Agroindustry", room: "Ruang Kemuning" },
-                            { time: "15.00 - 16.20", name: "Kalkulus", room: "Ruang Kemuning" }
+                            { time: "08.00 - 09.40", name: "Kewarganegaraan", room: "Ruang Pampaken" },
+                            { time: "13.00 - 14.40", name: "Pengetahuan Bahan Agroindustri", room: "Ruang Kemuning" },
+                            { time: "16.20 - 18.00", name: "Kalkulus", room: "Ruang Kemuning" }
                         ]
                     }
                 ]
@@ -1923,6 +2008,11 @@
             if(sem === 1 || sem === 2) {
                 const data = schedules[sem];
                 const display = document.getElementById('schedule-display');
+                
+                // Deteksi Hari Ini
+                const todayIndex = new Date().getDay(); // 0 = Minggu, 1 = Senin, dst
+                const dayNames = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
+                const currentDayName = dayNames[todayIndex];
                 
                 // Build HTML
                 let html = `
@@ -1935,9 +2025,14 @@
                 `;
 
                 data.days.forEach(d => {
+                    // Logic Highlighting Jadwal Hari Ini
+                    const isToday = d.day === currentDayName;
+                    const highlightClass = isToday ? 'day-highlight' : `bg-white/5 border-${d.color}-500`;
+                    const titleColor = isToday ? 'text-tipYellow text-glow' : `text-${d.color}-400`;
+                    
                     html += `
-                        <div class="bg-white/5 rounded-xl p-4 border-l-4 border-${d.color}-500">
-                            <h4 class="font-bold text-lg mb-3 text-${d.color}-400">${d.day}</h4>
+                        <div class="rounded-xl p-4 border-l-4 ${highlightClass} transition-all duration-300">
+                            <h4 class="font-bold text-lg mb-3 ${titleColor}">${d.day}</h4>
                             <ul class="space-y-3">
                     `;
                     d.courses.forEach(c => {
@@ -1963,6 +2058,167 @@
                 alert("Jadwal Semester " + sem + " belum tersedia / Anda belum memiliki akses.");
             }
         }
+
+        // --- WIDGET COUNTDOWN LOGIC ---
+        function parseTimeMins(timeStr) {
+            let parts = timeStr.includes('.') ? timeStr.split('.') : timeStr.split(':');
+            return parseInt(parts[0], 10) * 60 + parseInt(parts[1], 10);
+        }
+
+        function updateClassCountdown() {
+            const now = new Date();
+            const dayNames = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
+            const currentDayStr = dayNames[now.getDay()];
+            const currentMins = now.getHours() * 60 + now.getMinutes();
+            const totalCurrentSecs = (now.getHours() * 3600) + (now.getMinutes() * 60) + now.getSeconds();
+
+            // Update Tanggal
+            const dateOptions = { day: 'numeric', month: 'long', year: 'numeric' };
+            const dateStr = now.toLocaleDateString('id-ID', dateOptions);
+            const widgetDate = document.getElementById('widget-date');
+            if(widgetDate) widgetDate.innerText = `${currentDayStr}, ${dateStr}`;
+
+            // Element DOM WIdget
+            const wStatus = document.getElementById('widget-status');
+            const wCourse = document.getElementById('widget-course');
+            const wCountdown = document.getElementById('widget-countdown');
+            const wTimeLabel = document.getElementById('widget-time-label');
+            const wProgBar = document.getElementById('widget-progress-bar');
+            const wOngoing = document.getElementById('widget-ongoing-text');
+
+            if(!wStatus) return; // Guard agar tidak error di tab lain
+
+            // Ambil data jadwal Semester 2 hari ini
+            const sem2 = schedules[2].days.find(d => d.day === currentDayStr);
+
+            let ongoingClass = null;
+            let nextClass = null;
+            let nextClassDayOffset = 0; // 0 artinya hari ini
+            let nextClassDayName = currentDayStr;
+
+            // 1. Cek jadwal HARI INI
+            if (sem2 && sem2.courses) {
+                for (let i = 0; i < sem2.courses.length; i++) {
+                    let c = sem2.courses[i];
+                    let times = c.time.split(' - ');
+                    let startMins = parseTimeMins(times[0]);
+                    let endMins = parseTimeMins(times[1]);
+
+                    if (currentMins >= startMins && currentMins < endMins) {
+                        ongoingClass = c;
+                        // Cek apakah ada matkul selanjutnya hari ini
+                        if (i + 1 < sem2.courses.length) {
+                            nextClass = sem2.courses[i + 1];
+                            nextClassDayOffset = 0;
+                        }
+                        break; 
+                    } else if (startMins > currentMins) {
+                        if (!nextClass) {
+                            nextClass = c;
+                            nextClassDayOffset = 0;
+                        }
+                        break; 
+                    }
+                }
+            }
+
+            // 2. Jika TIDAK ADA kelas berikutnya HARI INI, cari di hari-hari kedepan (Maks 7 hari)
+            if (!nextClass) {
+                for (let daysAhead = 1; daysAhead <= 7; daysAhead++) {
+                    let checkDayIndex = (now.getDay() + daysAhead) % 7;
+                    let checkDayStr = dayNames[checkDayIndex];
+                    let checkSem2 = schedules[2].days.find(d => d.day === checkDayStr);
+
+                    if (checkSem2 && checkSem2.courses && checkSem2.courses.length > 0) {
+                        nextClass = checkSem2.courses[0]; // Ambil matkul paling pertama di hari tsb
+                        nextClassDayOffset = daysAhead;
+                        nextClassDayName = checkDayStr;
+                        break;
+                    }
+                }
+            }
+
+            if (ongoingClass && !nextClass) {
+                // Sangat jarang terjadi jika lookahead 7 hari aktif, tapi sbg fallback
+                wStatus.innerText = "KELAS SEDANG BERLANGSUNG";
+                wCourse.innerText = ongoingClass.name;
+                wOngoing.innerHTML = `<i class="fa-solid fa-chalkboard-user mr-1"></i> Sedang di: ${ongoingClass.room} (Berakhir ${ongoingClass.time.split(' - ')[1]})`;
+                wCountdown.innerHTML = `00:00:00 <span class="text-2xl text-gray-800">selesai</span>`;
+                wTimeLabel.innerText = "Sisa waktu perkuliahan";
+                wProgBar.style.width = `100%`;
+
+            } else if (ongoingClass && nextClass) {
+                // Ada kelas jalan, dan ada kelas selanjutnya
+                wStatus.innerText = "MATA KULIAH BERIKUTNYA";
+                wCourse.innerText = nextClass.name;
+                wOngoing.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-1"></i> Sedang Berlangsung: ${ongoingClass.name} (${ongoingClass.room})`;
+
+                let startMins = parseTimeMins(nextClass.time.split(' - ')[0]);
+                let diffTotalSecs = 0;
+                
+                if (nextClassDayOffset === 0) {
+                    diffTotalSecs = (startMins * 60) - totalCurrentSecs;
+                    wTimeLabel.innerText = `Pukul ${nextClass.time.split(' - ')[0]}`;
+                } else {
+                    diffTotalSecs = (86400 - totalCurrentSecs) + ((nextClassDayOffset - 1) * 86400) + (startMins * 60);
+                    let dayText = nextClassDayOffset === 1 ? "Besok" : nextClassDayName;
+                    wTimeLabel.innerText = `${dayText}, Pukul ${nextClass.time.split(' - ')[0]}`;
+                }
+
+                let h = Math.floor(diffTotalSecs / 3600);
+                let m = Math.floor((diffTotalSecs % 3600) / 60);
+                let s = diffTotalSecs % 60;
+
+                wCountdown.innerHTML = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')} <span class="text-2xl text-gray-900 font-extrabold">lagi</span>`;
+                wProgBar.style.width = `50%`;
+
+            } else if (!ongoingClass && nextClass) {
+                // Tidak ada kelas saat ini, menunggu kelas selanjutnya
+                wStatus.innerText = "MATA KULIAH BERIKUTNYA";
+                wCourse.innerText = nextClass.name;
+
+                let startMins = parseTimeMins(nextClass.time.split(' - ')[0]);
+                let diffTotalSecs = 0;
+
+                if (nextClassDayOffset === 0) {
+                    // Kelasnya di hari yang sama
+                    wOngoing.innerHTML = `<i class="fa-solid fa-mug-hot mr-1"></i> Waktu istirahat. Bersiap untuk kelas berikutnya.`;
+                    wTimeLabel.innerHTML = `Pukul ${nextClass.time.split(' - ')[0]} &bull; ${nextClass.room}`;
+                    diffTotalSecs = (startMins * 60) - totalCurrentSecs;
+                    
+                    let dayStart = 7 * 60; 
+                    let totalWait = startMins - dayStart;
+                    let waited = currentMins - dayStart;
+                    let percent = Math.max(0, Math.min(100, (waited / totalWait) * 100));
+                    wProgBar.style.width = `${percent}%`;
+                } else {
+                    // Kelasnya di hari esok atau beberapa hari kedepan
+                    let dayText = nextClassDayOffset === 1 ? "Besok" : `Hari ${nextClassDayName}`;
+                    wOngoing.innerHTML = `<i class="fa-solid fa-bed mr-1"></i> Tidak ada kelas. Santai dulu sampai ${dayText}.`;
+                    wTimeLabel.innerHTML = `${dayText}, ${nextClass.time.split(' - ')[0]} &bull; ${nextClass.room}`;
+                    diffTotalSecs = (86400 - totalCurrentSecs) + ((nextClassDayOffset - 1) * 86400) + (startMins * 60);
+                    
+                    wProgBar.style.width = `100%`; // Progress bar hijau penuh saat hari bebas
+                }
+                
+                let h = Math.floor(diffTotalSecs / 3600);
+                let m = Math.floor((diffTotalSecs % 3600) / 60);
+                let s = diffTotalSecs % 60;
+
+                // Format jam (h bisa melebihi 24 jam)
+                wCountdown.innerHTML = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')} <span class="text-2xl text-gray-900 font-extrabold">lagi</span>`;
+
+            } else {
+                // Jika jadwal kosong melompong secara permanen
+                wStatus.innerText = "INFO AKADEMIK";
+                wCourse.innerText = "Jadwal Belum Dibuat";
+                wOngoing.innerHTML = `<i class="fa-solid fa-house-chimney mr-1"></i> Tunggu update sistem untuk jadwal semester ini.`;
+                wCountdown.innerHTML = `--:--:-- <span class="text-2xl text-gray-800">jam</span>`;
+                wTimeLabel.innerText = "Sampai Jumpa";
+                wProgBar.style.width = `0%`;
+            }
+        }
+
 
         // --- 5. IPK CALCULATOR ---
         let courses = [];
