@@ -1302,6 +1302,7 @@
                     <i class="fa-solid fa-moon absolute -top-1 -right-1 text-tipYellow/20 text-4xl z-0 rotate-12"></i>
                     <i class="fa-solid fa-arrow-right float-right opacity-0 group-hover:opacity-100 transition-opacity z-10 relative"></i>
                 </button>
+                
                 <button class="p-4 glass-panel rounded-xl opacity-50 cursor-not-allowed">Semester 3</button>
                 <button class="p-4 glass-panel rounded-xl opacity-50 cursor-not-allowed">Semester 4</button>
                 <button class="p-4 glass-panel rounded-xl opacity-50 cursor-not-allowed">Semester 5</button>
@@ -2024,55 +2025,160 @@
                         ]
                     }
                 ]
+            },
+            'uts2': {
+                title: "JADWAL UJIAN TENGAH SEMESTER (UTS) - SEMESTER 2",
+                isUts: true,
+                days: [
+                    {
+                        date: "Senin, 06 April 2026",
+                        courses: [
+                            { time: "09.50 - 11.30", name: "Bahasa Inggris", code: "EFB1209", lecturer: "Alia Rahmi, S.T.P., M.EngSc., Ph.D.", room: "Pampaken" },
+                            { time: "13.00 - 14.40", name: "Manajemen Sumber Daya Manusia", code: "EFBGHFH", lecturer: "Tim Dosen", room: "Kenanga" },
+                            { time: "14.50 - 16.30", name: "Metode Statistika", code: "EFB2202", lecturer: "Novianti Adi Rohmanna, S.T.P., M.T., dkk.", room: "Kemuning" }
+                        ]
+                    },
+                    {
+                        date: "Selasa, 07 April 2026",
+                        courses: [
+                            { time: "08.00 - 09.40", name: "Manajemen Lingkungan Industri", code: "EFB2207", lecturer: "Prof. Agung Nugroho, S.T.P., M.Sc., Ph.D.", room: "Kalalayu" },
+                            { time: "13.00 - 14.40", name: "Dasar Teknik Proses", code: "EFB2201", lecturer: "Prof. Agung Nugroho, S.T.P., M.Sc., Ph.D., dkk.", room: "Kenanga" }
+                        ]
+                    },
+                    {
+                        date: "Rabu, 08 April 2026",
+                        courses: [
+                            { time: "14.50 - 16.30", name: "Pengantar Lingkungan Lahan Basah", code: "EFB1208", lecturer: "Ismi Nuari Puspitaningrum, S.P., M.Sc.", room: "Culan" }
+                        ]
+                    },
+                    {
+                        date: "Kamis, 09 April 2026",
+                        courses: [
+                            { time: "08.00 - 09.40", name: "Kewarganegaraan", code: "EFB1203", lecturer: "Habibah Pidi Rohmatu, M.Pd.", room: "Pampaken" },
+                            { time: "13.00 - 14.40", name: "Pengetahuan Bahan Agroindustri", code: "EFB2205", lecturer: "Nurul Azizah, S.T.P., M.T.", room: "Kemuning" },
+                            { time: "16.40 - 18.20", name: "Kalkulus", code: "EFB2204", lecturer: "Oni Susanto, S.Si., M.Si.", room: "Kemuning" }
+                        ]
+                    }
+                ]
             }
         };
 
         function showSchedule(sem) {
-            if(sem === 1 || sem === 2) {
+            if(sem === 1 || sem === 2 || sem === 'uts2') {
                 const data = schedules[sem];
                 const display = document.getElementById('schedule-display');
                 
-                // Deteksi Hari Ini
-                const todayIndex = new Date().getDay(); // 0 = Minggu, 1 = Senin, dst
-                const dayNames = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
-                const currentDayName = dayNames[todayIndex];
-                
-                // Build HTML
-                let html = `
-                    <div class="glass-panel rounded-2xl overflow-hidden animate-pop-in">
-                        <div class="bg-tipYellow p-4 flex justify-between items-center text-black">
-                            <h3 class="font-bold text-xl">${data.title}</h3>
-                            <i class="fa-regular fa-calendar-days text-xl"></i>
-                        </div>
-                        <div class="p-6 grid gap-6 md:grid-cols-2">
-                `;
+                let html = '';
 
-                data.days.forEach(d => {
-                    // Logic Highlighting Jadwal Hari Ini
-                    const isToday = d.day === currentDayName;
-                    const highlightClass = isToday ? 'day-highlight' : `bg-white/5 border-${d.color}-500`;
-                    const titleColor = isToday ? 'text-tipYellow text-glow' : `text-${d.color}-400`;
-                    
-                    html += `
-                        <div class="rounded-xl p-4 border-l-4 ${highlightClass} transition-all duration-300">
-                            <h4 class="font-bold text-lg mb-3 ${titleColor}">${d.day}</h4>
-                            <ul class="space-y-3">
+                if (data.isUts) {
+                    // --- TAMPILAN KHUSUS JADWAL UTS (WARNING RED THEME) ---
+                    html = `
+                        <div class="glass-panel rounded-2xl overflow-hidden animate-pop-in border border-red-500/50 shadow-[0_0_40px_rgba(220,38,38,0.2)] relative">
+                            <!-- Stripe Background Animation -->
+                            <div class="absolute inset-0 opacity-10 pointer-events-none" style="background-image: repeating-linear-gradient(45deg, #000 0, #000 10px, #ef4444 10px, #ef4444 20px);"></div>
+                            
+                            <div class="bg-gradient-to-r from-red-900 to-red-600 p-4 flex justify-between items-center text-white relative z-10 border-b-4 border-black/30">
+                                <div>
+                                    <button onclick="showSchedule(2)" class="mb-2 text-[10px] font-bold bg-black/40 hover:bg-black/80 text-white px-3 py-1 rounded-full flex items-center gap-1 transition-colors border border-white/20"><i class="fa-solid fa-arrow-left"></i> KEMBALI KE JADWAL REGULER</button>
+                                    <h3 class="font-black text-lg md:text-xl tracking-wider uppercase drop-shadow-md flex items-center gap-2">
+                                        <i class="fa-solid fa-triangle-exclamation text-yellow-400 animate-pulse"></i> ${data.title}
+                                    </h3>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-[10px] text-red-200 font-bold tracking-widest leading-none">SELAMAT</p>
+                                    <p class="text-sm font-black text-white leading-none">BERJUANG!</p>
+                                </div>
+                            </div>
+                            
+                            <div class="p-4 md:p-6 grid gap-6 md:grid-cols-2 relative z-10 bg-black/60 backdrop-blur-sm">
                     `;
-                    d.courses.forEach(c => {
-                        html += `
-                            <li class="flex justify-between border-b border-gray-700 pb-2">
-                                <span class="text-sm font-medium text-gray-300">${c.time}</span>
-                                <span class="text-right text-sm">
-                                    <span class="font-bold text-white">${c.name}</span><br>
-                                    <small class="text-gray-400">${c.room}</small>
-                                </span>
-                            </li>
-                        `;
-                    });
-                    html += `</ul></div>`;
-                });
 
-                html += `</div></div>`;
+                    data.days.forEach(d => {
+                        html += `
+                            <div class="rounded-xl p-4 md:p-5 border border-red-900 bg-black/80 shadow-[0_4px_20px_rgba(0,0,0,0.5)] relative overflow-hidden group hover:border-red-500 transition-colors">
+                                <div class="absolute top-0 left-0 w-1 h-full bg-red-600"></div>
+                                
+                                <h4 class="font-black text-lg mb-4 text-red-400 border-b border-red-500/30 pb-2 flex items-center gap-2">
+                                    <i class="fa-regular fa-calendar-xmark text-red-500"></i> ${d.date}
+                                </h4>
+                                <ul class="space-y-4">
+                        `;
+                        d.courses.forEach(c => {
+                            html += `
+                                <li class="flex flex-col bg-white/5 p-3 rounded-lg border border-white/5 hover:bg-red-900/20 transition-colors">
+                                    <div class="flex justify-between items-start mb-2 border-b border-gray-700/50 pb-2">
+                                        <span class="text-xs font-bold text-white bg-red-600 px-2 py-0.5 rounded shadow-sm flex items-center gap-1"><i class="fa-regular fa-clock"></i> ${c.time}</span>
+                                        <span class="text-[10px] font-mono font-bold text-red-300 bg-red-900/50 px-2 py-0.5 rounded-full border border-red-800">${c.code}</span>
+                                    </div>
+                                    <span class="font-black text-lg text-white leading-tight mb-2">${c.name}</span>
+                                    <div class="text-[11px] text-gray-400 flex flex-col gap-1.5">
+                                        <span class="flex items-start gap-2"><i class="fa-solid fa-user-pen text-red-500 mt-0.5 w-3"></i> <span>${c.lecturer}</span></span>
+                                        <span class="flex items-start gap-2"><i class="fa-solid fa-door-open text-red-500 mt-0.5 w-3"></i> <span class="font-bold text-gray-300">Ruang ${c.room}</span></span>
+                                    </div>
+                                </li>
+                            `;
+                        });
+                        html += `</ul></div>`;
+                    });
+
+                    html += `</div></div>`;
+
+                } else {
+                    // --- TAMPILAN JADWAL REGULER (HARI-HARI) ---
+                    const todayIndex = new Date().getDay(); // 0 = Minggu, 1 = Senin, dst
+                    const dayNames = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
+                    const currentDayName = dayNames[todayIndex];
+                    
+                    html = `
+                        <div class="glass-panel rounded-2xl overflow-hidden animate-pop-in">
+                            <div class="bg-tipYellow p-4 flex justify-between items-center text-black">
+                                <h3 class="font-bold text-xl">${data.title}</h3>
+                                <i class="fa-regular fa-calendar-days text-xl"></i>
+                            </div>
+                    `;
+
+                    // Tambahkan tombol UTS khusus jika membuka Semester 2
+                    if (sem === 2) {
+                        html += `
+                            <div class="p-4 md:p-6 bg-black/40 border-b border-white/5 flex justify-center">
+                                <button onclick="showSchedule('uts2')" class="w-full md:w-auto px-6 py-3 rounded-xl border border-red-600 bg-red-950/40 text-red-400 hover:bg-red-600 hover:text-white hover:shadow-[0_0_30px_rgba(220,38,38,0.8)] transition-all font-bold group relative overflow-hidden animate-pulse shadow-[0_0_15px_rgba(220,38,38,0.4)] backdrop-blur-sm">
+                                    <span class="relative z-10 flex items-center justify-center gap-2">
+                                        <i class="fa-solid fa-fire text-lg"></i> KLIK DI SINI UNTUK MELIHAT JADWAL UTS <i class="fa-solid fa-skull group-hover:scale-125 transition-transform"></i>
+                                    </span>
+                                    <div class="absolute inset-0 bg-red-500/10 w-full h-full animate-[shimmer-bg_2s_infinite] pointer-events-none"></div>
+                                </button>
+                            </div>
+                        `;
+                    }
+
+                    html += `<div class="p-6 grid gap-6 md:grid-cols-2">`;
+
+                    data.days.forEach(d => {
+                        const isToday = d.day === currentDayName;
+                        const highlightClass = isToday ? 'day-highlight' : `bg-white/5 border-${d.color}-500`;
+                        const titleColor = isToday ? 'text-tipYellow text-glow' : `text-${d.color}-400`;
+                        
+                        html += `
+                            <div class="rounded-xl p-4 border-l-4 ${highlightClass} transition-all duration-300">
+                                <h4 class="font-bold text-lg mb-3 ${titleColor}">${d.day}</h4>
+                                <ul class="space-y-3">
+                        `;
+                        d.courses.forEach(c => {
+                            html += `
+                                <li class="flex justify-between border-b border-gray-700 pb-2">
+                                    <span class="text-sm font-medium text-gray-300">${c.time}</span>
+                                    <span class="text-right text-sm">
+                                        <span class="font-bold text-white">${c.name}</span><br>
+                                        <small class="text-gray-400">${c.room}</small>
+                                    </span>
+                                </li>
+                            `;
+                        });
+                        html += `</ul></div>`;
+                    });
+
+                    html += `</div></div>`;
+                }
                 
                 display.innerHTML = html;
                 display.classList.remove('hidden');
