@@ -10,7 +10,7 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Agronity 25">
+    <meta name="apple-mobile-web-app-title" content="Agronity25">
     <link rel="apple-touch-icon" href="https://image2url.com/r2/default/images/1775039804162-457ef4f8-5b5d-46af-b13f-5da942fe6314.png">
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -660,23 +660,6 @@
     </button>
     <!-- End WhoBirthToday -->
 
-    <!-- PWA Install Banner (Hidden by default) -->
-    <div id="pwa-install-banner" class="fixed top-24 left-1/2 transform -translate-x-1/2 z-[100] hidden w-[90%] max-w-sm glass-panel border border-tipYellow/50 rounded-2xl p-4 shadow-[0_0_30px_rgba(234,179,8,0.5)] transition-all duration-500">
-        <div class="flex items-center gap-4">
-            <img src="https://image2url.com/r2/default/images/1775039804162-457ef4f8-5b5d-46af-b13f-5da942fe6314.png" class="w-12 h-12 rounded-xl border-2 border-tipYellow object-cover" alt="App Icon">
-            <div class="flex-1">
-                <h4 class="text-white font-bold text-sm leading-tight">Install Agronity25</h4>
-                <p class="text-[10px] text-gray-400 mt-1">Tambahkan ke Layar Utama (Home Screen)</p>
-            </div>
-            <button id="pwa-install-btn" class="bg-tipYellow text-black font-bold text-xs px-4 py-2 rounded-lg hover:scale-105 transition-transform shadow-[0_0_10px_rgba(234,179,8,0.5)]">
-                Install
-            </button>
-            <button id="pwa-close-btn" class="text-gray-400 hover:text-white transition-colors p-2">
-                <i class="fa-solid fa-xmark"></i>
-            </button>
-        </div>
-    </div>
-
     <div class="intro-loader-wrapper" id="intro-loader">
         <div class="loader-screen">
             <img src="https://image2url.com/r2/default/gifs/1773505858649-e2f1bb98-6c1a-438d-9551-90f4108f9639.gif" class="loader-gif" alt="Loading Agronity">
@@ -872,16 +855,24 @@
                     </div>
 
                     <!-- Bottom Area: Countdown & Location/Time Pill -->
-                    <div class="flex flex-col gap-2">
-                        <div id="widget-countdown" class="text-5xl md:text-6xl font-black text-black tracking-tighter drop-shadow-sm leading-none mt-1" style="font-family: 'Poppins', sans-serif;">
-                            --:--:-- <span class="text-base text-gray-800 tracking-normal font-bold">lagi</span>
-                        </div>
-                        
-                        <div class="mt-2">
-                            <div id="widget-time-label" class="text-black font-bold text-[11px] bg-black/10 w-fit px-4 py-2 rounded-xl border border-black/10 backdrop-blur-sm shadow-inner">
-                                --:--
+                    <div class="flex justify-between items-end gap-2">
+                        <div class="flex flex-col gap-2">
+                            <div id="widget-countdown" class="text-5xl md:text-6xl font-black text-black tracking-tighter drop-shadow-sm leading-none mt-1" style="font-family: 'Poppins', sans-serif;">
+                                --:--:-- <span class="text-base text-gray-800 tracking-normal font-bold">lagi</span>
+                            </div>
+                            
+                            <div class="mt-2">
+                                <div id="widget-time-label" class="text-black font-bold text-[11px] bg-black/10 w-fit px-4 py-2 rounded-xl border border-black/10 backdrop-blur-sm shadow-inner">
+                                    --:--
+                                </div>
                             </div>
                         </div>
+
+                        <!-- NEW: PWA Install Widget Button -->
+                        <button id="widget-pwa-install" class="hidden mb-1 bg-black/90 backdrop-blur-md text-tipYellow border border-tipYellow/40 px-2.5 py-2 rounded-xl flex items-center gap-2 shadow-[0_5px_15px_rgba(0,0,0,0.3)] hover:scale-105 transition-transform text-left max-w-[125px] shrink-0 cursor-pointer animate-pop-in z-20">
+                            <i class="fa-solid fa-download text-lg animate-bounce"></i>
+                            <span class="text-[8px] font-bold leading-tight uppercase tracking-wider">Tambahkan app ini ke home screen anda</span>
+                        </button>
                     </div>
 
                     <!-- Progress Bar dengan Spark Animasi -->
@@ -1508,7 +1499,7 @@
         (function initPWA() {
             // 1. Generate Manifest Dynamically (Agar tetap 1 file HTML)
             const manifestJSON = {
-                "name": "Portal TIP ULM 2025",
+                "name": "Agronity25",
                 "short_name": "Agronity25",
                 "description": "Portal Resmi Mahasiswa TIP ULM 2025",
                 "start_url": window.location.href,
@@ -1558,35 +1549,30 @@
 
             // 3. Tangani Prompt Instalasi
             let deferredPrompt;
-            const installBanner = document.getElementById('pwa-install-banner');
-            const installBtn = document.getElementById('pwa-install-btn');
-            const closeBtn = document.getElementById('pwa-close-btn');
+            const installBtn = document.getElementById('widget-pwa-install');
 
             window.addEventListener('beforeinstallprompt', (e) => {
                 // Cegah prompt bawaan browser muncul otomatis
                 e.preventDefault();
                 deferredPrompt = e;
                 
-                // Tampilkan banner custom kita setelah intro loader selesai (sekitar 6 detik)
+                // Tampilkan tombol di widget setelah delay intro loader
                 setTimeout(() => {
-                    installBanner.classList.remove('hidden');
-                    installBanner.classList.add('animate-pop-in');
+                    if(installBtn) installBtn.classList.remove('hidden');
                 }, 6500);
             });
 
-            installBtn.addEventListener('click', async () => {
-                installBanner.classList.add('hidden');
-                if (deferredPrompt) {
-                    deferredPrompt.prompt();
-                    const { outcome } = await deferredPrompt.userChoice;
-                    console.log(`Hasil pilihan install: ${outcome}`);
-                    deferredPrompt = null;
-                }
-            });
-
-            closeBtn.addEventListener('click', () => {
-                installBanner.classList.add('hidden');
-            });
+            if(installBtn) {
+                installBtn.addEventListener('click', async () => {
+                    installBtn.classList.add('hidden'); // Sembunyikan setelah diklik
+                    if (deferredPrompt) {
+                        deferredPrompt.prompt();
+                        const { outcome } = await deferredPrompt.userChoice;
+                        console.log(`Hasil pilihan install: ${outcome}`);
+                        deferredPrompt = null;
+                    }
+                });
+            }
         })();
 
         // --- LOADER LOGIC ---
