@@ -660,6 +660,23 @@
     </button>
     <!-- End WhoBirthToday -->
 
+    <!-- NEW: PWA Manual Install Modal (Untuk iOS & Browser Strict) -->
+    <div id="pwa-manual-modal" class="fixed inset-0 z-[10000] hidden flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 opacity-0 transition-opacity duration-300">
+        <div class="glass-panel border border-tipYellow p-6 rounded-3xl max-w-sm w-full text-center relative shadow-[0_0_30px_rgba(234,179,8,0.3)] transform scale-95 transition-transform duration-300" id="pwa-manual-content">
+            <button onclick="hidePWAModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white bg-black/50 hover:bg-red-500/50 rounded-full w-8 h-8 flex items-center justify-center transition-all z-20">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+            <i class="fa-brands fa-apple text-5xl text-white mb-4 animate-bounce" id="pwa-manual-icon"></i>
+            <h3 class="text-xl font-bold text-white mb-2">Install Agronity25</h3>
+            <div class="text-gray-300 text-sm mb-6 leading-relaxed bg-black/40 p-4 rounded-xl border border-white/10" id="pwa-manual-text">
+                <!-- Text Injected via JS -->
+            </div>
+            <button onclick="hidePWAModal()" class="bg-tipYellow text-black font-bold px-6 py-3 rounded-xl w-full hover:scale-105 transition-transform shadow-[0_0_15px_rgba(234,179,8,0.4)]">
+                Saya Mengerti
+            </button>
+        </div>
+    </div>
+
     <div class="intro-loader-wrapper" id="intro-loader">
         <div class="loader-screen">
             <img src="https://image2url.com/r2/default/gifs/1773505858649-e2f1bb98-6c1a-438d-9551-90f4108f9639.gif" class="loader-gif" alt="Loading Agronity">
@@ -1547,32 +1564,67 @@
                 });
             }
 
-            // 3. Tangani Prompt Instalasi
+            // 3. Tangani Prompt Instalasi (BULLETPROOF ALL DEVICES)
             let deferredPrompt;
             const installBtn = document.getElementById('widget-pwa-install');
+            
+            // Cek apakah mode standalone (sudah diinstall di Home Screen)
+            const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
 
-            window.addEventListener('beforeinstallprompt', (e) => {
-                // Cegah prompt bawaan browser muncul otomatis
-                e.preventDefault();
-                deferredPrompt = e;
-                
-                // Tampilkan tombol di widget setelah delay intro loader
+            // Selalu tampilkan tombol setelah 6.5 detik JIKA belum diinstall (Mengabaikan batasan browser)
+            if (!isStandalone) {
                 setTimeout(() => {
                     if(installBtn) installBtn.classList.remove('hidden');
                 }, 6500);
+            }
+
+            window.addEventListener('beforeinstallprompt', (e) => {
+                // Tangkap prompt asli Android/Chrome
+                e.preventDefault();
+                deferredPrompt = e;
             });
 
             if(installBtn) {
                 installBtn.addEventListener('click', async () => {
-                    installBtn.classList.add('hidden'); // Sembunyikan setelah diklik
                     if (deferredPrompt) {
+                        // Jalankan prompt pop-up otomatis (Untuk Android / Chrome)
+                        installBtn.classList.add('hidden');
                         deferredPrompt.prompt();
                         const { outcome } = await deferredPrompt.userChoice;
                         console.log(`Hasil pilihan install: ${outcome}`);
                         deferredPrompt = null;
+                    } else {
+                        // Tampilkan Modal Panduan Manual (Untuk iOS iPhone / Browser Strict)
+                        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+                        const modal = document.getElementById('pwa-manual-modal');
+                        const icon = document.getElementById('pwa-manual-icon');
+                        const text = document.getElementById('pwa-manual-text');
+                        
+                        if (isIOS) {
+                            icon.className = "fa-brands fa-apple text-5xl text-white mb-4 animate-bounce";
+                            text.innerHTML = "Untuk pengguna <b>iOS / iPhone</b>:<br><br>1. Ketuk ikon <b>Bagikan (Share)</b> <i class='fa-solid fa-arrow-up-from-bracket mx-1 text-tipYellow'></i> di menu bawah Safari.<br>2. Gulir ke bawah dan pilih <b>Tambahkan ke Layar Utama</b> <i class='fa-regular fa-square-plus mx-1 text-tipYellow'></i>.";
+                        } else {
+                            icon.className = "fa-solid fa-ellipsis-vertical text-5xl text-white mb-4 animate-bounce";
+                            text.innerHTML = "Sistem menahan pop-up otomatis.<br><br>Silakan buka <b>Menu Browser (Titik Tiga)</b> di pojok atas, lalu pilih <b>Tambahkan ke Layar Utama</b> atau <b>Instal Aplikasi</b>.";
+                        }
+                        
+                        modal.classList.remove('hidden');
+                        // Animasi masuk modal
+                        setTimeout(() => {
+                            modal.classList.add('opacity-100');
+                            document.getElementById('pwa-manual-content').classList.remove('scale-95');
+                        }, 10);
                     }
                 });
             }
+
+            // Global function untuk menutup modal PWA
+            window.hidePWAModal = function() {
+                const modal = document.getElementById('pwa-manual-modal');
+                modal.classList.remove('opacity-100');
+                document.getElementById('pwa-manual-content').classList.add('scale-95');
+                setTimeout(() => modal.classList.add('hidden'), 300);
+            };
         })();
 
         // --- LOADER LOGIC ---
