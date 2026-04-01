@@ -5,6 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Portal TIP ULM 2025 - Agricultural Technology</title>
     
+    <!-- PWA Meta Tags & Icons -->
+    <meta name="theme-color" content="#eab308">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Agronity 25">
+    <link rel="apple-touch-icon" href="https://image2url.com/r2/default/images/1775039804162-457ef4f8-5b5d-46af-b13f-5da942fe6314.png">
+    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,400&display=swap" rel="stylesheet">
@@ -651,6 +659,23 @@
         <span class="birth-tooltip">WhoBirthToday?</span>
     </button>
     <!-- End WhoBirthToday -->
+
+    <!-- PWA Install Banner (Hidden by default) -->
+    <div id="pwa-install-banner" class="fixed top-24 left-1/2 transform -translate-x-1/2 z-[100] hidden w-[90%] max-w-sm glass-panel border border-tipYellow/50 rounded-2xl p-4 shadow-[0_0_30px_rgba(234,179,8,0.5)] transition-all duration-500">
+        <div class="flex items-center gap-4">
+            <img src="https://image2url.com/r2/default/images/1775039804162-457ef4f8-5b5d-46af-b13f-5da942fe6314.png" class="w-12 h-12 rounded-xl border-2 border-tipYellow object-cover" alt="App Icon">
+            <div class="flex-1">
+                <h4 class="text-white font-bold text-sm leading-tight">Install Agronity25</h4>
+                <p class="text-[10px] text-gray-400 mt-1">Tambahkan ke Layar Utama (Home Screen)</p>
+            </div>
+            <button id="pwa-install-btn" class="bg-tipYellow text-black font-bold text-xs px-4 py-2 rounded-lg hover:scale-105 transition-transform shadow-[0_0_10px_rgba(234,179,8,0.5)]">
+                Install
+            </button>
+            <button id="pwa-close-btn" class="text-gray-400 hover:text-white transition-colors p-2">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+    </div>
 
     <div class="intro-loader-wrapper" id="intro-loader">
         <div class="loader-screen">
@@ -1479,6 +1504,91 @@
     </footer>
 
     <script>
+        // --- PWA LOGIC (Dynamic Manifest & Service Worker) ---
+        (function initPWA() {
+            // 1. Generate Manifest Dynamically (Agar tetap 1 file HTML)
+            const manifestJSON = {
+                "name": "Portal TIP ULM 2025",
+                "short_name": "Agronity25",
+                "description": "Portal Resmi Mahasiswa TIP ULM 2025",
+                "start_url": window.location.href,
+                "display": "standalone",
+                "background_color": "#0a0a0a",
+                "theme_color": "#eab308",
+                "icons": [
+                    {
+                        "src": "https://image2url.com/r2/default/images/1775039804162-457ef4f8-5b5d-46af-b13f-5da942fe6314.png",
+                        "sizes": "192x192",
+                        "type": "image/png",
+                        "purpose": "any maskable"
+                    },
+                    {
+                        "src": "https://image2url.com/r2/default/images/1775039804162-457ef4f8-5b5d-46af-b13f-5da942fe6314.png",
+                        "sizes": "512x512",
+                        "type": "image/png",
+                        "purpose": "any maskable"
+                    }
+                ]
+            };
+            const manifestBlob = new Blob([JSON.stringify(manifestJSON)], {type: 'application/manifest+json'});
+            const manifestURL = URL.createObjectURL(manifestBlob);
+            const manifestLink = document.createElement('link');
+            manifestLink.rel = 'manifest';
+            manifestLink.href = manifestURL;
+            document.head.appendChild(manifestLink);
+
+            // 2. Register Service Worker via Blob (Syarat Wajib PWA)
+            if ('serviceWorker' in navigator) {
+                const swCode = `
+                    self.addEventListener('install', (e) => self.skipWaiting());
+                    self.addEventListener('activate', (e) => self.clients.claim());
+                    self.addEventListener('fetch', (e) => {
+                        // Dummy fetch handler to satisfy PWA criteria
+                    });
+                `;
+                const swBlob = new Blob([swCode], {type: 'application/javascript'});
+                const swUrl = URL.createObjectURL(swBlob);
+                
+                navigator.serviceWorker.register(swUrl).then(reg => {
+                    console.log('PWA Service Worker siap.');
+                }).catch(err => {
+                    console.log('SW terblokir (Wajar jika di iFrame/Sandbox):', err);
+                });
+            }
+
+            // 3. Tangani Prompt Instalasi
+            let deferredPrompt;
+            const installBanner = document.getElementById('pwa-install-banner');
+            const installBtn = document.getElementById('pwa-install-btn');
+            const closeBtn = document.getElementById('pwa-close-btn');
+
+            window.addEventListener('beforeinstallprompt', (e) => {
+                // Cegah prompt bawaan browser muncul otomatis
+                e.preventDefault();
+                deferredPrompt = e;
+                
+                // Tampilkan banner custom kita setelah intro loader selesai (sekitar 6 detik)
+                setTimeout(() => {
+                    installBanner.classList.remove('hidden');
+                    installBanner.classList.add('animate-pop-in');
+                }, 6500);
+            });
+
+            installBtn.addEventListener('click', async () => {
+                installBanner.classList.add('hidden');
+                if (deferredPrompt) {
+                    deferredPrompt.prompt();
+                    const { outcome } = await deferredPrompt.userChoice;
+                    console.log(`Hasil pilihan install: ${outcome}`);
+                    deferredPrompt = null;
+                }
+            });
+
+            closeBtn.addEventListener('click', () => {
+                installBanner.classList.add('hidden');
+            });
+        })();
+
         // --- LOADER LOGIC ---
         document.addEventListener("DOMContentLoaded", () => {
             // Sequence Timing Configuration
