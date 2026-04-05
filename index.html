@@ -854,40 +854,47 @@
         <section id="beranda" class="tab-content active">
             
             <!-- WIDGET JADWAL / PENGINGAT MATKUL (Dipindah Paling Atas) -->
-            <div class="mb-6 widget-gold-shimmer rounded-[28px] p-5 md:p-6 relative overflow-hidden text-black shadow-xl">
+            <div class="mb-6 bg-[linear-gradient(135deg,#7f1d1d_0%,#450a0a_50%,#7f1d1d_100%)] bg-[length:200%_200%] animate-[shimmer-bg_3s_ease_infinite] rounded-[28px] p-5 md:p-6 relative overflow-hidden text-white shadow-[0_0_40px_rgba(220,38,38,0.4)] border border-red-500/50">
+                <!-- Tulisan "UTS" Raksasa di Background -->
+                <div class="absolute inset-0 flex items-center justify-end pointer-events-none z-0 overflow-hidden opacity-20">
+                    <span class="text-[180px] md:text-[220px] font-black tracking-tighter text-red-500 leading-none mr-[-20px] mb-[-40px] transform -rotate-12 select-none drop-shadow-2xl">
+                        UTS
+                    </span>
+                </div>
+                
                 <div class="relative z-10">
                     <!-- Top Header: Location, Date & Icon -->
                     <div class="flex justify-between items-start mb-4">
                         <div class="flex flex-col gap-1.5">
-                            <div class="flex items-center gap-1.5 bg-black/5 w-fit px-3 py-1.5 rounded-full border border-black/10 backdrop-blur-sm">
-                                <i class="fa-solid fa-location-dot text-black text-[10px]"></i>
-                                <span class="text-xs font-bold">Universitas Lambung Mangkurat</span>
+                            <div class="flex items-center gap-1.5 bg-red-600 w-fit px-3 py-1.5 rounded-full border border-red-400 shadow-[0_0_15px_rgba(220,38,38,0.8)] animate-pulse">
+                                <i class="fa-solid fa-fire text-yellow-300 text-[10px]"></i>
+                                <span class="text-xs font-black text-white tracking-widest">NOW UTS</span>
                             </div>
-                            <div id="widget-date" class="text-xs font-extrabold text-black/90 pl-1 drop-shadow-sm">
+                            <div id="widget-date" class="text-xs font-extrabold text-red-200 pl-1 drop-shadow-sm">
                                 Memuat tanggal...
                             </div>
                         </div>
-                        <div class="w-12 h-12 rounded-[18px] bg-gradient-to-br from-yellow-200 to-yellow-500 shadow-inner border border-white/40 flex items-center justify-center shrink-0">
-                            <i class="fa-solid fa-clock text-black/80 text-2xl"></i>
+                        <div class="w-12 h-12 rounded-[18px] bg-gradient-to-br from-red-500 to-red-700 shadow-inner border border-red-400 flex items-center justify-center shrink-0">
+                            <i class="fa-solid fa-clock text-white text-2xl"></i>
                         </div>
                     </div>
 
                     <!-- Content Area -->
                     <div class="flex flex-col gap-1 mb-3">
-                        <h4 id="widget-status" class="text-black/70 font-bold tracking-widest text-[10px] uppercase">MENDETEKSI JADWAL...</h4>
-                        <h2 id="widget-course" class="text-3xl md:text-4xl font-black text-black leading-tight drop-shadow-sm">Memuat Data</h2>
-                        <p id="widget-ongoing-text" class="text-black/80 text-[11px] font-bold italic border-l-2 border-black/40 pl-2 mt-1 leading-snug">...</p>
+                        <h4 id="widget-status" class="text-red-300 font-bold tracking-widest text-[10px] uppercase">MENDETEKSI JADWAL UTS...</h4>
+                        <h2 id="widget-course" class="text-3xl md:text-4xl font-black text-white leading-tight drop-shadow-md">Memuat Data</h2>
+                        <p id="widget-ongoing-text" class="text-red-200 text-[11px] font-bold italic border-l-2 border-red-500 pl-2 mt-1 leading-snug">...</p>
                     </div>
 
                     <!-- Bottom Area: Countdown & Location/Time Pill -->
                     <div class="flex justify-between items-end gap-2">
                         <div class="flex flex-col gap-2">
-                            <div id="widget-countdown" class="text-5xl md:text-6xl font-black text-black tracking-tighter drop-shadow-sm leading-none mt-1" style="font-family: 'Poppins', sans-serif;">
-                                --:--:-- <span class="text-base text-gray-800 tracking-normal font-bold">lagi</span>
+                            <div id="widget-countdown" class="text-5xl md:text-6xl font-black text-white tracking-tighter drop-shadow-md leading-none mt-1" style="font-family: 'Poppins', sans-serif;">
+                                --:--:-- <span class="text-base text-red-300 tracking-normal font-bold">lagi</span>
                             </div>
                             
                             <div class="mt-2">
-                                <div id="widget-time-label" class="text-black font-bold text-[11px] bg-black/10 w-fit px-4 py-2 rounded-xl border border-black/10 backdrop-blur-sm shadow-inner">
+                                <div id="widget-time-label" class="text-white font-bold text-[11px] bg-black/40 w-fit px-4 py-2 rounded-xl border border-red-500/50 backdrop-blur-sm shadow-inner">
                                     --:--
                                 </div>
                             </div>
@@ -901,14 +908,14 @@
                     </div>
 
                     <!-- Progress Bar dengan Spark Animasi -->
-                    <div class="w-full h-1.5 bg-black/15 rounded-full mt-4 relative shadow-inner">
-                        <div id="widget-progress-bar" class="absolute top-0 left-0 h-full bg-gradient-to-r from-green-600 to-green-400 w-0 transition-all duration-1000 ease-linear rounded-full shadow-[0_0_10px_rgba(34,197,94,0.6)]">
+                    <div class="w-full h-1.5 bg-black/40 rounded-full mt-4 relative shadow-inner overflow-hidden border border-red-900/50">
+                        <div id="widget-progress-bar" class="absolute top-0 left-0 h-full bg-gradient-to-r from-yellow-500 to-yellow-300 w-0 transition-all duration-1000 ease-linear rounded-full shadow-[0_0_10px_rgba(253,224,71,0.8)]">
                             <!-- Bulatan dan Percikan Api di ujung kanan -->
                             <div class="absolute top-1/2 -right-2 transform -translate-y-1/2 flex items-center justify-center">
-                                <!-- Ping Effect Hijau -->
-                                <div class="absolute w-4 h-4 bg-green-400 rounded-full animate-ping opacity-60"></div>
-                                <!-- Percikan Api Glow (Oranye/Kuning) -->
-                                <div class="absolute w-6 h-6 bg-yellow-400 blur-[4px] opacity-70 mix-blend-screen rounded-full progress-spark-fire"></div>
+                                <!-- Ping Effect -->
+                                <div class="absolute w-4 h-4 bg-yellow-400 rounded-full animate-ping opacity-60"></div>
+                                <!-- Percikan Api Glow -->
+                                <div class="absolute w-6 h-6 bg-yellow-200 blur-[4px] opacity-70 mix-blend-screen rounded-full progress-spark-fire"></div>
                                 <!-- Inti Bulatan Putih -->
                                 <div class="w-2.5 h-2.5 bg-white rounded-full z-10 shadow-[0_0_8px_#ffffff]"></div>
                             </div>
@@ -2229,11 +2236,13 @@
                 if (data.isUts) {
                     // --- TAMPILAN KHUSUS JADWAL UTS (WARNING RED THEME) ---
                     html = `
-                        <div class="glass-panel rounded-2xl overflow-hidden animate-pop-in border border-red-500/50 shadow-[0_0_40px_rgba(220,38,38,0.2)] relative">
-                            <!-- Stripe Background Animation -->
-                            <div class="absolute inset-0 opacity-10 pointer-events-none" style="background-image: repeating-linear-gradient(45deg, #000 0, #000 10px, #ef4444 10px, #ef4444 20px);"></div>
+                        <div class="glass-panel rounded-2xl overflow-hidden animate-pop-in border border-red-500/50 shadow-[0_0_40px_rgba(220,38,38,0.2)] relative bg-[linear-gradient(135deg,#7f1d1d_0%,#450a0a_50%,#7f1d1d_100%)] bg-[length:200%_200%] animate-[shimmer-bg_3s_ease_infinite]">
+                            <!-- Tulisan "UTS" Raksasa di Background -->
+                            <div class="absolute inset-0 flex items-center justify-center pointer-events-none z-0 overflow-hidden opacity-10">
+                                <span class="text-[150px] md:text-[250px] font-black tracking-tighter text-red-500 leading-none transform -rotate-12 select-none">UTS</span>
+                            </div>
                             
-                            <div class="bg-gradient-to-r from-red-900 to-red-600 p-4 flex justify-between items-center text-white relative z-10 border-b-4 border-black/30">
+                            <div class="bg-gradient-to-r from-red-900/90 to-red-600/90 p-4 flex justify-between items-center text-white relative z-10 border-b-4 border-black/30 backdrop-blur-sm">
                                 <div>
                                     <button onclick="showSchedule(2)" class="mb-2 text-[10px] font-bold bg-black/40 hover:bg-black/80 text-white px-3 py-1 rounded-full flex items-center gap-1 transition-colors border border-white/20"><i class="fa-solid fa-arrow-left"></i> KEMBALI KE JADWAL REGULER</button>
                                     <h3 class="font-black text-lg md:text-xl tracking-wider uppercase drop-shadow-md flex items-center gap-2">
@@ -2373,8 +2382,10 @@
 
             if(!wStatus) return; // Guard agar tidak error di tab lain
 
-            // Ambil data jadwal Semester 2 hari ini
-            const sem2 = schedules[2].days.find(d => d.day === currentDayStr);
+            // AMBIL DATA UTS SEMESTER 2
+            const utsData = schedules['uts2'];
+            const getUtsDay = (dayName) => utsData.days.find(d => d.date.startsWith(dayName));
+            const currentUtsDay = getUtsDay(currentDayStr);
 
             let ongoingClass = null;
             let nextClass = null;
@@ -2382,9 +2393,9 @@
             let nextClassDayName = currentDayStr;
 
             // 1. Cek jadwal HARI INI
-            if (sem2 && sem2.courses) {
-                for (let i = 0; i < sem2.courses.length; i++) {
-                    let c = sem2.courses[i];
+            if (currentUtsDay && currentUtsDay.courses) {
+                for (let i = 0; i < currentUtsDay.courses.length; i++) {
+                    let c = currentUtsDay.courses[i];
                     let times = c.time.split(' - ');
                     let startMins = parseTimeMins(times[0]);
                     let endMins = parseTimeMins(times[1]);
@@ -2392,8 +2403,8 @@
                     if (currentMins >= startMins && currentMins < endMins) {
                         ongoingClass = c;
                         // Cek apakah ada matkul selanjutnya hari ini
-                        if (i + 1 < sem2.courses.length) {
-                            nextClass = sem2.courses[i + 1];
+                        if (i + 1 < currentUtsDay.courses.length) {
+                            nextClass = currentUtsDay.courses[i + 1];
                             nextClassDayOffset = 0;
                         }
                         break; 
@@ -2407,15 +2418,15 @@
                 }
             }
 
-            // 2. Jika TIDAK ADA kelas berikutnya HARI INI, cari di hari-hari kedepan (Maks 7 hari)
+            // 2. Jika TIDAK ADA kelas berikutnya HARI INI, cari di hari-hari kedepan
             if (!nextClass) {
                 for (let daysAhead = 1; daysAhead <= 7; daysAhead++) {
                     let checkDayIndex = (now.getDay() + daysAhead) % 7;
                     let checkDayStr = dayNames[checkDayIndex];
-                    let checkSem2 = schedules[2].days.find(d => d.day === checkDayStr);
+                    let checkUtsDay = getUtsDay(checkDayStr);
 
-                    if (checkSem2 && checkSem2.courses && checkSem2.courses.length > 0) {
-                        nextClass = checkSem2.courses[0]; // Ambil matkul paling pertama di hari tsb
+                    if (checkUtsDay && checkUtsDay.courses && checkUtsDay.courses.length > 0) {
+                        nextClass = checkUtsDay.courses[0]; // Ambil matkul paling pertama di hari tsb
                         nextClassDayOffset = daysAhead;
                         nextClassDayName = checkDayStr;
                         break;
@@ -2424,14 +2435,13 @@
             }
 
             if (ongoingClass && !nextClass) {
-                // Sangat jarang terjadi jika lookahead 7 hari aktif, tapi sbg fallback
-                wStatus.innerText = "KELAS SEDANG BERLANGSUNG";
+                wStatus.innerText = "UJIAN SEDANG BERLANGSUNG";
                 wCourse.innerText = ongoingClass.name;
-                wOngoing.innerHTML = `<i class="fa-solid fa-chalkboard-user mr-1"></i> Sedang di: ${ongoingClass.room} (Berakhir ${ongoingClass.time.split(' - ')[1]})`;
-                wCountdown.innerHTML = `00:00:00 <span class="text-base text-gray-800 font-bold">selesai</span>`;
-                wTimeLabel.innerText = "Sisa waktu perkuliahan";
+                wOngoing.innerHTML = `<i class="fa-solid fa-pen-nib mr-1"></i> Sedang Ujian di: ${ongoingClass.room} (Berakhir ${ongoingClass.time.split(' - ')[1]})`;
+                wCountdown.innerHTML = `00:00:00 <span class="text-base text-red-300 font-bold">selesai</span>`;
+                wTimeLabel.innerText = "Sisa waktu ujian";
                 
-                // Progress Bar: Ikuti progress kelas yang sedang berlangsung
+                // Progress Bar
                 let startMins = parseTimeMins(ongoingClass.time.split(' - ')[0]);
                 let endMins = parseTimeMins(ongoingClass.time.split(' - ')[1]);
                 let percent = Math.max(2, Math.min(100, ((currentMins - startMins) / (endMins - startMins)) * 100));
@@ -2439,7 +2449,7 @@
 
             } else if (ongoingClass && nextClass) {
                 // Ada kelas jalan, dan ada kelas selanjutnya
-                wStatus.innerText = "MATA KULIAH BERIKUTNYA";
+                wStatus.innerText = "UJIAN BERIKUTNYA";
                 wCourse.innerText = nextClass.name;
                 wOngoing.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-1"></i> Sedang Berlangsung: ${ongoingClass.name} (${ongoingClass.room})`;
 
@@ -2459,9 +2469,9 @@
                 let m = Math.floor((diffTotalSecs % 3600) / 60);
                 let s = diffTotalSecs % 60;
 
-                wCountdown.innerHTML = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')} <span class="text-base text-gray-900 font-extrabold">lagi</span>`;
+                wCountdown.innerHTML = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')} <span class="text-base text-red-300 font-extrabold">lagi</span>`;
                 
-                // Progress Bar: Ikuti progress kelas yang sedang berlangsung
+                // Progress Bar
                 let startMins = parseTimeMins(ongoingClass.time.split(' - ')[0]);
                 let endMins = parseTimeMins(ongoingClass.time.split(' - ')[1]);
                 let percent = Math.max(2, Math.min(100, ((currentMins - startMins) / (endMins - startMins)) * 100));
@@ -2469,7 +2479,7 @@
 
             } else if (!ongoingClass && nextClass) {
                 // Tidak ada kelas saat ini, menunggu kelas selanjutnya
-                wStatus.innerText = "MATA KULIAH BERIKUTNYA";
+                wStatus.innerText = "UJIAN BERIKUTNYA";
                 wCourse.innerText = nextClass.name;
 
                 let startMins = parseTimeMins(nextClass.time.split(' - ')[0]);
@@ -2477,13 +2487,13 @@
 
                 if (nextClassDayOffset === 0) {
                     // Kelasnya di hari yang sama
-                    wOngoing.innerHTML = `<i class="fa-solid fa-mug-hot mr-1"></i> Waktu istirahat. Bersiap untuk kelas berikutnya.`;
+                    wOngoing.innerHTML = `<i class="fa-solid fa-book-open mr-1"></i> Waktu istirahat. Persiapkan materi UTS berikutnya!`;
                     wTimeLabel.innerHTML = `Pukul ${nextClass.time.split(' - ')[0]} &bull; ${nextClass.room}`;
                     diffTotalSecs = (startMins * 60) - totalCurrentSecs;
                 } else {
                     // Kelasnya di hari esok atau beberapa hari kedepan
                     let dayText = nextClassDayOffset === 1 ? "Besok" : `Hari ${nextClassDayName}`;
-                    wOngoing.innerHTML = `<i class="fa-solid fa-bed mr-1"></i> Tidak ada kelas. Santai dulu sampai ${dayText}.`;
+                    wOngoing.innerHTML = `<i class="fa-solid fa-bed mr-1"></i> Santai dulu, UTS dilanjut ${dayText}. Belajar yang rajin!`;
                     wTimeLabel.innerHTML = `${dayText}, Pukul ${nextClass.time.split(' - ')[0]} &bull; ${nextClass.room}`;
                     diffTotalSecs = (86400 - totalCurrentSecs) + ((nextClassDayOffset - 1) * 86400) + (startMins * 60);
                 }
@@ -2492,24 +2502,23 @@
                 let m = Math.floor((diffTotalSecs % 3600) / 60);
                 let s = diffTotalSecs % 60;
 
-                // Format jam (h bisa melebihi 24 jam)
-                wCountdown.innerHTML = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')} <span class="text-base text-gray-900 font-extrabold">lagi</span>`;
+                wCountdown.innerHTML = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')} <span class="text-base text-red-300 font-extrabold">lagi</span>`;
 
-                // Logika Garis Animasi Baru (Max 12 Jam Mundur)
-                // Garis berjalan dari kiri (pendek) maju ke kanan seiring mendekati waktu mulai kelas (hitungan 12 jam sisa)
                 let maxWaitSecs = 12 * 3600; 
                 let percent = 100 - ((diffTotalSecs / maxWaitSecs) * 100);
-                percent = Math.max(2, Math.min(100, percent)); // Min 2% agar bulatan percikan tetap terlihat
+                percent = Math.max(2, Math.min(100, percent)); 
                 wProgBar.style.width = `${percent}%`;
 
             } else {
-                // Jika jadwal kosong melompong secara permanen
+                // Jika jadwal kosong (Ujian Selesai)
                 wStatus.innerText = "INFO AKADEMIK";
-                wCourse.innerText = "Jadwal Belum Dibuat";
-                wOngoing.innerHTML = `<i class="fa-solid fa-house-chimney mr-1"></i> Tunggu update sistem untuk jadwal semester ini.`;
-                wCountdown.innerHTML = `--:--:-- <span class="text-base text-gray-800 font-bold">jam</span>`;
-                wTimeLabel.innerText = "Sampai Jumpa";
-                wProgBar.style.width = `2%`; // Set 2% agar percikan ngumpet manis di awal
+                wCourse.innerText = "UTS Selesai!";
+                wOngoing.innerHTML = `<i class="fa-solid fa-champagne-glasses mr-1"></i> Rangkaian UTS Semester 2 telah berakhir. Selamat beristirahat!`;
+                wCountdown.innerHTML = `--:--:-- <span class="text-base text-red-300 font-bold">selesai</span>`;
+                wTimeLabel.innerText = "Alhamdulillah";
+                wProgBar.style.width = `100%`; 
+                wProgBar.className = "absolute top-0 left-0 h-full bg-gradient-to-r from-green-600 to-green-400 w-full rounded-full shadow-[0_0_10px_rgba(34,197,94,0.6)]";
+                wProgBar.innerHTML = '';
             }
         }
 
