@@ -331,6 +331,31 @@
             box-shadow: 0 0 40px rgba(234, 179, 8, 0.7), inset 0 0 20px rgba(255,255,255,0.6);
         }
 
+        /* --- SOCIETY GRONITY STYLES --- */
+        .story-ring {
+            background: linear-gradient(45deg, #facc15, #f59e0b, #ef4444, #ec4899, #8b5cf6);
+            padding: 3px;
+            border-radius: 50%;
+            display: inline-flex;
+        }
+        .story-progress-bar {
+            width: 100%;
+            height: 3px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 2px;
+            overflow: hidden;
+            position: relative;
+        }
+        .story-progress-fill {
+            height: 100%;
+            background: white;
+            width: 0%;
+        }
+        @keyframes fillStory {
+            from { width: 0%; }
+            to { width: 100%; }
+        }
+
         /* NEW: Fire spark effect for progress bar */
         @keyframes fire-flicker {
             0%, 100% { opacity: 0.8; transform: scale(1) translateY(0); filter: hue-rotate(0deg); }
@@ -654,6 +679,52 @@
         </div>
     </div>
 
+    <!-- NEW: SOCIETY GRONITY MODALS -->
+    <!-- Modal Buat Story -->
+    <div id="create-story-modal" class="fixed inset-0 z-[10000] hidden flex items-end sm:items-center justify-center bg-black/80 backdrop-blur-sm sm:p-4 opacity-100 transition-opacity">
+        <div class="bg-tipDark border-t border-tipYellow/50 sm:border sm:rounded-3xl rounded-t-3xl w-full max-w-md relative shadow-[0_-10px_40px_rgba(234,179,8,0.2)]">
+            <div class="flex justify-between items-center p-4 border-b border-gray-800">
+                <button onclick="window.closeCreateStoryModal()" class="text-white"><i class="fa-solid fa-xmark text-xl"></i></button>
+                <h3 class="text-white font-bold text-sm">Buat Story Baru</h3>
+                <button onclick="window.submitStory()" class="text-tipYellow font-bold text-sm">Kirim</button>
+            </div>
+            <div class="p-4">
+                <textarea id="story-input" rows="5" class="w-full bg-transparent text-white text-lg placeholder-gray-500 outline-none resize-none" placeholder="Apa yang ingin kamu bagikan hari ini?"></textarea>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Lihat Story -->
+    <div id="view-story-modal" class="fixed inset-0 z-[10000] hidden bg-black flex flex-col justify-between pb-8">
+        <div class="absolute inset-0 bg-gradient-to-b from-black/80 via-transparent to-black/80 z-0"></div>
+        <!-- Progress & Header -->
+        <div class="p-4 z-10 w-full max-w-lg mx-auto">
+            <div class="story-progress-bar mb-4">
+                <div id="story-progress-fill" class="story-progress-fill"></div>
+            </div>
+            <div class="flex justify-between items-center text-white">
+                <div class="flex items-center gap-3">
+                    <img id="story-view-avatar" src="" class="w-10 h-10 rounded-full border border-gray-600 bg-white object-cover">
+                    <div>
+                        <h4 id="story-view-author" class="font-bold text-sm">...</h4>
+                        <p id="story-view-time" class="text-[10px] text-gray-400">...</p>
+                    </div>
+                </div>
+                <button onclick="window.closeViewStoryModal()" class="text-white bg-black/50 w-8 h-8 rounded-full flex items-center justify-center"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+        </div>
+        
+        <!-- Story Content Text -->
+        <div class="z-10 flex-1 flex items-center justify-center p-6 w-full max-w-lg mx-auto">
+            <h2 id="story-view-text" class="text-white text-2xl sm:text-3xl font-bold text-center leading-snug drop-shadow-md">...</h2>
+        </div>
+        
+        <!-- Footer / Interaction (Optional Dummy) -->
+        <div class="z-10 p-4 w-full max-w-lg mx-auto text-center">
+            <p class="text-gray-500 text-xs"><i class="fa-solid fa-eye mr-1"></i> Dilihat oleh mahasiswa TIP</p>
+        </div>
+    </div>
+
     <button onclick="triggerBirthdayCheck()" class="floating-birth-btn group">
         <i class="fa-solid fa-cake-candles text-white text-2xl"></i>
         <span class="birth-tooltip">WhoBirthToday?</span>
@@ -752,6 +823,10 @@
                     <div class="ml-10 flex items-baseline space-x-2">
                         <button onclick="switchTab('beranda')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-tipYellow hover:bg-white/5 transition-all">Beranda</button>
                         <button onclick="window.open('https://simari.ulm.ac.id/login/', '_blank')" class="nav-btn px-3 py-2 rounded-md text-sm font-bold text-blue-400 hover:text-blue-300 hover:bg-blue-900/20 transition-all flex items-center gap-1"><i class="fa-solid fa-graduation-cap"></i> SIMARI</button>
+                        <!-- NEW SOCIETY TAB TOP NAV -->
+                        <button onclick="switchTab('society')" class="nav-btn px-3 py-2 rounded-md text-sm font-bold text-white bg-gradient-to-r from-pink-500 to-purple-500 shadow-[0_0_10px_rgba(236,72,153,0.5)] hover:shadow-[0_0_20px_rgba(236,72,153,0.7)] hover:scale-105 transition-all transform flex items-center gap-2">
+                            <i class="fa-solid fa-globe"></i> Society
+                        </button>
                         <button onclick="switchTab('mengenal')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-tipYellow hover:bg-white/5 transition-all">Mengenal TIP</button>
                         <button onclick="switchTab('mahasiswa')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-tipYellow hover:bg-white/5 transition-all">Mahasiswa</button>
                         <button onclick="switchTab('agronews')" class="nav-btn px-3 py-2 rounded-md text-sm font-bold text-white bg-newsRed border border-red-500 shadow-[0_0_10px_rgba(204,0,0,0.5)] hover:shadow-[0_0_20px_rgba(204,0,0,0.7)] hover:scale-105 transition-all flex items-center gap-2">
@@ -837,6 +912,14 @@
                 <span class="text-[9px] font-medium tracking-wide leading-none">Dokum</span>
             </button>
 
+            <!-- NEW SOCIETY TAB BOTTOM NAV -->
+            <button onclick="switchTab('society')" class="bottom-nav-item group flex flex-col items-center justify-center p-1 rounded-lg transition-all duration-300 snap-center focus:outline-none">
+                <div class="mb-0.5 p-0.5 rounded-full group-active:scale-90 transition-transform text-pink-400">
+                    <i class="fa-solid fa-globe text-lg mb-0 transition-colors"></i>
+                </div>
+                <span class="text-[9px] font-bold tracking-wide leading-none text-pink-400">Society</span>
+            </button>
+
             <button onclick="switchTab('links')" class="bottom-nav-item group flex flex-col items-center justify-center p-1 rounded-lg transition-all duration-300 snap-center focus:outline-none">
                 <div class="mb-0.5 p-0.5 rounded-full group-active:scale-90 transition-transform">
                     <i class="fa-solid fa-link text-lg mb-0 transition-colors"></i>
@@ -920,6 +1003,32 @@
                                 <div class="w-2.5 h-2.5 bg-white rounded-full z-10 shadow-[0_0_8px_#ffffff]"></div>
                             </div>
                         </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- WIDGET IG STORIES SOCIETYGRONITY -->
+            <div class="mb-6 glass-panel rounded-[28px] p-4 overflow-hidden border-pink-500/30 shadow-[0_0_30px_rgba(236,72,153,0.1)]">
+                <div class="flex justify-between items-center mb-3 px-2">
+                    <h3 class="text-white font-bold text-sm flex items-center gap-2">
+                        <i class="fa-solid fa-circle-notch text-pink-500 animate-spin-slow"></i> Society Stories
+                    </h3>
+                    <button onclick="switchTab('society')" class="text-[10px] text-pink-400 font-bold hover:text-white">Buka Feed <i class="fa-solid fa-arrow-right"></i></button>
+                </div>
+                
+                <div class="flex overflow-x-auto gap-4 no-scrollbar items-center pb-2 px-2" id="stories-feed-container">
+                    <!-- My Story Button -->
+                    <div onclick="window.openCreateStoryModal()" class="flex flex-col items-center gap-1.5 cursor-pointer shrink-0 group">
+                        <div class="w-[60px] h-[60px] rounded-full border-2 border-dashed border-gray-500 flex items-center justify-center bg-white/5 group-hover:bg-pink-500/20 group-hover:border-pink-400 transition-all">
+                            <i class="fa-solid fa-plus text-gray-400 group-hover:text-pink-400 text-xl"></i>
+                        </div>
+                        <span class="text-[10px] text-gray-400 font-medium">Buat Story</span>
+                    </div>
+                    
+                    <!-- Dynamic Stories Injected Here -->
+                    <div id="stories-dynamic-list" class="flex gap-4 items-center">
+                        <!-- Loading State / Fallback -->
+                        <span class="text-xs text-gray-600 italic">Memuat cerita terbaru...</span>
                     </div>
                 </div>
             </div>
@@ -1519,6 +1628,55 @@
             </div>
         </section>
 
+        <!-- NEW SECTION: SOCIETY GRONITY (TWITTER FEED) -->
+        <section id="society" class="tab-content">
+            <div class="max-w-2xl mx-auto">
+                <div class="text-center mb-8">
+                    <h2 class="text-3xl md:text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 tracking-tight">SocietyGronity</h2>
+                    <p class="text-gray-400 text-sm mt-2">Ruang publik mahasiswa TIP untuk berbagi momen secara real-time.</p>
+                </div>
+
+                <!-- Login Prompt -->
+                <div id="society-login-prompt" class="glass-panel p-6 rounded-3xl text-center mb-8 border-pink-500/30">
+                    <i class="fa-solid fa-user-lock text-4xl text-pink-500 mb-4"></i>
+                    <p class="text-gray-300 mb-4">Kamu harus login dengan akun mahasiswa terlebih dahulu untuk mulai mengirim tweet dan melihat interaksi penuh.</p>
+                    <button onclick="switchTab('mahasiswa')" class="bg-gradient-to-r from-pink-500 to-purple-600 text-white font-bold px-8 py-3 rounded-full shadow-[0_0_15px_rgba(236,72,153,0.5)] hover:scale-105 transition-transform">
+                        Login Mahasiswa
+                    </button>
+                </div>
+
+                <!-- Post Box (Hidden if not logged in) -->
+                <div id="society-post-box" class="glass-panel p-5 rounded-3xl mb-8 hidden border border-white/10 shadow-lg">
+                    <div class="flex gap-4">
+                        <img id="society-current-avatar" src="https://api.dicebear.com/7.x/avataaars/svg?seed=Anon&backgroundColor=ec4899" class="w-12 h-12 rounded-full border-2 border-pink-500 bg-white shrink-0 object-cover">
+                        <div class="w-full">
+                            <textarea id="society-input" rows="3" class="w-full bg-black/30 rounded-2xl p-4 text-white placeholder-gray-500 outline-none resize-none focus:ring-2 focus:ring-pink-500 transition-shadow text-sm" placeholder="Apa yang sedang terjadi di TIP hari ini?"></textarea>
+                            <div class="flex justify-between items-center mt-3">
+                                <span class="text-[10px] text-gray-500"><i class="fa-solid fa-lock"></i> Hanya Mahasiswa TIP</span>
+                                <button onclick="window.postTweet()" class="bg-pink-600 text-white font-bold px-6 py-2 rounded-full shadow-[0_0_15px_rgba(236,72,153,0.4)] hover:bg-pink-500 transition-colors text-sm">
+                                    <i class="fa-solid fa-paper-plane mr-1"></i> Post
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Timeline Feed -->
+                <div class="flex items-center gap-2 mb-6 text-white border-b border-gray-800 pb-2">
+                    <i class="fa-solid fa-fire text-pink-500"></i>
+                    <h3 class="font-bold text-lg">Linimasa Terbaru</h3>
+                </div>
+
+                <div id="society-timeline" class="space-y-4">
+                    <!-- Loading State -->
+                    <div class="text-center text-gray-500 py-10">
+                        <i class="fa-solid fa-circle-notch fa-spin text-3xl mb-3 text-pink-500"></i>
+                        <p>Memuat kicauan teman-teman...</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
     </main>
 
     <footer class="glass-panel mt-12 py-8 text-center text-gray-500 text-sm border-t border-tipYellow/20">
@@ -1642,6 +1800,28 @@
             };
         })();
 
+        // --- GLOBAL VARIABLE UNTUK AUTH ---
+        let currentUser = null;
+
+        // Auto Login Checker dari LocalStorage (Agar tidak usah login terus saat refresh)
+        function checkPersistedLogin() {
+            const savedUser = localStorage.getItem('agronity_user');
+            if(savedUser) {
+                currentUser = JSON.parse(savedUser);
+                // Hydrate Profile Card Silently
+                document.getElementById('login-container').classList.add('hidden');
+                document.getElementById('profile-card').classList.remove('hidden');
+                document.getElementById('profile-name').innerText = currentUser.name;
+                document.getElementById('profile-pob').innerText = currentUser.pob;
+                document.getElementById('profile-dob').innerText = currentUser.dob;
+                
+                // Unlock Documentation
+                document.getElementById('doc-locked').classList.add('hidden');
+                document.getElementById('doc-content').classList.remove('hidden');
+            }
+            updateSocietyUI();
+        }
+
         // --- LOADER LOGIC ---
         document.addEventListener("DOMContentLoaded", () => {
             // Sequence Timing Configuration
@@ -1706,6 +1886,9 @@
             // Inisialisasi Widget Hitung Mundur Jadwal
             setInterval(updateClassCountdown, 1000);
             updateClassCountdown();
+
+            // Cek Login Tersimpan
+            checkPersistedLogin();
         });
 
         // --- 0. AGRONEWS LOGIC (UPDATED TO CNN API STRUCTURE) ---
@@ -2073,6 +2256,9 @@
 
             if (user) {
                 // Success
+                currentUser = user;
+                localStorage.setItem('agronity_user', JSON.stringify(user)); // Simpan sesi
+
                 document.getElementById('login-container').classList.add('hidden');
                 document.getElementById('profile-card').classList.remove('hidden');
                 
@@ -2087,6 +2273,12 @@
                 document.getElementById('doc-locked').classList.add('hidden');
                 document.getElementById('doc-content').classList.remove('hidden');
 
+                // UPDATE SOCIETY UI
+                updateSocietyUI();
+                
+                // Kasih feedback visual berhasil
+                alert(`Selamat datang kembali, ${user.name}!`);
+
             } else {
                 // Fail
                 errorMsg.classList.remove('hidden');
@@ -2098,6 +2290,9 @@
         }
 
         function handleLogout() {
+            currentUser = null;
+            localStorage.removeItem('agronity_user');
+
             document.getElementById('login-container').classList.remove('hidden');
             document.getElementById('profile-card').classList.add('hidden');
             document.getElementById('username').value = '';
@@ -2106,6 +2301,28 @@
             // LOCK DOKUMENTASI PAGE AGAIN
             document.getElementById('doc-locked').classList.remove('hidden');
             document.getElementById('doc-content').classList.add('hidden');
+
+            // UPDATE SOCIETY UI
+            updateSocietyUI();
+        }
+
+        function updateSocietyUI() {
+            const prompt = document.getElementById('society-login-prompt');
+            const postBox = document.getElementById('society-post-box');
+            const currentAvatar = document.getElementById('society-current-avatar');
+
+            if(prompt && postBox) {
+                if(currentUser) {
+                    prompt.classList.add('hidden');
+                    postBox.classList.remove('hidden');
+                    if(currentAvatar) {
+                        currentAvatar.src = `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(currentUser.name)}&backgroundColor=ec4899`;
+                    }
+                } else {
+                    prompt.classList.remove('hidden');
+                    postBox.classList.add('hidden');
+                }
+            }
         }
 
         // --- 4. SCHEDULE SYSTEM ---
@@ -2681,6 +2898,229 @@
                 resultBox.classList.remove('birthday-result-active');
             }, 5000);
         }
+
+    </script>
+
+    <!-- --- FIREBASE MODULE & SOCIETY LOGIC --- -->
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getDatabase, ref, push, onValue, query, limitToLast } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js";
+
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyC6FmgBpeObCsLgBxBjXmjOaoVBIm2Im2Q",
+            authDomain: "agronitysociety.firebaseapp.com",
+            projectId: "agronitysociety",
+            storageBucket: "agronitysociety.firebasestorage.app",
+            messagingSenderId: "425560492792",
+            appId: "1:425560492792:web:0f1b29f03fcde77a7b890d"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        // ==========================================
+        // 1. TWEET / TIMELINE POST LOGIC
+        // ==========================================
+        window.postTweet = function() {
+            if(!currentUser) {
+                alert("Silakan login di halaman Mahasiswa terlebih dahulu!");
+                switchTab('mahasiswa');
+                return;
+            }
+
+            const input = document.getElementById('society-input');
+            const text = input.value.trim();
+            
+            if(!text) {
+                alert("Pesan tidak boleh kosong!");
+                return;
+            }
+
+            // Disable input while posting
+            input.disabled = true;
+
+            const postRef = ref(db, 'posts');
+            push(postRef, {
+                authorName: currentUser.name,
+                text: text,
+                timestamp: Date.now()
+            }).then(() => {
+                input.value = '';
+                input.disabled = false;
+            }).catch((err) => {
+                console.error("Gagal mengirim post: ", err);
+                alert("Terjadi kesalahan sistem saat mengirim pesan.");
+                input.disabled = false;
+            });
+        };
+
+        // Realtime Listener for Timeline (Ambil 50 post terakhir agar tidak berat)
+        const postsQuery = query(ref(db, 'posts'), limitToLast(50));
+        onValue(postsQuery, (snapshot) => {
+            const timelineContainer = document.getElementById('society-timeline');
+            if(!timelineContainer) return;
+            
+            timelineContainer.innerHTML = ''; // Bersihkan container
+            
+            const data = snapshot.val();
+            if(!data) {
+                timelineContainer.innerHTML = `
+                    <div class="text-center text-gray-500 py-10 glass-panel rounded-2xl">
+                        <i class="fa-solid fa-wind text-4xl mb-3 text-gray-600"></i>
+                        <p>Belum ada kicauan. Jadilah yang pertama menyapa angkatan!</p>
+                    </div>`;
+                return;
+            }
+
+            // Konversi object ke array dan urutkan dari yang terbaru
+            const posts = Object.values(data).sort((a,b) => b.timestamp - a.timestamp);
+            
+            posts.forEach(post => {
+                // Generate Avatar konsisten berdasarkan nama menggunakan Dicebear API
+                const avatarUrl = `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(post.authorName)}&backgroundColor=0a0a0a`;
+                
+                // Format Waktu Relatif sederhana (contoh: "10:30")
+                const timeString = new Date(post.timestamp).toLocaleString('id-ID', {day: 'numeric', month: 'short', hour:'2-digit', minute:'2-digit'});
+
+                // Ambil inisial/nama depan untuk display jika nama terlalu panjang
+                const shortName = post.authorName.split(' ').slice(0,2).join(' ');
+
+                const html = `
+                    <div class="glass-panel p-4 md:p-5 rounded-3xl hover:bg-white/5 transition-colors border border-white/5">
+                        <div class="flex gap-4">
+                            <img src="${avatarUrl}" class="w-12 h-12 rounded-full border border-gray-600 bg-white shrink-0 object-cover">
+                            <div class="flex-1 min-w-0">
+                                <div class="flex justify-between items-center mb-1">
+                                    <h4 class="font-bold text-white text-sm truncate">${shortName} <i class="fa-solid fa-circle-check text-blue-400 text-[10px] ml-1" title="Verified Mahasiswa"></i></h4>
+                                    <span class="text-[10px] text-gray-500 whitespace-nowrap ml-2">${timeString}</span>
+                                </div>
+                                <p class="text-gray-300 text-sm whitespace-pre-wrap leading-relaxed break-words">${post.text}</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                timelineContainer.innerHTML += html;
+            });
+        });
+
+        // ==========================================
+        // 2. IG STORIES LOGIC
+        // ==========================================
+        window.openCreateStoryModal = function() {
+            if(!currentUser) {
+                alert("Kamu harus Login Mahasiswa dulu untuk membuat Story!");
+                switchTab('mahasiswa');
+                return;
+            }
+            document.getElementById('create-story-modal').classList.remove('hidden');
+        };
+
+        window.closeCreateStoryModal = function() {
+            document.getElementById('create-story-modal').classList.add('hidden');
+            document.getElementById('story-input').value = '';
+        };
+
+        window.submitStory = function() {
+            const input = document.getElementById('story-input');
+            const text = input.value.trim();
+            if(!text) return;
+
+            push(ref(db, 'stories'), {
+                authorName: currentUser.name,
+                text: text,
+                timestamp: Date.now()
+            }).then(() => {
+                closeCreateStoryModal();
+            }).catch(err => console.error(err));
+        };
+
+        // Realtime Listener for Stories
+        const storiesRef = ref(db, 'stories');
+        onValue(storiesRef, (snapshot) => {
+            const container = document.getElementById('stories-dynamic-list');
+            if(!container) return;
+            
+            container.innerHTML = '';
+            const data = snapshot.val();
+            if(!data) {
+                container.innerHTML = '<span class="text-[10px] text-gray-600 italic px-2">Belum ada story terbaru.</span>';
+                return;
+            }
+
+            // Aturan Story: Hilang setelah 24 Jam
+            const ONE_DAY = 24 * 60 * 60 * 1000;
+            const now = Date.now();
+            
+            // Filter story valid dan urutkan (terbaru ke lama)
+            const validStories = Object.values(data)
+                .filter(s => (now - s.timestamp) < ONE_DAY)
+                .sort((a,b) => b.timestamp - a.timestamp);
+
+            // Kelompokkan Story berdasarkan Author (Agar 1 user = 1 ring seperti IG)
+            const groupedStories = {};
+            validStories.forEach(s => {
+                if(!groupedStories[s.authorName]) groupedStories[s.authorName] = [];
+                groupedStories[s.authorName].push(s);
+            });
+
+            // Simpan ke window agar modal viewer bisa mengambil teksnya
+            window.currentStoriesData = groupedStories;
+
+            Object.keys(groupedStories).forEach(author => {
+                const avatarUrl = `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(author)}&backgroundColor=0a0a0a`;
+                const firstName = author.split(' ')[0];
+
+                const html = `
+                    <div onclick="window.viewStory('${author}')" class="flex flex-col items-center gap-1.5 cursor-pointer shrink-0 group">
+                        <div class="story-ring p-[2px] rounded-full group-hover:scale-105 transition-transform shadow-lg">
+                            <img src="${avatarUrl}" class="w-[56px] h-[56px] rounded-full border-2 border-tipDark bg-white object-cover">
+                        </div>
+                        <span class="text-[9px] text-gray-300 font-medium truncate w-14 text-center">${firstName}</span>
+                    </div>
+                `;
+                container.innerHTML += html;
+            });
+        });
+
+        // Logika Menampilkan Story Fullscreen
+        window.viewStory = function(author) {
+            const stories = window.currentStoriesData[author];
+            if(!stories || stories.length === 0) return;
+
+            // Ambil story paling baru dari user tersebut
+            const latestStory = stories[0]; 
+            const avatarUrl = `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(author)}&backgroundColor=0a0a0a`;
+
+            document.getElementById('story-view-author').innerText = author;
+            document.getElementById('story-view-avatar').src = avatarUrl;
+            document.getElementById('story-view-time').innerText = new Date(latestStory.timestamp).toLocaleString('id-ID', {hour:'2-digit', minute:'2-digit'});
+            document.getElementById('story-view-text').innerText = latestStory.text;
+
+            const modal = document.getElementById('view-story-modal');
+            const progressFill = document.getElementById('story-progress-fill');
+            
+            modal.classList.remove('hidden');
+            
+            // Jalankan animasi progress bar CSS (5 detik)
+            progressFill.style.animation = 'none';
+            progressFill.offsetHeight; // trigger reflow
+            progressFill.style.animation = 'fillStory 5s linear forwards';
+
+            // Auto Close Timer (5 detik)
+            clearTimeout(window.storyTimeout);
+            window.storyTimeout = setTimeout(() => {
+                window.closeViewStoryModal();
+            }, 5000);
+        };
+
+        window.closeViewStoryModal = function() {
+            document.getElementById('view-story-modal').classList.add('hidden');
+            clearTimeout(window.storyTimeout);
+            document.getElementById('story-progress-fill').style.animation = 'none';
+        };
 
     </script>
 </body>
