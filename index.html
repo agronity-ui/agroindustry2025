@@ -86,211 +86,48 @@
             height: 100vh;
         }
 
-        /* --- LOADER STYLES START --- */
+        /* --- PREMIUM LOADER STYLES (NEW) --- */
         .intro-loader-wrapper {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 9999; /* Top priority */
-            pointer-events: all;
-            font-family: 'Poppins', sans-serif;
-            transition: opacity 0.8s ease-out, visibility 0.8s;
+            inset: 0;
+            z-index: 9999;
+            background-color: #0a0a0a;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.5s ease-out, visibility 0.5s;
         }
 
-        /* To hide loader after animation */
         .intro-loader-wrapper.loader-finished {
             opacity: 0;
             visibility: hidden;
             pointer-events: none;
         }
 
-        /* SEQUENCE 1: PRE-LOADER (BLACK BG WITH GIF) */
-        .loader-screen {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: var(--brand-black);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 10;
-            transform-origin: top;
+        .intro-loader-wrapper.zoom-exit {
+            animation: loader-zoom-exit 0.6s cubic-bezier(0.76, 0, 0.24, 1) forwards;
         }
 
-        /* NEW: Pre-loader GIF Style - Diperbesar */
-        .loader-gif {
-            max-width: 400px; /* Ditingkatkan dari 250px */
-            width: 90%;       /* Ditingkatkan dari 80% */
+        .premium-loader-logo {
+            width: 80vw;
+            max-width: 450px;
             height: auto;
-            object-fit: contain;
+            /* Green Glow Effect */
+            filter: drop-shadow(0 0 40px rgba(16, 185, 129, 0.8));
+            animation: logo-enter 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
         }
 
-        /* SEQUENCE 2: TRANSITION OVERLAY */
-        .wipe-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: var(--brand-black);
-            z-index: 20;
-            transform: translateY(100%); /* Start hidden below */
+        @keyframes logo-enter {
+            0% { opacity: 0; transform: scale(0.4); }
+            100% { opacity: 1; transform: scale(1); }
         }
 
-        /* SEQUENCE 3: LOGO REVEAL (FINAL STATE) */
-        .final-screen {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 30;
-            opacity: 0; /* Starts hidden */
-            pointer-events: none;
+        @keyframes loader-zoom-exit {
+            0% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(10); opacity: 0; }
         }
 
-        /* Logo Composition */
-        .logo-wrapper {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            position: relative;
-        }
-
-        .tagline {
-            font-size: 0.75rem;
-            color: var(--brand-white);
-            letter-spacing: 3px;
-            font-weight: 300;
-            margin-bottom: -5px;
-            margin-left: 4px;
-            opacity: 0;
-            transform: translateY(10px);
-        }
-
-        /* --- NEW INTRO LOGO STYLES --- */
-        .intro-logo-img {
-            width: 60px; /* Ukuran default mobile lebih proporsional */
-            height: 60px;
-            object-fit: contain;
-            opacity: 0;
-            transform: scale(0);
-            filter: drop-shadow(0 0 20px rgba(234, 179, 8, 0.6));
-            z-index: 35;
-        }
-        
-        @media (min-width: 768px) {
-            .intro-logo-img {
-                width: 100px;
-                height: 100px;
-            }
-        }
-
-        @keyframes logo-bounce-in {
-            0% { opacity: 0; transform: scale(0) rotate(-45deg); }
-            60% { opacity: 1; transform: scale(1.2) rotate(10deg); }
-            100% { opacity: 1; transform: scale(1) rotate(0deg); }
-        }
-        /* ----------------------------- */
-
-        .main-logo {
-            display: flex;
-            align-items: center;
-            font-size: clamp(2.5rem, 8vw, 5rem);
-            font-weight: 700;
-            color: var(--brand-white);
-            line-height: 1;
-            position: relative;
-            opacity: 0;
-            transform: translateY(20px);
-        }
-
-        .shimmer-text {
-            background: linear-gradient(110deg, var(--brand-white) 40%, var(--brand-yellow) 50%, var(--brand-white) 60%);
-            background-size: 200% auto;
-            color: transparent;
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-            display: inline-block;
-        }
-
-        .gear-icon {
-            width: 0.8em; 
-            height: 0.8em;
-            fill: var(--brand-yellow);
-            animation: slow-spin 5s linear infinite;
-            margin: 0 2px;
-            filter: drop-shadow(0 0 5px rgba(255, 184, 0, 0.4));
-        }
-
-        .letter-y {
-            position: relative;
-            display: inline-block;
-        }
-
-        .pixel-grid {
-            position: absolute;
-            top: 0.1em;
-            right: -0.3em;
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 2px;
-            width: 12px;
-        }
-        
-        .pixel-dot {
-            width: 3px;
-            height: 3px;
-            background-color: var(--brand-yellow);
-            border-radius: 0.5px;
-            opacity: 0;
-        }
-
-        .suffix { margin-left: 2px; }
-
-        /* Loader Animations */
-        @keyframes capsule-pingpong {
-            0% { width: 20px; transform: translateX(-40px); }
-            50% { width: 80px; }
-            100% { width: 20px; transform: translateX(40px); }
-        }
-        @keyframes fade-pulse {
-            0%, 100% { opacity: 0.6; }
-            50% { opacity: 1; }
-        }
-        @keyframes slow-spin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-        @keyframes shine {
-            0% { background-position: -200% center; }
-            100% { background-position: 200% center; }
-        }
-        @keyframes wipe-up {
-            0% { transform: translateY(100%); }
-            100% { transform: translateY(0%); }
-        }
-        @keyframes fade-out {
-            to { opacity: 0; visibility: hidden; }
-        }
-        @keyframes slide-up-fade {
-            to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes pixel-pop {
-            0% { transform: scale(0); opacity: 0; }
-            70% { transform: scale(1.5); opacity: 1; }
-            100% { transform: scale(1); opacity: 1; }
-        }
+        /* --- LOADER STYLES END --- */
 
         /* --- NEW DAY HIGHLIGHT --- */
         @keyframes shimmer-bg {
@@ -338,38 +175,6 @@
         .progress-spark-fire {
             animation: fire-flicker 0.4s infinite alternate;
         }
-
-        /* Animation Trigger Classes */
-        body.start-wipe .wipe-overlay { animation: wipe-up 1s var(--anim-curve) forwards; }
-        body.start-wipe .loader-screen { animation: fade-out 0.5s ease 0.8s forwards; }
-        
-        body.reveal-logo .final-screen { opacity: 1; }
-        
-        /* Updated Sequence: Tagline -> Image -> Main Text */
-        body.reveal-logo .tagline { animation: slide-up-fade 0.8s ease-out 0.2s forwards; }
-        body.reveal-logo .intro-logo-img { animation: logo-bounce-in 1s cubic-bezier(0.68, -0.55, 0.265, 1.55) 0.5s forwards; }
-        body.reveal-logo .main-logo { animation: slide-up-fade 0.8s ease-out 0.9s forwards; } /* Delayed for image */
-        
-        body.reveal-logo .shimmer-text { animation: shine 3s linear infinite; }
-        body.reveal-logo .pixel-dot { animation: pixel-pop 0.3s ease-out forwards; }
-        body.reveal-logo .pixel-dot:nth-child(1) { animation-delay: 1.5s; }
-        body.reveal-logo .pixel-dot:nth-child(2) { animation-delay: 1.6s; }
-        body.reveal-logo .pixel-dot:nth-child(3) { animation-delay: 1.7s; }
-        body.reveal-logo .pixel-dot:nth-child(4) { animation-delay: 1.6s; }
-        body.reveal-logo .pixel-dot:nth-child(5) { animation-delay: 1.7s; }
-        body.reveal-logo .pixel-dot:nth-child(6) { animation-delay: 1.8s; }
-
-        @media (max-width: 600px) {
-            .loader-text { font-size: 0.65rem; }
-            .capsule-loader { width: 40px; }
-            @keyframes capsule-pingpong {
-                0% { width: 15px; transform: translateX(-30px); }
-                50% { width: 60px; }
-                100% { width: 15px; transform: translateX(30px); }
-            }
-        }
-        /* --- LOADER STYLES END --- */
-
 
         /* --- EXISTING WEBSITE STYLES --- */
         /* Scrollbar */
@@ -676,58 +481,11 @@
         </div>
     </div>
 
+    <!-- 🌟 NEW MINIMALIST PREMIUM LOADER 🌟 -->
     <div class="intro-loader-wrapper" id="intro-loader">
-        <div class="loader-screen">
-            <img src="https://image2url.com/r2/default/gifs/1773505858649-e2f1bb98-6c1a-438d-9551-90f4108f9639.gif" class="loader-gif" alt="Loading Agronity">
-        </div>
-
-        <div class="wipe-overlay"></div>
-
-        <div class="final-screen">
-            <div class="logo-wrapper">
-                <div class="tagline">Team Media Creative</div>
-                
-                <!-- CONTAINER BARU: Flex agar Logo & Tulisan Samping-sampingan -->
-                <div class="flex items-center gap-2 md:gap-4 mt-4">
-                    
-                    <!-- NEW INTRO IMAGE LOGO (Moved Here) -->
-                    <img src="https://image2url.com/r2/default/images/1771202156309-5a871b50-95dc-4ef2-930b-ed8f94f23541.png" 
-                         class="intro-logo-img" 
-                         alt="Agronity Logo Intro">
-                    
-                    <div class="main-logo">
-                        <span class="shimmer-text">agr</span>
-                        
-                        <svg class="gear-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M95.6,41.9l-11-1.6c-0.7-2.5-1.7-4.8-2.9-7l7.2-8.5c1-1.2,0.9-3-0.2-4.1l-6.1-6.1c-1.1-1.1-2.9-1.2-4.1-0.2
-                            l-8.5,7.2c-2.2-1.2-4.5-2.2-7-2.9l-1.6-11c-0.2-1.6-1.5-2.7-3.1-2.7h-8.6c-1.6,0-2.9,1.2-3.1,2.7l-1.6,11c-2.5,0.7-4.8,1.7-7,2.9
-                            l-8.5-7.2c-1.2-1-3-0.9-4.1,0.2l-6.1,6.1c-1.1,1.1-1.2,2.9-0.2,4.1l7.2,8.5c-1.2,2.2-2.2,4.5-2.9,7l-11,1.6
-                            c-1.6,0.2-2.7,1.5-2.7,3.1v8.6c0,1.6,1.2,2.9,2.7,3.1l11,1.6c0.7,2.5,1.7,4.8,2.9,7l-7.2,8.5c-1,1.2-0.9,3,0.2,4.1l6.1,6.1
-                            c1.1,1.1,2.9,1.2,4.1,0.2l8.5-7.2c2.2,1.2,4.5,2.2,7,2.9l1.6,11c0.2,1.6,1.5,2.7,3.1,2.7h8.6c1.6,0,2.9-1.2,3.1-2.7l1.6-11
-                            c2.5-0.7,4.8-1.7,7-2.9l8.5,7.2c1.2,1,3,0.9,4.1-0.2l6.1-6.1c1.1-1.1,1.2-2.9,0.2-4.1l-7.2-8.5c1.2-2.2,2.2-4.5,2.9-7l11-1.6
-                            c1.6-0.2,2.7-1.5,2.7-3.1v-8.6C98.3,43.4,97.1,42.1,95.6,41.9z M50,65c-8.3,0-15-6.7-15-15s6.7-15,15-15s15,6.7,15,15S58.3,65,50,65z"/>
-                        </svg>
-
-                        <span class="shimmer-text">nit</span>
-
-                        <div class="letter-y shimmer-text">
-                            y
-                            <div class="pixel-grid">
-                                <div class="pixel-dot"></div>
-                                <div class="pixel-dot"></div>
-                                <div class="pixel-dot"></div>
-                                <div class="pixel-dot"></div>
-                                <div class="pixel-dot"></div>
-                                <div class="pixel-dot"></div>
-                            </div>
-                        </div>
-
-                        <span class="suffix shimmer-text">25</span>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <img src="https://image2url.com/r2/default/images/1771202156309-5a871b50-95dc-4ef2-930b-ed8f94f23541.png" alt="Agronity Logo" class="premium-loader-logo">
     </div>
+
     <div id="particles-container" class="fixed inset-0 pointer-events-none z-50"></div>
 
     <nav class="fixed top-0 w-full z-40 glass-panel border-b-0 border-b-tipYellow/20">
@@ -852,94 +610,100 @@
 
         <section id="beranda" class="tab-content active">
             
-            <!-- WIDGET JADWAL / PENGINGAT MATKUL (Dipindah Paling Atas) -->
-            <div class="mb-6 bg-[linear-gradient(135deg,#064e3b_0%,#022c22_50%,#064e3b_100%)] bg-[length:200%_200%] animate-[shimmer-bg_3s_ease_infinite] rounded-[28px] p-5 md:p-6 relative overflow-hidden text-white shadow-[0_0_40px_rgba(16,185,129,0.3)] border border-[#10b981]/50">
-                <div class="relative z-10">
-                    <!-- Top Header: Location, Date & Icon -->
-                    <div class="flex justify-between items-start mb-4">
-                        <div class="flex flex-col gap-1.5">
-                            <div class="flex items-center gap-1.5 bg-[#10b981] w-fit px-3 py-1.5 rounded-full border border-[#34d399] shadow-[0_0_15px_rgba(16,185,129,0.6)] animate-pulse">
-                                <i class="fa-solid fa-graduation-cap text-black text-[10px]"></i>
-                                <span class="text-xs font-black text-black tracking-widest">LIVE CLASS</span>
-                            </div>
-                            <div id="widget-date" class="text-xs font-extrabold text-[#34d399] pl-1 drop-shadow-sm">
-                                Memuat tanggal...
-                            </div>
-                        </div>
-                        <div class="w-12 h-12 rounded-[18px] bg-gradient-to-br from-[#10b981] to-[#064e3b] shadow-inner border border-[#34d399] flex items-center justify-center shrink-0">
-                            <i class="fa-solid fa-calendar-check text-white text-2xl"></i>
-                        </div>
-                    </div>
-
-                    <!-- Content Area -->
-                    <div class="flex flex-col gap-1 mb-3">
-                        <h4 id="widget-status" class="text-[#34d399] font-bold tracking-widest text-[10px] uppercase">MENCARI JADWAL KULIAH...</h4>
-                        <h2 id="widget-course" class="text-3xl md:text-4xl font-black text-white leading-tight drop-shadow-md">Memuat Data</h2>
-                        <p id="widget-ongoing-text" class="text-[#a7f3d0] text-[11px] font-bold italic border-l-2 border-[#10b981] pl-2 mt-1 leading-snug">...</p>
-                    </div>
-
-                    <!-- Bottom Area: Countdown & Location/Time Pill -->
-                    <div class="flex justify-between items-end gap-2">
-                        <div class="flex flex-col gap-2">
-                            <div id="widget-countdown" class="text-5xl md:text-6xl font-black text-white tracking-tighter drop-shadow-md leading-none mt-1" style="font-family: 'Poppins', sans-serif;">
-                                --:--:-- <span class="text-base text-[#34d399] tracking-normal font-bold">lagi</span>
-                            </div>
-                            
-                            <div class="mt-2">
-                                <div id="widget-time-label" class="text-white font-bold text-[11px] bg-black/40 w-fit px-4 py-2 rounded-xl border border-[#10b981]/50 backdrop-blur-sm shadow-inner">
-                                    --:--
+            <!-- WIDGET WRAPPER UNTUK MENCEGAH ANIMATION CLASH -->
+            <div id="home-widget-wrapper" class="opacity-0 translate-y-10 transition-all duration-700 ease-out">
+                <!-- WIDGET JADWAL / PENGINGAT MATKUL -->
+                <div id="main-home-widget" class="mb-6 bg-[linear-gradient(135deg,#064e3b_0%,#022c22_50%,#064e3b_100%)] bg-[length:200%_200%] animate-[shimmer-bg_3s_ease_infinite] rounded-[28px] p-5 md:p-6 relative overflow-hidden text-white shadow-[0_0_40px_rgba(16,185,129,0.3)] border border-[#10b981]/50">
+                    <div class="relative z-10">
+                        <!-- Top Header: Location, Date & Icon -->
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="flex flex-col gap-1.5">
+                                <div class="flex items-center gap-1.5 bg-[#10b981] w-fit px-3 py-1.5 rounded-full border border-[#34d399] shadow-[0_0_15px_rgba(16,185,129,0.6)] animate-pulse">
+                                    <i class="fa-solid fa-graduation-cap text-black text-[10px]"></i>
+                                    <span class="text-xs font-black text-black tracking-widest">LIVE CLASS</span>
+                                </div>
+                                <div id="widget-date" class="text-xs font-extrabold text-[#34d399] pl-1 drop-shadow-sm">
+                                    Memuat tanggal...
                                 </div>
                             </div>
+                            <div class="w-12 h-12 rounded-[18px] bg-gradient-to-br from-[#10b981] to-[#064e3b] shadow-inner border border-[#34d399] flex items-center justify-center shrink-0">
+                                <i class="fa-solid fa-calendar-check text-white text-2xl"></i>
+                            </div>
                         </div>
 
-                        <!-- NEW: PWA Install Widget Button -->
-                        <button id="widget-pwa-install" class="hidden mb-1 bg-black/90 backdrop-blur-md text-tipYellow border border-tipYellow/40 px-2.5 py-2 rounded-xl flex items-center gap-2 shadow-[0_5px_15px_rgba(0,0,0,0.3)] hover:scale-105 transition-transform text-left max-w-[125px] shrink-0 cursor-pointer animate-pop-in z-20">
-                            <i class="fa-solid fa-download text-lg animate-bounce"></i>
-                            <span class="text-[8px] font-bold leading-tight uppercase tracking-wider">Tambahkan app ini ke home screen anda</span>
-                        </button>
-                    </div>
+                        <!-- Content Area -->
+                        <div class="flex flex-col gap-1 mb-3">
+                            <h4 id="widget-status" class="text-[#34d399] font-bold tracking-widest text-[10px] uppercase">MENCARI JADWAL KULIAH...</h4>
+                            <h2 id="widget-course" class="text-3xl md:text-4xl font-black text-white leading-tight drop-shadow-md">Memuat Data</h2>
+                            <p id="widget-ongoing-text" class="text-[#a7f3d0] text-[11px] font-bold italic border-l-2 border-[#10b981] pl-2 mt-1 leading-snug">...</p>
+                        </div>
 
-                    <!-- Progress Bar dengan Spark Animasi -->
-                    <div class="w-full h-1.5 bg-black/40 rounded-full mt-4 relative shadow-inner overflow-hidden border border-[#064e3b]">
-                        <div id="widget-progress-bar" class="absolute top-0 left-0 h-full bg-gradient-to-r from-[#10b981] to-[#34d399] w-0 transition-all duration-1000 ease-linear rounded-full shadow-[0_0_10px_rgba(16,185,129,0.8)]">
-                            <!-- Bulatan dan Percikan Api di ujung kanan -->
-                            <div class="absolute top-1/2 -right-2 transform -translate-y-1/2 flex items-center justify-center">
-                                <!-- Ping Effect -->
-                                <div class="absolute w-4 h-4 bg-[#10b981] rounded-full animate-ping opacity-60"></div>
-                                <!-- Percikan Api Glow -->
-                                <div class="absolute w-6 h-6 bg-[#34d399] blur-[4px] opacity-70 mix-blend-screen rounded-full progress-spark-fire"></div>
-                                <!-- Inti Bulatan Putih -->
-                                <div class="w-2.5 h-2.5 bg-white rounded-full z-10 shadow-[0_0_8px_#ffffff]"></div>
+                        <!-- Bottom Area: Countdown & Location/Time Pill -->
+                        <div class="flex justify-between items-end gap-2">
+                            <div class="flex flex-col gap-2">
+                                <div id="widget-countdown" class="text-5xl md:text-6xl font-black text-white tracking-tighter drop-shadow-md leading-none mt-1" style="font-family: 'Poppins', sans-serif;">
+                                    --:--:-- <span class="text-base text-[#34d399] tracking-normal font-bold">lagi</span>
+                                </div>
+                                
+                                <div class="mt-2">
+                                    <div id="widget-time-label" class="text-white font-bold text-[11px] bg-black/40 w-fit px-4 py-2 rounded-xl border border-[#10b981]/50 backdrop-blur-sm shadow-inner">
+                                        --:--
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- NEW: PWA Install Widget Button -->
+                            <button id="widget-pwa-install" class="hidden mb-1 bg-black/90 backdrop-blur-md text-tipYellow border border-tipYellow/40 px-2.5 py-2 rounded-xl flex items-center gap-2 shadow-[0_5px_15px_rgba(0,0,0,0.3)] hover:scale-105 transition-transform text-left max-w-[125px] shrink-0 cursor-pointer animate-pop-in z-20">
+                                <i class="fa-solid fa-download text-lg animate-bounce"></i>
+                                <span class="text-[8px] font-bold leading-tight uppercase tracking-wider">Tambahkan app ini ke home screen anda</span>
+                            </button>
+                        </div>
+
+                        <!-- Progress Bar dengan Spark Animasi -->
+                        <div class="w-full h-1.5 bg-black/40 rounded-full mt-4 relative shadow-inner overflow-hidden border border-[#064e3b]">
+                            <div id="widget-progress-bar" class="absolute top-0 left-0 h-full bg-gradient-to-r from-[#10b981] to-[#34d399] w-0 transition-all duration-1000 ease-linear rounded-full shadow-[0_0_10px_rgba(16,185,129,0.8)]">
+                                <!-- Bulatan dan Percikan Api di ujung kanan -->
+                                <div class="absolute top-1/2 -right-2 transform -translate-y-1/2 flex items-center justify-center">
+                                    <!-- Ping Effect -->
+                                    <div class="absolute w-4 h-4 bg-[#10b981] rounded-full animate-ping opacity-60"></div>
+                                    <!-- Percikan Api Glow -->
+                                    <div class="absolute w-6 h-6 bg-[#34d399] blur-[4px] opacity-70 mix-blend-screen rounded-full progress-spark-fire"></div>
+                                    <!-- Inti Bulatan Putih -->
+                                    <div class="w-2.5 h-2.5 bg-white rounded-full z-10 shadow-[0_0_8px_#ffffff]"></div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Content Beranda (Hero Banner) -->
-            <div class="relative rounded-3xl overflow-hidden glass-panel h-[80vh] flex items-center justify-center text-center p-6 border-tipYellow/50 shadow-[0_0_50px_rgba(234,179,8,0.1)]">
-                <div class="absolute inset-0 z-0">
-                    <img src="https://image2url.com/r2/default/images/1770952078547-727f18b1-0d3e-4829-8283-b21986d79eb7.jpeg" class="w-full h-full object-cover opacity-30" alt="Agriculture Tech">
-                    <div class="absolute inset-0 bg-gradient-to-t from-tipBlack via-tipBlack/80 to-transparent"></div>
-                </div>
-
-                <div class="relative z-10 max-w-4xl mx-auto space-y-6">
-                    <div class="inline-block px-4 py-1 rounded-full border border-tipYellow/50 bg-tipYellow/10 text-tipYellow text-sm font-semibold tracking-wide mb-4 animate-pulse">
-                        DIKELOLA OLEH TMC AGRONITY25
+            <!-- HERO BANPER WRAPPER -->
+            <div id="home-hero-wrapper" class="opacity-0 translate-y-10 transition-all duration-700 ease-out delay-100">
+                <!-- Content Beranda (Hero Banner) -->
+                <div id="main-hero-banner" class="relative rounded-3xl overflow-hidden glass-panel h-[80vh] flex items-center justify-center text-center p-6 border-tipYellow/50 shadow-[0_0_50px_rgba(234,179,8,0.1)]">
+                    <div class="absolute inset-0 z-0">
+                        <img src="https://image2url.com/r2/default/images/1770952078547-727f18b1-0d3e-4829-8283-b21986d79eb7.jpeg" class="w-full h-full object-cover opacity-30" alt="Agriculture Tech">
+                        <div class="absolute inset-0 bg-gradient-to-t from-tipBlack via-tipBlack/80 to-transparent"></div>
                     </div>
-                    <h1 class="text-5xl md:text-7xl font-extrabold text-white tracking-tight">
-                        PORTAL <span class="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-yellow-600 text-glow">RESMI</span><br> AGRONITY25
-                    </h1>
-                    <p class="text-lg md:text-xl text-gray-300 max-w-2xl mx-auto">
-                        Program Studi Teknologi Industri Pertanian Universitas Lambung Mangkurat. KHUSUS ANGKATAN 2025.
-                    </p>
-                    <div class="flex flex-col sm:flex-row gap-4 justify-center mt-8">
-                        <button onclick="window.open('https://simari.ulm.ac.id/login/', '_blank')" class="px-8 py-3 rounded-xl bg-blue-600 text-white font-bold text-lg hover:bg-blue-700 hover:shadow-[0_0_20px_rgba(37,99,235,0.6)] transition-all transform hover:-translate-y-1 flex items-center gap-2 justify-center">
-                            <i class="fa-solid fa-graduation-cap"></i> Buka SIMARI
-                        </button>
-                        <a href="http://pmb.ulm.ac.id" target="_blank" class="px-8 py-3 rounded-xl glass-panel text-white font-bold text-lg hover:bg-white/10 hover:border-tipYellow transition-all transform hover:-translate-y-1 flex items-center justify-center gap-2">
-                            Daftar Sekarang <i class="fa-solid fa-arrow-right"></i>
-                        </a>
+
+                    <div class="relative z-10 max-w-4xl mx-auto space-y-6">
+                        <div class="inline-block px-4 py-1 rounded-full border border-tipYellow/50 bg-tipYellow/10 text-tipYellow text-sm font-semibold tracking-wide mb-4 animate-pulse">
+                            DIKELOLA OLEH TMC AGRONITY25
+                        </div>
+                        <h1 class="text-5xl md:text-7xl font-extrabold text-white tracking-tight">
+                            PORTAL <span class="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-yellow-600 text-glow">RESMI</span><br> AGRONITY25
+                        </h1>
+                        <p class="text-lg md:text-xl text-gray-300 max-w-2xl mx-auto">
+                            Program Studi Teknologi Industri Pertanian Universitas Lambung Mangkurat. KHUSUS ANGKATAN 2025.
+                        </p>
+                        <div class="flex flex-col sm:flex-row gap-4 justify-center mt-8">
+                            <button onclick="window.open('https://simari.ulm.ac.id/login/', '_blank')" class="px-8 py-3 rounded-xl bg-blue-600 text-white font-bold text-lg hover:bg-blue-700 hover:shadow-[0_0_20px_rgba(37,99,235,0.6)] transition-all transform hover:-translate-y-1 flex items-center gap-2 justify-center">
+                                <i class="fa-solid fa-graduation-cap"></i> Buka SIMARI
+                            </button>
+                            <a href="http://pmb.ulm.ac.id" target="_blank" class="px-8 py-3 rounded-xl glass-panel text-white font-bold text-lg hover:bg-white/10 hover:border-tipYellow transition-all transform hover:-translate-y-1 flex items-center justify-center gap-2">
+                                Daftar Sekarang <i class="fa-solid fa-arrow-right"></i>
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1655,47 +1419,47 @@
             }
         }
 
-        // --- LOADER LOGIC ---
+        // --- NEW LOADER LOGIC (3 SECONDS) ---
         document.addEventListener("DOMContentLoaded", () => {
-            // Sequence Timing Configuration
-            const TIMING = {
-                startTransition: 2500, // 2.5s - Start wiping screen black
-                showLogo: 3200,        // 3.2s - Reveal the logo elements
-                exitLoader: 5800       // 5.8s - Fade out loader & enable scroll
-            };
-
             const body = document.body;
             const loaderWrapper = document.getElementById('intro-loader');
 
             // --- AUDIO LOGIC ---
             const audio = document.getElementById('intro-bgm');
-            // Mencoba memutar audio saat halaman dimuat
-            // Catatan: Sebagian besar browser memblokir autoplay jika belum ada interaksi pengguna
             if(audio) {
                 audio.volume = 0.5; // Set volume 50%
                 const playPromise = audio.play();
-
                 if (playPromise !== undefined) {
                     playPromise.catch(error => {
-                        console.log("Autoplay Audio diblokir oleh browser (Wajar, kebijakan keamanan browser).");
-                        // Opsional: Anda bisa menambahkan tombol "Unmute" di sini jika perlu
+                        console.log("Autoplay Audio diblokir oleh browser.");
                     });
                 }
             }
 
-            // Step 1: Trigger Transition (Yellow -> Black Wipe)
+            // Step 1: Trigger Exit Animation (Zoom-In) at 2.5s
             setTimeout(() => {
-                body.classList.add('start-wipe');
-            }, TIMING.startTransition);
+                if(loaderWrapper) loaderWrapper.classList.add('zoom-exit');
+                
+                // Beri efek masuk (fade in & slide up) pada elemen beranda menggunakan wrapper
+                const widgetWrap = document.getElementById('home-widget-wrapper');
+                const heroWrap = document.getElementById('home-hero-wrapper');
+                
+                if(widgetWrap) {
+                    widgetWrap.classList.remove('opacity-0', 'translate-y-10');
+                    widgetWrap.classList.add('opacity-100', 'translate-y-0');
+                }
+                if(heroWrap) {
+                    heroWrap.classList.remove('opacity-0', 'translate-y-10');
+                    heroWrap.classList.add('opacity-100', 'translate-y-0');
+                }
+            }, 2500);
 
-            // Step 2: Reveal Logo Elements
+            // Step 2: Remove loader completely at 3.0s
             setTimeout(() => {
-                body.classList.add('reveal-logo');
-            }, TIMING.showLogo);
-
-            // Step 3: Finish Loader, Fade Out Audio & Reveal Site
-            setTimeout(() => {
-                loaderWrapper.classList.add('loader-finished');
+                if(loaderWrapper) {
+                    loaderWrapper.classList.add('loader-finished');
+                    setTimeout(() => { loaderWrapper.style.display = 'none'; }, 500);
+                }
                 body.classList.remove('loading-active'); // Enable scrolling
                 
                 // Fade out audio effect
@@ -1707,14 +1471,9 @@
                             clearInterval(fadeAudio);
                             audio.pause();
                         }
-                    }, 200); // Turunkan volume setiap 200ms
+                    }, 200); 
                 }
-
-                // Optional: Remove from DOM after transition
-                setTimeout(() => {
-                    loaderWrapper.style.display = 'none';
-                }, 1000);
-            }, TIMING.exitLoader);
+            }, 3000);
 
             // Inisialisasi Widget Hitung Mundur Jadwal
             setInterval(updateClassCountdown, 1000);
