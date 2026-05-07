@@ -481,6 +481,27 @@
         </div>
     </div>
 
+    <!-- NEW: NOTIFICATION ONBOARDING MODAL -->
+    <div id="notification-onboarding-modal" class="fixed inset-0 z-[10000] hidden flex items-center justify-center bg-black/80 backdrop-blur-md p-4 opacity-0 transition-opacity duration-300">
+        <div class="glass-panel border-2 border-[#10b981] p-6 rounded-3xl max-w-sm w-full text-center relative shadow-[0_0_30px_rgba(16,185,129,0.3)] transform scale-95 transition-transform duration-300" id="notif-modal-content">
+            <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-[#10b981]/20 mb-4 border border-[#10b981]/50">
+                <i class="fa-solid fa-bell text-4xl text-[#10b981] animate-bounce"></i>
+            </div>
+            <h3 class="text-xl font-bold text-white mb-2">Aktifkan Pengingat Kuliah?</h3>
+            <p class="text-gray-300 text-sm mb-6 leading-relaxed">
+                Dapatkan pesan semangat setiap pagi jam 08.00 WITA langsung di HP kamu.
+            </p>
+            <div class="flex flex-col gap-3">
+                <button onclick="acceptNotification()" class="bg-gradient-to-r from-[#10b981] to-[#34d399] text-black font-bold px-6 py-3 rounded-xl w-full hover:scale-105 transition-transform shadow-[0_0_15px_rgba(16,185,129,0.4)]">
+                    Aktifkan Sekarang
+                </button>
+                <button onclick="declineNotification()" class="bg-white/5 border border-white/10 text-gray-400 font-bold px-6 py-3 rounded-xl w-full hover:bg-white/20 hover:text-white transition-colors">
+                    Nanti Saja
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- 🌟 NEW MINIMALIST PREMIUM LOADER 🌟 -->
     <div class="intro-loader-wrapper" id="intro-loader">
         <img src="https://image2url.com/r2/default/images/1771202156309-5a871b50-95dc-4ef2-930b-ed8f94f23541.png" alt="Agronity Logo" class="premium-loader-logo">
@@ -1085,6 +1106,15 @@
                                 <p class="font-medium text-green-400">Aktif <i class="fa-solid fa-circle-check"></i></p>
                             </div>
                         </div>
+
+                        <!-- NEW: NOTIF STATUS DI PROFIL -->
+                        <div class="mt-4 bg-white/5 p-4 rounded-xl flex justify-between items-center cursor-pointer hover:bg-white/10 transition-colors border border-transparent hover:border-tipYellow/50" onclick="manualRequestNotification()">
+                            <div class="text-left">
+                                <p class="text-xs text-gray-500">Status Notifikasi</p>
+                                <p id="notif-status-text" class="font-medium text-white">Memuat...</p>
+                            </div>
+                            <i class="fa-solid fa-chevron-right text-gray-500 text-xs"></i>
+                        </div>
                         
                         <button onclick="handleLogout()" class="mt-6 w-full py-2 border border-red-500/50 text-red-400 rounded-lg hover:bg-red-500/10 transition-colors">
                             Logout
@@ -1358,7 +1388,6 @@
 
             if(installBtn) {
                 installBtn.addEventListener('click', async () => {
-                    requestNotificationPermission(); // Meminta izin notifikasi
                     if (deferredPrompt) {
                         // Jalankan prompt pop-up otomatis (Untuk Android / Chrome)
                         installBtn.classList.add('hidden');
@@ -1475,6 +1504,10 @@
                         }
                     }, 200); 
                 }
+                
+                // Cek status Onboarding Notifikasi untuk pengguna baru
+                checkNotificationOnboarding();
+
             }, 3000);
 
             // Inisialisasi Widget Hitung Mundur Jadwal
@@ -1867,9 +1900,6 @@
                 document.getElementById('doc-locked').classList.add('hidden');
                 document.getElementById('doc-content').classList.remove('hidden');
                 
-                // Minta izin Push Notification setelah sukses login
-                requestNotificationPermission();
-
                 // Kasih feedback visual berhasil
                 alert(`Selamat datang kembali, ${user.name}!`);
 
@@ -2365,17 +2395,109 @@
         // --- 8. NATIVE PUSH NOTIFICATION SYSTEM ---
         let lastNotifiedDate = null;
 
-        // Fungsi Meminta Izin Notifikasi
-        function requestNotificationPermission() {
+        // Cek dan Munculkan Modal Onboarding (Pengguna Baru)
+        function checkNotificationOnboarding() {
+            if (!("Notification" in window)) return; // Abaikan jika browser tidak support
+            
+            const isShown = localStorage.getItem('notif_onboarding_shown');
+            
+            // Jika belum di-handle oleh user, munculkan modal
+            if (Notification.permission === 'default' && !isShown) {
+                // Munculkan 2 detik setelah animasi masuk selesai
+                setTimeout(() => {
+                    const modal = document.getElementById('notification-onboarding-modal');
+                    modal.classList.remove('hidden');
+                    // Timeout kecil untuk trigger transition opacity
+                    setTimeout(() => {
+                        modal.classList.add('opacity-100');
+                        document.getElementById('notif-modal-content').classList.remove('scale-95');
+                    }, 10);
+                }, 2000);
+            }
+            
+            // Render ulang status di profil menu
+            updateNotifStatusUI();
+        }
+
+        // Tombol Nanti Saja diklik
+        function declineNotification() {
+            localStorage.setItem('notif_onboarding_shown', 'true');
+            closeNotifModal();
+        }
+
+        // Tombol Aktifkan Sekarang diklik
+        function acceptNotification() {
+            localStorage.setItem('notif_onboarding_shown', 'true');
+            
             if (!("Notification" in window)) {
-                console.log("Browser tidak mendukung Native Notification.");
+                return closeNotifModal();
+            }
+
+            Notification.requestPermission().then(permission => {
+                if (permission === 'granted') {
+                    // Berikan feedback langsung bahwa notifikasi berhasil nyala
+                    triggerNativeNotification("Terima kasih! Notifikasi Agronity25 sudah aktif. ✨");
+                }
+                updateNotifStatusUI();
+                closeNotifModal();
+            });
+        }
+
+        // Tutup Modal
+        function closeNotifModal() {
+            const modal = document.getElementById('notification-onboarding-modal');
+            modal.classList.remove('opacity-100');
+            document.getElementById('notif-modal-content').classList.add('scale-95');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        }
+
+        // Minta Izin Secara Manual (via Profil)
+        function manualRequestNotification() {
+            if (!("Notification" in window)) {
+                alert("Browser Anda tidak mendukung fitur Notifikasi.");
                 return;
             }
+
+            if (Notification.permission === 'default' || Notification.permission === 'denied') {
+                Notification.requestPermission().then(permission => {
+                    updateNotifStatusUI();
+                    if (permission === 'granted') {
+                        triggerNativeNotification("Notifikasi berhasil diaktifkan kembali! ✨");
+                    } else if (permission === 'denied') {
+                        alert("Anda telah memblokir notifikasi. Silakan izinkan secara manual melalui ikon gembok di URL bar/pengaturan browser.");
+                    }
+                });
+            } else {
+                alert("Notifikasi Pengingat Kuliah sudah aktif.");
+            }
+        }
+
+        // Update Text Status pada Profil
+        function updateNotifStatusUI() {
+            const statusText = document.getElementById('notif-status-text');
+            if (!statusText) return;
+
+            if (!("Notification" in window)) {
+                statusText.innerHTML = `<span class="text-gray-500">Tidak Didukung</span>`;
+                return;
+            }
+
+            if (Notification.permission === 'granted') {
+                statusText.innerHTML = `<span class="text-[#10b981]">Aktif <i class="fa-solid fa-bell ml-1"></i></span>`;
+            } else {
+                statusText.innerHTML = `<span class="text-red-500">Nonaktif <i class="fa-solid fa-bell-slash ml-1"></i></span>`;
+            }
+        }
+
+        // Panggilan original lama masih di-keep untuk fallback / keamanan trigger
+        function requestNotificationPermission() {
+            if (!("Notification" in window)) return;
             if (Notification.permission !== "denied" && Notification.permission !== "granted") {
                 Notification.requestPermission().then(permission => {
-                    if (permission === "granted") {
-                        console.log("Izin notifikasi diberikan oleh pengguna.");
-                    }
+                    updateNotifStatusUI();
+                    if (permission === "granted") console.log("Izin notifikasi diberikan.");
                 });
             }
         }
