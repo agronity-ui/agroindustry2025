@@ -497,7 +497,8 @@
                     <!-- Ganti link (src) di bawah ini dengan link gambar logo Anda -->
                     <img src="https://image2url.com/r2/default/images/1771202156309-5a871b50-95dc-4ef2-930b-ed8f94f23541.png" 
                          class="h-10 w-10 object-contain drop-shadow-[0_0_5px_rgba(234,179,8,0.8)]" 
-                         alt="Logo Agronity">
+                         alt="Logo Agronity"
+                         onclick="forceTestNotification(); event.stopPropagation();">
 
                     <div>
                         <h1 class="font-bold text-xl tracking-wider text-white">AGRONITY <span class="text-tipYellow text-glow">25</span></h1>
@@ -1357,6 +1358,7 @@
 
             if(installBtn) {
                 installBtn.addEventListener('click', async () => {
+                    requestNotificationPermission(); // Meminta izin notifikasi
                     if (deferredPrompt) {
                         // Jalankan prompt pop-up otomatis (Untuk Android / Chrome)
                         installBtn.classList.add('hidden');
@@ -1865,6 +1867,9 @@
                 document.getElementById('doc-locked').classList.add('hidden');
                 document.getElementById('doc-content').classList.remove('hidden');
                 
+                // Minta izin Push Notification setelah sukses login
+                requestNotificationPermission();
+
                 // Kasih feedback visual berhasil
                 alert(`Selamat datang kembali, ${user.name}!`);
 
@@ -2356,6 +2361,102 @@
                 resultBox.classList.remove('birthday-result-active');
             }, 5000);
         }
+
+        // --- 8. NATIVE PUSH NOTIFICATION SYSTEM ---
+        let lastNotifiedDate = null;
+
+        // Fungsi Meminta Izin Notifikasi
+        function requestNotificationPermission() {
+            if (!("Notification" in window)) {
+                console.log("Browser tidak mendukung Native Notification.");
+                return;
+            }
+            if (Notification.permission !== "denied" && Notification.permission !== "granted") {
+                Notification.requestPermission().then(permission => {
+                    if (permission === "granted") {
+                        console.log("Izin notifikasi diberikan oleh pengguna.");
+                    }
+                });
+            }
+        }
+
+        // Fungsi Menembakkan Notifikasi Sistem Asli
+        function triggerNativeNotification(message) {
+            if (!("Notification" in window)) return;
+
+            if (Notification.permission === "granted") {
+                const options = {
+                    body: message,
+                    icon: "https://image2url.com/r2/default/images/1771202156309-5a871b50-95dc-4ef2-930b-ed8f94f23541.png",
+                    badge: "https://image2url.com/r2/default/images/1771202156309-5a871b50-95dc-4ef2-930b-ed8f94f23541.png",
+                    vibrate: [200, 100, 200],
+                    requireInteraction: true // Notifikasi menetap sampai di klik pengguna
+                };
+
+                // Prioritaskan Service Worker agar notifikasi bekerja sempurna di Mobile (Android/PWA)
+                if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+                    navigator.serviceWorker.ready.then(function(registration) {
+                        registration.showNotification("Agronity25", options);
+                    }).catch(function(err) {
+                        // Fallback API standard
+                        new Notification("Agronity25", options);
+                    });
+                } else {
+                    // Fallback jika bukan dari PWA/Service worker belum nyangkut
+                    new Notification("Agronity25", options);
+                }
+            } else {
+                console.log("Gagal menembakkan notifikasi: Izin tidak diberikan. (" + Notification.permission + ")");
+            }
+        }
+
+        // Fungsi Penjadwal Waktu
+        function checkAndSendNotification() {
+            const now = new Date();
+            const dateStr = now.toLocaleDateString();
+            const hour = now.getHours();
+            const minute = now.getMinutes();
+            const day = now.getDay(); // 0:Minggu, 1:Senin, 2:Selasa, 3:Rabu, 4:Kamis, 5:Jumat, 6:Sabtu
+
+            // Cek kondisi Waktu: 08:00 dan proteksi anti-spam di hari yang sama
+            if (hour === 8 && minute === 0 && lastNotifiedDate !== dateStr) {
+                let message = "";
+                
+                if (day >= 1 && day <= 4) {
+                    // Senin - Kamis
+                    message = "Semangat Kuliahnya Anak Agronity! ✨";
+                } else {
+                    // Jumat - Minggu (5, 6, 0)
+                    message = "Selamat beristirahat anak Agronity, Tubuhmu perlu Rehat ☕";
+                }
+                
+                triggerNativeNotification(message);
+                lastNotifiedDate = dateStr; // Set flag sudah notif hari ini
+            }
+        }
+
+        // Fungsi Rahasia (Demo Mode) untuk diklik di logo
+        function forceTestNotification() {
+            requestNotificationPermission(); // Paksa minta izin jika belum
+            console.log("Demo Notifikasi dipicu!");
+
+            // Beri jeda 500ms agar alert/prompt perizinan browser sempat tertutup jika baru diklik
+            setTimeout(() => {
+                const day = new Date().getDay();
+                let message = "";
+                
+                if (day >= 1 && day <= 4) {
+                    message = "Semangat Kuliahnya Anak Agronity! ✨";
+                } else {
+                    message = "Selamat beristirahat anak Agronity, Tubuhmu perlu Rehat ☕";
+                }
+                
+                triggerNativeNotification("[DEMO] " + message);
+            }, 500);
+        }
+
+        // Jalankan Pengecekan setiap 60 Detik (Scheduler Engine)
+        setInterval(checkAndSendNotification, 60000);
 
     </script>
 </body>
