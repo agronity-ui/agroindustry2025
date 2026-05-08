@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+# Peta jalan untuk robot Google
+Sitemap: https://agronity-ui.github.io/agroindustry2025/sitemap.xml
