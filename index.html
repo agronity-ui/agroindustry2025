@@ -1382,12 +1382,26 @@
         .siri-bubble-screen.siri-bubble-active .siri-bubble-sparkle:nth-child(8) { animation: siriSparkFour 1.9s ease-out .38s forwards; }
 
         body.siri-bubble-active #app,
-        body.siri-bubble-active > nav.fixed,
         body.siri-bubble-active .floating-birth-btn {
             transform-origin: var(--birthday-bubble-x) var(--birthday-bubble-y) !important;
             animation: siriWholeScreenBubble 3.45s cubic-bezier(.18,.9,.22,1) forwards !important;
             filter: url(#siri-bubble-distortion) saturate(1.18) brightness(1.06) contrast(1.03) !important;
             will-change: transform, filter;
+        }
+
+        /* FIX MOBILE NAV: nav fixed tidak ikut scale/filter bubble agar tidak geser setelah animasi selesai */
+        body.siri-bubble-active > nav.fixed.top-0 {
+            transform: translateX(-50%) translateZ(0) !important;
+            filter: none !important;
+            animation: none !important;
+            will-change: auto !important;
+        }
+
+        body.siri-bubble-active > nav.md\:hidden.fixed.bottom-4 {
+            transform: none !important;
+            filter: none !important;
+            animation: none !important;
+            will-change: auto !important;
         }
 
         body.siri-bubble-active .birthday-result-modal {
@@ -1485,8 +1499,12 @@
             .siri-bubble-orb,
             .siri-bubble-sparkle,
             body.siri-bubble-active #app,
-            body.siri-bubble-active > nav.fixed,
             body.siri-bubble-active .floating-birth-btn {
+                animation: none !important;
+                filter: none !important;
+            }
+            body.siri-bubble-active > nav.fixed.top-0,
+            body.siri-bubble-active > nav.md\:hidden.fixed.bottom-4 {
                 animation: none !important;
                 filter: none !important;
             }
@@ -3699,6 +3717,11 @@
             window.__birthdayBubbleTimer = setTimeout(() => {
                 document.body.classList.remove('siri-bubble-active');
                 bubble?.classList.remove('siri-bubble-active');
+                document.querySelectorAll('body > nav.fixed.top-0, body > nav.md\:hidden.fixed.bottom-4').forEach(nav => {
+                    nav.style.filter = '';
+                    nav.style.animation = '';
+                    nav.style.willChange = '';
+                });
             }, 3600);
         }
 
