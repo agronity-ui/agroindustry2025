@@ -1866,7 +1866,127 @@
             .admin-post-mockup { border-radius: 19px; }
         }
 
-</style>
+
+
+        /* ============================================================
+           FIX DESKTOP TOP NAV: menu atas bisa digeser/di-scroll
+           Problem sebelumnya: container flex desktop tidak punya min-width:0,
+           sehingga tombol menu memanjang keluar bar dan area scroll tidak aktif.
+           ============================================================ */
+        @media (min-width: 768px) {
+            body > nav.fixed.top-0 > div {
+                width: 100% !important;
+                max-width: none !important;
+            }
+
+            body > nav.fixed.top-0 .h-20 {
+                display: flex !important;
+                align-items: center !important;
+                justify-content: flex-start !important;
+                gap: 18px !important;
+                min-width: 0 !important;
+            }
+
+            body > nav.fixed.top-0 .flex-shrink-0 {
+                flex: 0 0 auto !important;
+                max-width: min(340px, 34vw) !important;
+                min-width: 0 !important;
+            }
+
+            body > nav.fixed.top-0 .hidden.md\:block {
+                flex: 1 1 auto !important;
+                min-width: 0 !important;
+                max-width: 100% !important;
+                overflow: hidden !important;
+                position: relative !important;
+            }
+
+            body > nav.fixed.top-0 .hidden.md\:block::before,
+            body > nav.fixed.top-0 .hidden.md\:block::after {
+                content: "";
+                position: absolute;
+                top: 8px;
+                bottom: 8px;
+                width: 30px;
+                z-index: 4;
+                pointer-events: none;
+                opacity: 0;
+                transition: opacity .25s ease;
+            }
+
+            body > nav.fixed.top-0 .hidden.md\:block::before {
+                left: 0;
+                background: linear-gradient(90deg, rgba(9,11,14,.95), transparent);
+            }
+
+            body > nav.fixed.top-0 .hidden.md\:block::after {
+                right: 0;
+                background: linear-gradient(270deg, rgba(9,11,14,.95), transparent);
+            }
+
+            body > nav.fixed.top-0 .hidden.md\:block.nav-can-scroll::before,
+            body > nav.fixed.top-0 .hidden.md\:block.nav-can-scroll::after {
+                opacity: 1;
+            }
+
+            body > nav.fixed.top-0 .hidden.md\:block > .ml-10 {
+                margin-left: 0 !important;
+                width: 100% !important;
+                max-width: 100% !important;
+                min-width: 0 !important;
+                overflow-x: auto !important;
+                overflow-y: hidden !important;
+                display: flex !important;
+                align-items: center !important;
+                flex-wrap: nowrap !important;
+                gap: 8px !important;
+                padding: 8px 22px 8px 8px !important;
+                scroll-behavior: smooth !important;
+                scroll-padding-inline: 18px !important;
+                scrollbar-width: none !important;
+                -ms-overflow-style: none !important;
+                overscroll-behavior-inline: contain !important;
+                touch-action: pan-x !important;
+                cursor: grab !important;
+                user-select: none !important;
+                -webkit-user-select: none !important;
+                mask-image: none !important;
+                -webkit-mask-image: none !important;
+            }
+
+            body > nav.fixed.top-0 .hidden.md\:block > .ml-10::-webkit-scrollbar {
+                display: none !important;
+            }
+
+            body > nav.fixed.top-0 .hidden.md\:block > .ml-10.is-dragging {
+                cursor: grabbing !important;
+                scroll-behavior: auto !important;
+            }
+
+            body > nav.fixed.top-0 .hidden.md\:block > .ml-10 .nav-btn {
+                flex: 0 0 auto !important;
+                white-space: nowrap !important;
+            }
+        }
+
+        @media (min-width: 768px) and (max-width: 960px) {
+            body > nav.fixed.top-0 .flex-shrink-0 {
+                max-width: 250px !important;
+            }
+
+            body > nav.fixed.top-0 .font-bold.text-xl {
+                font-size: 17px !important;
+            }
+
+            body > nav.fixed.top-0 .text-\[10px\] {
+                max-width: 190px !important;
+                overflow: hidden !important;
+                text-overflow: ellipsis !important;
+                white-space: nowrap !important;
+            }
+        }
+
+    </style>
 </head>
 <body class="relative min-h-screen loading-active">
 
@@ -5037,5 +5157,116 @@
         setInterval(checkAndSendNotification, 60000);
 
     </script>
+
+    <script>
+        /* FIX FINAL: Desktop top navigation scroll tetap bisa digeser, tetapi tombol tetap bisa diklik.
+           Versi sebelumnya memakai pointer capture pada container, sehingga click desktop
+           bisa tertahan di area scroll dan fungsi switchTab tidak selalu terpanggil. */
+        (function () {
+            function initDesktopTopNavScrollClickSafe() {
+                const scroller = document.querySelector('body > nav.fixed.top-0 .hidden.md\\:block > .ml-10');
+                const wrapper = document.querySelector('body > nav.fixed.top-0 .hidden.md\\:block');
+                if (!scroller || !wrapper || scroller.dataset.desktopClickSafeReady === '1') return;
+
+                scroller.dataset.desktopClickSafeReady = '1';
+                scroller.setAttribute('aria-label', 'Navigasi menu atas yang bisa digeser dan diklik');
+
+                let isDown = false;
+                let startX = 0;
+                let startY = 0;
+                let startScrollLeft = 0;
+                let movedEnoughForDrag = false;
+                let suppressNextClick = false;
+
+                const getMaxScroll = () => Math.max(0, scroller.scrollWidth - scroller.clientWidth);
+
+                const updateScrollableState = () => {
+                    const canScroll = getMaxScroll() > 2;
+                    wrapper.classList.toggle('nav-can-scroll', canScroll);
+                };
+
+                scroller.addEventListener('wheel', function (event) {
+                    if (window.innerWidth < 768) return;
+                    if (getMaxScroll() <= 0) return;
+
+                    const delta = Math.abs(event.deltaY) >= Math.abs(event.deltaX) ? event.deltaY : event.deltaX;
+                    if (!delta) return;
+
+                    const before = scroller.scrollLeft;
+                    scroller.scrollLeft += delta;
+
+                    if (scroller.scrollLeft !== before) {
+                        event.preventDefault();
+                    }
+                }, { passive: false });
+
+                scroller.addEventListener('pointerdown', function (event) {
+                    if (window.innerWidth < 768) return;
+                    if (event.button !== undefined && event.button !== 0) return;
+
+                    isDown = true;
+                    movedEnoughForDrag = false;
+                    suppressNextClick = false;
+                    startX = event.clientX;
+                    startY = event.clientY;
+                    startScrollLeft = scroller.scrollLeft;
+                    scroller.classList.add('is-dragging');
+
+                    // Jangan memakai setPointerCapture di sini. Di beberapa browser desktop,
+                    // itu membuat click tombol jatuh ke container, bukan ke button.
+                }, { passive: true });
+
+                scroller.addEventListener('pointermove', function (event) {
+                    if (!isDown || window.innerWidth < 768) return;
+                    if (getMaxScroll() <= 0) return;
+
+                    const moveX = event.clientX - startX;
+                    const moveY = event.clientY - startY;
+
+                    // Threshold dibuat lebih besar agar klik biasa tidak dianggap drag.
+                    if (Math.abs(moveX) > 10 && Math.abs(moveX) > Math.abs(moveY) * 1.2) {
+                        movedEnoughForDrag = true;
+                        scroller.scrollLeft = startScrollLeft - moveX;
+                        event.preventDefault();
+                    }
+                }, { passive: false });
+
+                const stopDragging = () => {
+                    if (!isDown) return;
+                    isDown = false;
+                    scroller.classList.remove('is-dragging');
+
+                    if (movedEnoughForDrag) {
+                        suppressNextClick = true;
+                        window.setTimeout(() => { suppressNextClick = false; }, 120);
+                    }
+                };
+
+                scroller.addEventListener('pointerup', stopDragging, { passive: true });
+                scroller.addEventListener('pointercancel', stopDragging, { passive: true });
+                scroller.addEventListener('pointerleave', stopDragging, { passive: true });
+
+                // Hanya blok click setelah benar-benar drag. Klik normal tetap menjalankan onclick lama.
+                scroller.addEventListener('click', function (event) {
+                    if (!suppressNextClick) return;
+                    event.preventDefault();
+                    event.stopPropagation();
+                    suppressNextClick = false;
+                }, true);
+
+                window.addEventListener('resize', updateScrollableState, { passive: true });
+                updateScrollableState();
+            }
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initDesktopTopNavScrollClickSafe);
+            } else {
+                initDesktopTopNavScrollClickSafe();
+            }
+
+            window.addEventListener('load', initDesktopTopNavScrollClickSafe, { once: true });
+        })();
+    </script>
+
 </body>
 </html>
