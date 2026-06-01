@@ -1264,6 +1264,236 @@
             }
         }
 
+
+        /* ============================================================
+           PREMIUM SIRI BUBBLE WAVE EFFECT FOR WHO BIRTH TODAY
+           Efek layar menggelembung + gelombang neon saat tombol kue ditekan.
+           ============================================================ */
+        :root {
+            --birthday-bubble-x: 82vw;
+            --birthday-bubble-y: 76vh;
+        }
+
+        .siri-bubble-svg {
+            position: fixed;
+            width: 0;
+            height: 0;
+            pointer-events: none;
+            opacity: 0;
+        }
+
+        .siri-bubble-screen {
+            position: fixed;
+            inset: -14vh -14vw;
+            z-index: 9998;
+            pointer-events: none;
+            opacity: 0;
+            visibility: hidden;
+            overflow: hidden;
+            transform: translateZ(0);
+            mix-blend-mode: screen;
+            background:
+                radial-gradient(circle at var(--birthday-bubble-x) var(--birthday-bubble-y), rgba(255,255,255,0.42) 0 2%, rgba(182,255,29,0.34) 7%, rgba(40,242,125,0.18) 18%, transparent 42%),
+                radial-gradient(circle at calc(var(--birthday-bubble-x) - 24vw) calc(var(--birthday-bubble-y) - 26vh), rgba(255, 210, 51, 0.18), transparent 28%),
+                radial-gradient(circle at calc(var(--birthday-bubble-x) + 18vw) calc(var(--birthday-bubble-y) - 12vh), rgba(0, 229, 255, 0.13), transparent 30%);
+            backdrop-filter: blur(0px) saturate(110%);
+            -webkit-backdrop-filter: blur(0px) saturate(110%);
+        }
+
+        .siri-bubble-screen::before,
+        .siri-bubble-screen::after {
+            content: "";
+            position: absolute;
+            width: 36vmax;
+            height: 36vmax;
+            left: var(--birthday-bubble-x);
+            top: var(--birthday-bubble-y);
+            border-radius: 999px;
+            transform: translate(-50%, -50%) scale(0.04);
+            border: 1px solid rgba(255,255,255,0.45);
+            box-shadow:
+                inset 0 0 55px rgba(255,255,255,0.26),
+                inset 0 0 90px rgba(182,255,29,0.18),
+                0 0 70px rgba(182,255,29,0.26),
+                0 0 130px rgba(40,242,125,0.16);
+            filter: blur(0.2px);
+        }
+
+        .siri-bubble-screen::after {
+            width: 58vmax;
+            height: 58vmax;
+            border-color: rgba(182,255,29,0.26);
+            box-shadow:
+                inset 0 0 80px rgba(40,242,125,0.12),
+                0 0 90px rgba(255,210,51,0.16);
+        }
+
+        .siri-bubble-orb {
+            position: absolute;
+            left: var(--birthday-bubble-x);
+            top: var(--birthday-bubble-y);
+            width: 18vmax;
+            height: 18vmax;
+            border-radius: 45% 55% 58% 42% / 48% 42% 58% 52%;
+            transform: translate(-50%, -50%) scale(0.01) rotate(0deg);
+            background:
+                radial-gradient(circle at 32% 24%, rgba(255,255,255,0.72), transparent 12%),
+                radial-gradient(circle at 64% 74%, rgba(182,255,29,0.32), transparent 31%),
+                linear-gradient(135deg, rgba(255,255,255,0.18), rgba(182,255,29,0.15), rgba(40,242,125,0.10));
+            border: 1px solid rgba(255,255,255,0.26);
+            box-shadow:
+                inset 0 0 34px rgba(255,255,255,0.20),
+                inset 0 -28px 58px rgba(0,0,0,0.16),
+                0 0 50px rgba(182,255,29,0.28);
+            opacity: 0;
+            filter: blur(0.1px);
+        }
+
+        .siri-bubble-orb-2 { width: 12vmax; height: 12vmax; }
+        .siri-bubble-orb-3 { width: 8vmax; height: 8vmax; }
+        .siri-bubble-orb-4 { width: 6vmax; height: 6vmax; }
+
+        .siri-bubble-sparkle {
+            position: absolute;
+            left: var(--birthday-bubble-x);
+            top: var(--birthday-bubble-y);
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #fffbe6;
+            box-shadow: 0 0 16px rgba(255,255,255,.9), 0 0 28px rgba(182,255,29,.55);
+            transform: translate(-50%, -50%) scale(0);
+            opacity: 0;
+        }
+
+        .siri-bubble-screen.siri-bubble-active {
+            visibility: visible;
+            animation: siriBubbleOverlayLife 3.45s cubic-bezier(.2,.8,.2,1) forwards;
+        }
+        .siri-bubble-screen.siri-bubble-active::before { animation: siriBubbleRing 2.95s cubic-bezier(.16,1,.3,1) forwards; }
+        .siri-bubble-screen.siri-bubble-active::after { animation: siriBubbleRingOuter 3.25s cubic-bezier(.16,1,.3,1) forwards; }
+        .siri-bubble-screen.siri-bubble-active .siri-bubble-orb-1 { animation: siriBubbleOrbOne 3.35s cubic-bezier(.16,1,.3,1) forwards; }
+        .siri-bubble-screen.siri-bubble-active .siri-bubble-orb-2 { animation: siriBubbleOrbTwo 3.15s cubic-bezier(.16,1,.3,1) .08s forwards; }
+        .siri-bubble-screen.siri-bubble-active .siri-bubble-orb-3 { animation: siriBubbleOrbThree 3.05s cubic-bezier(.16,1,.3,1) .13s forwards; }
+        .siri-bubble-screen.siri-bubble-active .siri-bubble-orb-4 { animation: siriBubbleOrbFour 2.85s cubic-bezier(.16,1,.3,1) .18s forwards; }
+        .siri-bubble-screen.siri-bubble-active .siri-bubble-sparkle:nth-child(5) { animation: siriSparkOne 1.8s ease-out .18s forwards; }
+        .siri-bubble-screen.siri-bubble-active .siri-bubble-sparkle:nth-child(6) { animation: siriSparkTwo 1.9s ease-out .26s forwards; }
+        .siri-bubble-screen.siri-bubble-active .siri-bubble-sparkle:nth-child(7) { animation: siriSparkThree 2s ease-out .32s forwards; }
+        .siri-bubble-screen.siri-bubble-active .siri-bubble-sparkle:nth-child(8) { animation: siriSparkFour 1.9s ease-out .38s forwards; }
+
+        body.siri-bubble-active #app,
+        body.siri-bubble-active > nav.fixed,
+        body.siri-bubble-active .floating-birth-btn {
+            transform-origin: var(--birthday-bubble-x) var(--birthday-bubble-y) !important;
+            animation: siriWholeScreenBubble 3.45s cubic-bezier(.18,.9,.22,1) forwards !important;
+            filter: url(#siri-bubble-distortion) saturate(1.18) brightness(1.06) contrast(1.03) !important;
+            will-change: transform, filter;
+        }
+
+        body.siri-bubble-active .birthday-result-modal {
+            box-shadow:
+                0 0 0 1px rgba(255,255,255,0.16),
+                0 26px 90px rgba(0,0,0,0.72),
+                0 0 70px rgba(182,255,29,0.20) !important;
+        }
+
+        @keyframes siriWholeScreenBubble {
+            0% { transform: scale(1) translate3d(0,0,0); }
+            12% { transform: scale(1.018) translate3d(0,-2px,0); }
+            25% { transform: scale(1.046) translate3d(0,4px,0); }
+            42% { transform: scale(1.022) translate3d(0,-3px,0); }
+            58% { transform: scale(1.035) translate3d(0,2px,0); }
+            78% { transform: scale(1.012) translate3d(0,-1px,0); }
+            100% { transform: scale(1) translate3d(0,0,0); }
+        }
+
+        @keyframes siriBubbleOverlayLife {
+            0% { opacity: 0; backdrop-filter: blur(0px) saturate(110%); -webkit-backdrop-filter: blur(0px) saturate(110%); }
+            10% { opacity: 1; backdrop-filter: blur(1.5px) saturate(155%); -webkit-backdrop-filter: blur(1.5px) saturate(155%); }
+            44% { opacity: .95; backdrop-filter: blur(3px) saturate(185%); -webkit-backdrop-filter: blur(3px) saturate(185%); }
+            74% { opacity: .55; backdrop-filter: blur(1px) saturate(145%); -webkit-backdrop-filter: blur(1px) saturate(145%); }
+            100% { opacity: 0; backdrop-filter: blur(0px) saturate(110%); -webkit-backdrop-filter: blur(0px) saturate(110%); }
+        }
+
+        @keyframes siriBubbleRing {
+            0% { opacity: 0; transform: translate(-50%, -50%) scale(.04); border-radius: 50%; }
+            12% { opacity: .88; transform: translate(-50%, -50%) scale(.34); border-radius: 42% 58% 44% 56% / 55% 45% 58% 42%; }
+            48% { opacity: .56; transform: translate(-50%, -50%) scale(1.45); border-radius: 58% 42% 54% 46% / 42% 58% 44% 56%; }
+            100% { opacity: 0; transform: translate(-50%, -50%) scale(2.7); border-radius: 50%; }
+        }
+
+        @keyframes siriBubbleRingOuter {
+            0% { opacity: 0; transform: translate(-50%, -50%) scale(.02); }
+            18% { opacity: .62; transform: translate(-50%, -50%) scale(.28); }
+            58% { opacity: .36; transform: translate(-50%, -50%) scale(1.18); }
+            100% { opacity: 0; transform: translate(-50%, -50%) scale(2.05); }
+        }
+
+        @keyframes siriBubbleOrbOne {
+            0% { opacity: 0; transform: translate(-50%, -50%) scale(.01) rotate(0deg); }
+            14% { opacity: .82; transform: translate(-50%, -50%) scale(1.1) rotate(12deg); }
+            48% { opacity: .62; transform: translate(calc(-50% - 7vw), calc(-50% - 10vh)) scale(1.55) rotate(42deg); }
+            100% { opacity: 0; transform: translate(calc(-50% - 20vw), calc(-50% - 18vh)) scale(2.4) rotate(105deg); }
+        }
+
+        @keyframes siriBubbleOrbTwo {
+            0% { opacity: 0; transform: translate(-50%, -50%) scale(.01) rotate(0deg); }
+            18% { opacity: .72; transform: translate(calc(-50% + 7vw), calc(-50% - 5vh)) scale(1.05) rotate(-16deg); }
+            58% { opacity: .50; transform: translate(calc(-50% + 19vw), calc(-50% - 15vh)) scale(1.72) rotate(-54deg); }
+            100% { opacity: 0; transform: translate(calc(-50% + 34vw), calc(-50% - 23vh)) scale(2.15) rotate(-120deg); }
+        }
+
+        @keyframes siriBubbleOrbThree {
+            0% { opacity: 0; transform: translate(-50%, -50%) scale(.01) rotate(0deg); }
+            24% { opacity: .64; transform: translate(calc(-50% - 5vw), calc(-50% + 6vh)) scale(1.06) rotate(18deg); }
+            64% { opacity: .45; transform: translate(calc(-50% - 18vw), calc(-50% + 18vh)) scale(1.72) rotate(64deg); }
+            100% { opacity: 0; transform: translate(calc(-50% - 31vw), calc(-50% + 31vh)) scale(2.05) rotate(130deg); }
+        }
+
+        @keyframes siriBubbleOrbFour {
+            0% { opacity: 0; transform: translate(-50%, -50%) scale(.01) rotate(0deg); }
+            26% { opacity: .58; transform: translate(calc(-50% + 8vw), calc(-50% + 7vh)) scale(1) rotate(-20deg); }
+            64% { opacity: .36; transform: translate(calc(-50% + 22vw), calc(-50% + 17vh)) scale(1.55) rotate(-70deg); }
+            100% { opacity: 0; transform: translate(calc(-50% + 36vw), calc(-50% + 29vh)) scale(1.95) rotate(-144deg); }
+        }
+
+        @keyframes siriSparkOne {
+            0% { opacity: 0; transform: translate(-50%, -50%) scale(0); }
+            22% { opacity: 1; transform: translate(calc(-50% - 15vw), calc(-50% - 18vh)) scale(1); }
+            100% { opacity: 0; transform: translate(calc(-50% - 27vw), calc(-50% - 31vh)) scale(.1); }
+        }
+        @keyframes siriSparkTwo {
+            0% { opacity: 0; transform: translate(-50%, -50%) scale(0); }
+            24% { opacity: 1; transform: translate(calc(-50% + 18vw), calc(-50% - 14vh)) scale(1.1); }
+            100% { opacity: 0; transform: translate(calc(-50% + 32vw), calc(-50% - 26vh)) scale(.1); }
+        }
+        @keyframes siriSparkThree {
+            0% { opacity: 0; transform: translate(-50%, -50%) scale(0); }
+            24% { opacity: 1; transform: translate(calc(-50% - 16vw), calc(-50% + 16vh)) scale(.95); }
+            100% { opacity: 0; transform: translate(calc(-50% - 33vw), calc(-50% + 29vh)) scale(.1); }
+        }
+        @keyframes siriSparkFour {
+            0% { opacity: 0; transform: translate(-50%, -50%) scale(0); }
+            24% { opacity: 1; transform: translate(calc(-50% + 15vw), calc(-50% + 18vh)) scale(1); }
+            100% { opacity: 0; transform: translate(calc(-50% + 30vw), calc(-50% + 33vh)) scale(.1); }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .siri-bubble-screen,
+            .siri-bubble-screen::before,
+            .siri-bubble-screen::after,
+            .siri-bubble-orb,
+            .siri-bubble-sparkle,
+            body.siri-bubble-active #app,
+            body.siri-bubble-active > nav.fixed,
+            body.siri-bubble-active .floating-birth-btn {
+                animation: none !important;
+                filter: none !important;
+            }
+            .siri-bubble-screen.siri-bubble-active { opacity: .28; visibility: visible; }
+        }
+
+
 </style>
 </head>
 <body class="relative min-h-screen loading-active">
@@ -1276,12 +1506,35 @@
 
     <!-- WhoBirthToday Elements -->
     <div id="ai-glow" class="ai-glow-overlay"></div>
+
+    <!-- Premium Siri-like bubble wave layer for birthday check -->
+    <svg class="siri-bubble-svg" aria-hidden="true" focusable="false">
+        <filter id="siri-bubble-distortion" x="-20%" y="-20%" width="140%" height="140%">
+            <feTurbulence type="fractalNoise" baseFrequency="0.006 0.014" numOctaves="2" seed="25" result="birthdayNoise">
+                <animate attributeName="baseFrequency" dur="3.45s" values="0.006 0.014;0.026 0.052;0.014 0.028;0.006 0.014" repeatCount="1" />
+            </feTurbulence>
+            <feDisplacementMap in="SourceGraphic" in2="birthdayNoise" scale="0" xChannelSelector="R" yChannelSelector="G">
+                <animate attributeName="scale" dur="3.45s" values="0;30;16;6;0" repeatCount="1" />
+            </feDisplacementMap>
+        </filter>
+    </svg>
+    <div id="siri-bubble-screen" class="siri-bubble-screen" aria-hidden="true">
+        <span class="siri-bubble-orb siri-bubble-orb-1"></span>
+        <span class="siri-bubble-orb siri-bubble-orb-2"></span>
+        <span class="siri-bubble-orb siri-bubble-orb-3"></span>
+        <span class="siri-bubble-orb siri-bubble-orb-4"></span>
+        <span class="siri-bubble-sparkle"></span>
+        <span class="siri-bubble-sparkle"></span>
+        <span class="siri-bubble-sparkle"></span>
+        <span class="siri-bubble-sparkle"></span>
+    </div>
+
     
     <div id="birthday-result" class="birthday-result-modal">
         <div id="birthday-content"></div>
     </div>
 
-    <button onclick="triggerBirthdayCheck()" class="floating-birth-btn group">
+    <button onclick="triggerBirthdayCheck(event)" class="floating-birth-btn group">
         <i class="fa-solid fa-cake-candles text-white text-2xl"></i>
         <span class="birth-tooltip">WhoBirthToday?</span>
     </button>
@@ -3426,7 +3679,32 @@
         });
 
         // --- WHO BIRTH TODAY LOGIC ---
-        function triggerBirthdayCheck() {
+        function triggerSiriBirthdayBubble(event) {
+            const bubble = document.getElementById('siri-bubble-screen');
+            const fallbackX = Math.round(window.innerWidth * 0.84);
+            const fallbackY = Math.round(window.innerHeight * 0.76);
+            const x = event?.clientX ?? fallbackX;
+            const y = event?.clientY ?? fallbackY;
+            const root = document.documentElement;
+            root.style.setProperty('--birthday-bubble-x', `${x}px`);
+            root.style.setProperty('--birthday-bubble-y', `${y}px`);
+
+            document.body.classList.remove('siri-bubble-active');
+            bubble?.classList.remove('siri-bubble-active');
+            void document.body.offsetWidth;
+            document.body.classList.add('siri-bubble-active');
+            bubble?.classList.add('siri-bubble-active');
+
+            clearTimeout(window.__birthdayBubbleTimer);
+            window.__birthdayBubbleTimer = setTimeout(() => {
+                document.body.classList.remove('siri-bubble-active');
+                bubble?.classList.remove('siri-bubble-active');
+            }, 3600);
+        }
+
+        function triggerBirthdayCheck(event) {
+            triggerSiriBirthdayBubble(event);
+
             const glow = document.getElementById('ai-glow');
             glow.classList.remove('ai-glow-active');
             void glow.offsetWidth; 
