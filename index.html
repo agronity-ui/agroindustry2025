@@ -1512,6 +1512,360 @@
         }
 
 
+
+        /* ============================================================
+           ADMIN CONTENT STUDIO UPGRADE
+           Editor terasa seperti mengelola konten langsung: form + live mockup.
+           ============================================================ */
+        .admin-studio-hero {
+            position: relative;
+            overflow: hidden;
+            border-radius: 28px;
+            padding: 20px;
+            background:
+                radial-gradient(circle at 88% 8%, rgba(182,255,29,.22), transparent 32%),
+                radial-gradient(circle at 12% 82%, rgba(40,242,125,.12), transparent 30%),
+                linear-gradient(145deg, rgba(255,255,255,.095), rgba(255,255,255,.035)),
+                rgba(8, 10, 14, .90);
+            border: 1px solid rgba(255,255,255,.12);
+            box-shadow: 0 26px 80px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.10);
+            backdrop-filter: blur(26px) saturate(150%);
+            -webkit-backdrop-filter: blur(26px) saturate(150%);
+        }
+        .admin-studio-hero::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            background: linear-gradient(110deg, transparent 0%, rgba(255,255,255,.10) 38%, transparent 62%);
+            transform: translateX(-80%);
+            animation: premiumNavSheen 8.5s cubic-bezier(.2,.8,.2,1) infinite;
+        }
+        .admin-studio-hero > * { position: relative; z-index: 1; }
+        .admin-stat-card {
+            min-height: 92px;
+            border-radius: 22px;
+            padding: 14px;
+            background: linear-gradient(180deg, rgba(255,255,255,.09), rgba(255,255,255,.035));
+            border: 1px solid rgba(255,255,255,.11);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,.08), 0 15px 34px rgba(0,0,0,.25);
+        }
+        .admin-stat-card strong {
+            display: block;
+            font-size: 28px;
+            line-height: 1;
+            letter-spacing: -.05em;
+            color: #fff;
+        }
+        .admin-stat-card span {
+            display: block;
+            margin-top: 7px;
+            font-size: 10px;
+            font-weight: 900;
+            color: rgba(255,255,255,.54);
+            text-transform: uppercase;
+            letter-spacing: .08em;
+        }
+        .admin-editor-card {
+            position: relative;
+            overflow: hidden;
+            border-radius: 30px;
+            padding: 18px;
+            border: 1px solid rgba(255,255,255,.11);
+            background:
+                linear-gradient(180deg, rgba(255,255,255,.075), rgba(255,255,255,.027)),
+                rgba(11,14,18,.86);
+            box-shadow: 0 24px 72px rgba(0,0,0,.48), inset 0 1px 0 rgba(255,255,255,.08);
+            backdrop-filter: blur(24px) saturate(150%);
+            -webkit-backdrop-filter: blur(24px) saturate(150%);
+        }
+        .admin-editor-card::before {
+            content: "";
+            position: absolute;
+            inset: -1px;
+            pointer-events: none;
+            background: radial-gradient(circle at 85% 0%, rgba(182,255,29,.16), transparent 33%);
+            opacity: .9;
+        }
+        .admin-editor-card > * { position: relative; z-index: 1; }
+        .admin-editor-title {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        .admin-title-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 0;
+        }
+        .admin-title-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 17px;
+            display: grid;
+            place-items: center;
+            color: #061006;
+            background: linear-gradient(135deg, var(--neo-lime), var(--neo-green));
+            box-shadow: 0 14px 34px rgba(182,255,29,.22), inset 0 1px 0 rgba(255,255,255,.45);
+        }
+        .admin-title-left h3 { font-size: 19px; font-weight: 950; letter-spacing: -.04em; color: #fff; }
+        .admin-title-left p { font-size: 11px; margin-top: 2px; color: rgba(255,255,255,.50) !important; }
+        .admin-reset-btn {
+            flex: 0 0 auto;
+            padding: 8px 12px;
+            border-radius: 999px;
+            background: rgba(255,255,255,.07);
+            border: 1px solid rgba(255,255,255,.10);
+            color: rgba(255,255,255,.75);
+            font-size: 11px;
+            font-weight: 900;
+        }
+        .admin-reset-btn:hover { color: #061006; background: linear-gradient(135deg, var(--neo-lime), var(--neo-green)); }
+        .admin-form-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1.04fr) minmax(280px, .96fr);
+            gap: 18px;
+            align-items: start;
+        }
+        .admin-field {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+        }
+        .admin-field label,
+        .admin-field .admin-label {
+            color: rgba(255,255,255,.68);
+            font-size: 10px;
+            font-weight: 900;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+        }
+        .admin-editor-card .custom-input,
+        .admin-editor-card input,
+        .admin-editor-card textarea,
+        .admin-editor-card select {
+            border-radius: 16px !important;
+            min-height: 48px;
+        }
+        .admin-upload-drop {
+            min-height: 74px;
+            border-radius: 18px !important;
+            border: 1px dashed rgba(182,255,29,.35) !important;
+            background: linear-gradient(135deg, rgba(182,255,29,.08), rgba(255,255,255,.035)) !important;
+        }
+        .admin-save-btn {
+            width: 100%;
+            border-radius: 18px;
+            min-height: 52px;
+            font-weight: 950;
+            letter-spacing: -.02em;
+        }
+        .admin-preview-sticky {
+            position: sticky;
+            top: 104px;
+            display: grid;
+            gap: 12px;
+        }
+        .admin-preview-shell {
+            border-radius: 25px;
+            padding: 13px;
+            background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.03));
+            border: 1px solid rgba(255,255,255,.11);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,.08), 0 18px 44px rgba(0,0,0,.34);
+        }
+        .admin-preview-label {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 10px;
+            color: rgba(255,255,255,.58);
+            font-size: 10px;
+            font-weight: 950;
+            text-transform: uppercase;
+            letter-spacing: .08em;
+        }
+        .admin-live-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--neo-green); box-shadow: 0 0 13px var(--neo-green); }
+        .admin-post-mockup {
+            aspect-ratio: 4 / 5;
+            border-radius: 22px;
+            overflow: hidden;
+            position: relative;
+            background: #090b0e;
+            border: 1px solid rgba(255,255,255,.14);
+            box-shadow: 0 22px 46px rgba(0,0,0,.42);
+        }
+        .admin-post-mockup img,
+        .admin-news-mockup img {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: .92;
+        }
+        .admin-post-mockup::before {
+            content: "AGRONITY";
+            position: absolute;
+            left: -8px;
+            top: 20px;
+            z-index: 1;
+            font-size: clamp(42px, 6vw, 74px);
+            font-weight: 950;
+            letter-spacing: -.08em;
+            color: rgba(255,255,255,.055);
+            white-space: nowrap;
+        }
+        .admin-post-mockup::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(circle at 22% 8%, rgba(255,210,51,.35), transparent 22%),
+                radial-gradient(circle at 84% 20%, rgba(40,242,125,.18), transparent 24%),
+                linear-gradient(180deg, rgba(0,0,0,.06), rgba(0,0,0,.28) 38%, rgba(0,0,0,.92));
+            z-index: 2;
+        }
+        .admin-post-content {
+            position: absolute;
+            inset: 16px;
+            z-index: 4;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .admin-post-badge {
+            align-self: flex-start;
+            max-width: 100%;
+            padding: 7px 10px;
+            border-radius: 999px;
+            background: rgba(255,210,51,.95);
+            color: #070807;
+            font-size: 10px;
+            font-weight: 950;
+            box-shadow: 0 12px 26px rgba(255,210,51,.20);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .admin-post-bottom {
+            padding: 13px;
+            border-radius: 18px;
+            background: rgba(0,0,0,.46);
+            border: 1px solid rgba(255,255,255,.13);
+            backdrop-filter: blur(18px) saturate(140%);
+            -webkit-backdrop-filter: blur(18px) saturate(140%);
+        }
+        .admin-post-bottom small {
+            display: block;
+            color: var(--neo-lime) !important;
+            font-weight: 950;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: .05em;
+        }
+        .admin-post-bottom h4 {
+            margin-top: 6px;
+            color: #fff;
+            font-size: clamp(19px, 3vw, 30px);
+            line-height: .94;
+            letter-spacing: -.065em;
+            font-weight: 950;
+        }
+        .admin-post-bottom p {
+            margin-top: 9px;
+            color: rgba(255,255,255,.70) !important;
+            font-size: 11px;
+            line-height: 1.45;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .admin-news-mockup {
+            min-height: 310px;
+            border-radius: 22px;
+            overflow: hidden;
+            position: relative;
+            background: #090b0e;
+            border: 1px solid rgba(255,255,255,.14);
+            box-shadow: 0 22px 46px rgba(0,0,0,.42);
+        }
+        .admin-news-mockup::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(0,0,0,.05), rgba(0,0,0,.24) 36%, rgba(0,0,0,.92));
+            z-index: 1;
+        }
+        .admin-news-content {
+            position: absolute;
+            inset: auto 16px 16px 16px;
+            z-index: 2;
+        }
+        .admin-news-content .news-type {
+            display: inline-flex;
+            padding: 7px 10px;
+            border-radius: 999px;
+            background: linear-gradient(135deg, #ff3e55, #ff9f1c);
+            color: #fff;
+            font-size: 10px;
+            font-weight: 950;
+            margin-bottom: 10px;
+        }
+        .admin-news-content h4 {
+            color: #fff;
+            font-weight: 950;
+            font-size: 24px;
+            line-height: 1;
+            letter-spacing: -.055em;
+        }
+        .admin-news-content p { margin-top: 9px; color: rgba(255,255,255,.70) !important; font-size: 12px; line-height: 1.5; }
+        .admin-schedule-mockup {
+            border-radius: 22px;
+            padding: 16px;
+            min-height: 210px;
+            border: 1px solid rgba(255,255,255,.13);
+            background:
+                radial-gradient(circle at 82% 12%, rgba(40,242,125,.18), transparent 34%),
+                linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.03));
+            box-shadow: 0 22px 46px rgba(0,0,0,.36), inset 0 1px 0 rgba(255,255,255,.08);
+        }
+        .admin-schedule-mockup h4 { color:#fff; font-size:24px; line-height:1; letter-spacing:-.055em; font-weight:950; }
+        .admin-schedule-pill { display:inline-flex; margin-bottom:12px; padding:7px 10px; border-radius:999px; background:rgba(40,242,125,.13); color:var(--neo-lime); font-size:10px; font-weight:950; border:1px solid rgba(182,255,29,.22); }
+        .admin-mini-list-title { margin-top: 20px; color:#fff; font-weight:950; letter-spacing:-.035em; }
+        .admin-list-panel {
+            margin-top: 12px;
+            border-radius: 22px;
+            padding: 12px;
+            border: 1px solid rgba(255,255,255,.09);
+            background: rgba(0,0,0,.14);
+        }
+        #admin-jadwal-list > div,
+        #admin-berita-list > div,
+        #admin-apresiasi-list > div {
+            background: linear-gradient(180deg, rgba(255,255,255,.075), rgba(255,255,255,.032)) !important;
+            border: 1px solid rgba(255,255,255,.11) !important;
+            border-radius: 20px !important;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,.07), 0 12px 28px rgba(0,0,0,.22) !important;
+        }
+        @media (max-width: 1024px) {
+            .admin-form-grid { grid-template-columns: 1fr; }
+            .admin-preview-sticky { position: relative; top: auto; }
+        }
+        @media (max-width: 640px) {
+            .admin-studio-hero { border-radius: 24px; padding: 16px; }
+            .admin-editor-card { border-radius: 24px; padding: 14px; }
+            .admin-title-icon { width: 40px; height: 40px; border-radius: 15px; }
+            .admin-title-left h3 { font-size: 17px; }
+            .admin-editor-title { align-items: flex-start; }
+            .admin-reset-btn { padding: 7px 10px; }
+            .admin-post-mockup { border-radius: 19px; }
+        }
+
 </style>
 </head>
 <body class="relative min-h-screen loading-active">
@@ -2502,96 +2856,241 @@
                     </div>
                 </div>
 
-                <div id="admin-panel" class="hidden space-y-8">
-                    <div class="glass-panel p-5 rounded-2xl flex flex-col md:flex-row gap-4 md:items-center md:justify-between border-tipYellow/30">
-                        <div>
-                            <p class="text-xs text-gray-500 uppercase tracking-widest">Status Login</p>
-                            <h3 id="admin-user-email" class="text-white font-bold text-lg">Admin</h3>
-                            <p id="admin-db-status" class="text-xs text-gray-400 mt-1">Terhubung ke Supabase</p>
+                <div id="admin-panel" class="hidden space-y-7">
+                    <div class="admin-studio-hero">
+                        <div class="flex flex-col lg:flex-row gap-5 lg:items-center lg:justify-between">
+                            <div class="min-w-0">
+                                <p class="text-[10px] uppercase tracking-[0.26em] font-black text-tipYellow mb-2">Agronity Content Studio</p>
+                                <h3 class="text-2xl md:text-4xl font-black text-white tracking-[-0.06em] leading-none">Kelola website seperti editor postingan.</h3>
+                                <p class="text-sm text-gray-400 mt-3 max-w-2xl">Isi teks, pilih kategori, upload foto, lalu lihat mockup tampilan sebelum dipublish ke halaman publik.</p>
+                                <div class="mt-4 flex flex-wrap gap-2">
+                                    <span class="px-3 py-1.5 rounded-full bg-white/10 border border-white/10 text-[10px] font-black text-gray-300"><i class="fa-solid fa-circle-check text-green-400 mr-1"></i>Live Preview</span>
+                                    <span class="px-3 py-1.5 rounded-full bg-white/10 border border-white/10 text-[10px] font-black text-gray-300"><i class="fa-solid fa-cloud-arrow-up text-tipYellow mr-1"></i>Upload Foto</span>
+                                    <span class="px-3 py-1.5 rounded-full bg-white/10 border border-white/10 text-[10px] font-black text-gray-300"><i class="fa-solid fa-database text-cyan-300 mr-1"></i>Supabase Sync</span>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-3 gap-2 w-full lg:w-[360px]">
+                                <div class="admin-stat-card"><strong id="admin-stat-jadwal">0</strong><span>Jadwal</span></div>
+                                <div class="admin-stat-card"><strong id="admin-stat-berita">0</strong><span>Berita</span></div>
+                                <div class="admin-stat-card"><strong id="admin-stat-apresiasi">0</strong><span>Apresiasi</span></div>
+                            </div>
                         </div>
-                        <div class="flex gap-2 flex-wrap">
-                            <button onclick="adminRefreshAll()" class="px-4 py-2 rounded-xl bg-white/10 text-white font-bold hover:bg-white/20 transition-all"><i class="fa-solid fa-rotate mr-2"></i>Refresh</button>
-                            <button onclick="adminLogout()" class="px-4 py-2 rounded-xl bg-red-500/20 text-red-300 font-bold hover:bg-red-500/30 transition-all"><i class="fa-solid fa-right-from-bracket mr-2"></i>Logout</button>
+                        <div class="mt-5 flex flex-col md:flex-row gap-4 md:items-center md:justify-between border-t border-white/10 pt-4">
+                            <div>
+                                <p class="text-xs text-gray-500 uppercase tracking-widest">Status Login</p>
+                                <h3 id="admin-user-email" class="text-white font-bold text-lg">Admin</h3>
+                                <p id="admin-db-status" class="text-xs text-gray-400 mt-1">Terhubung ke Supabase</p>
+                            </div>
+                            <div class="flex gap-2 flex-wrap">
+                                <button onclick="adminRefreshAll()" class="px-4 py-2 rounded-xl bg-white/10 text-white font-bold hover:bg-white/20 transition-all"><i class="fa-solid fa-rotate mr-2"></i>Refresh</button>
+                                <button onclick="adminLogout()" class="px-4 py-2 rounded-xl bg-red-500/20 text-red-300 font-bold hover:bg-red-500/30 transition-all"><i class="fa-solid fa-right-from-bracket mr-2"></i>Logout</button>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                        <div class="glass-panel p-5 rounded-3xl border-green-500/30">
-                            <div class="flex items-center justify-between gap-3 mb-4">
-                                <h3 class="text-xl font-bold text-white"><i class="fa-regular fa-calendar-days text-green-400 mr-2"></i>Kelola Jadwal Perkuliahan</h3>
-                                <button onclick="resetAdminForm('jadwal')" class="text-xs px-3 py-1 rounded-full bg-white/10 text-gray-300 hover:bg-white/20">Reset</button>
+                    <div class="admin-editor-card border-tipYellow/30">
+                        <div class="admin-editor-title">
+                            <div class="admin-title-left">
+                                <div class="admin-title-icon"><i class="fa-solid fa-trophy"></i></div>
+                                <div>
+                                    <h3>Kelola Apresiasi</h3>
+                                    <p>Editor postingan 4:5, upload foto, dan preview langsung.</p>
+                                </div>
+                            </div>
+                            <button onclick="resetAdminForm('apresiasi')" class="admin-reset-btn">Reset</button>
+                        </div>
+
+                        <div class="admin-form-grid">
+                            <form id="admin-form-apresiasi" class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                <input type="hidden" id="admin-apresiasi-id">
+                                <div class="admin-field">
+                                    <label for="admin-apresiasi-name">Nama Mahasiswa / Tim</label>
+                                    <input id="admin-apresiasi-name" type="text" placeholder="Contoh: Ahmad Nafis Al Adieb" class="custom-input p-3 rounded-xl" required>
+                                </div>
+                                <div class="admin-field">
+                                    <label for="admin-apresiasi-slug">Slug unik</label>
+                                    <input id="admin-apresiasi-slug" type="text" placeholder="nafis-lidm-2026" class="custom-input p-3 rounded-xl" required>
+                                </div>
+                                <div class="admin-field">
+                                    <label for="admin-apresiasi-category">Kategori / Kompetisi</label>
+                                    <input id="admin-apresiasi-category" type="text" placeholder="LIDM / PPK Ormawa / PKM" class="custom-input p-3 rounded-xl" required>
+                                </div>
+                                <div class="admin-field">
+                                    <label for="admin-apresiasi-badge">Badge kartu</label>
+                                    <input id="admin-apresiasi-badge" type="text" placeholder="LIDM 2026" class="custom-input p-3 rounded-xl">
+                                </div>
+                                <div class="admin-field md:col-span-2">
+                                    <label>Foto postingan</label>
+                                    <div class="grid grid-cols-1 md:grid-cols-[1fr_auto] gap-3">
+                                        <input id="admin-apresiasi-image" type="url" placeholder="URL foto otomatis dari upload, atau tempel manual" class="custom-input p-3 rounded-xl">
+                                        <label class="admin-upload-drop custom-input p-3 rounded-xl cursor-pointer flex items-center justify-between gap-3 text-gray-400 hover:border-tipYellow">
+                                            <span><i class="fa-solid fa-image mr-2 text-tipYellow"></i>Upload Foto</span>
+                                            <input id="admin-apresiasi-file" type="file" accept="image/*" class="hidden">
+                                        </label>
+                                    </div>
+                                </div>
+                                <p id="admin-apresiasi-upload-status" class="hidden text-xs text-gray-400 -mt-1 md:col-span-2"></p>
+                                <div class="admin-field md:col-span-2">
+                                    <label for="admin-apresiasi-quote">Kalimat ucapan / caption</label>
+                                    <textarea id="admin-apresiasi-quote" placeholder="Contoh: Selamat atas lolosnya TIP25 dalam seleksi nasional. Terus berkarya dan mengharumkan nama Agronity." class="custom-input p-3 h-24 rounded-xl"></textarea>
+                                </div>
+                                <div class="admin-field md:col-span-2">
+                                    <label for="admin-apresiasi-achievements">Detail prestasi</label>
+                                    <textarea id="admin-apresiasi-achievements" placeholder="Satu baris satu item. Format: Judul prestasi | Label\nContoh: Lolos Seleksi Nasional LIDM 2026 | Nasional" class="custom-input p-3 h-32 rounded-xl"></textarea>
+                                </div>
+                                <div class="admin-field md:col-span-2">
+                                    <label for="admin-apresiasi-gradient">Warna aksen kartu publik</label>
+                                    <input id="admin-apresiasi-gradient" type="text" value="from-yellow-400 to-orange-500" placeholder="Gradient Tailwind" class="custom-input p-3 rounded-xl">
+                                </div>
+                                <button class="admin-save-btn bg-tipYellow text-black p-3 md:col-span-2 hover:bg-yellow-300 transition-all" type="submit"><i class="fa-solid fa-paper-plane mr-2"></i>Simpan Apresiasi</button>
+                            </form>
+
+                            <div class="admin-preview-sticky">
+                                <div class="admin-preview-shell">
+                                    <div class="admin-preview-label"><span>Mockup Postingan Apresiasi</span><span class="admin-live-dot"></span></div>
+                                    <div class="admin-post-mockup">
+                                        <img id="admin-apresiasi-preview-image" src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?q=80&w=900&auto=format&fit=crop" alt="Preview Apresiasi">
+                                        <div class="admin-post-content">
+                                            <span id="admin-apresiasi-preview-badge" class="admin-post-badge">LIDM 2026</span>
+                                            <div class="admin-post-bottom">
+                                                <small id="admin-apresiasi-preview-category">AGRONITY APRESIASI</small>
+                                                <h4 id="admin-apresiasi-preview-name">Nama Mahasiswa / Tim</h4>
+                                                <p id="admin-apresiasi-preview-quote">Kalimat apresiasi akan tampil di sini secara langsung saat admin mengetik.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <h4 class="admin-mini-list-title">Apresiasi tersimpan</h4>
+                        <div class="admin-list-panel">
+                            <div id="admin-apresiasi-list" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 xl:grid-cols-2 gap-7">
+                        <div class="admin-editor-card border-newsRed/30">
+                            <div class="admin-editor-title">
+                                <div class="admin-title-left">
+                                    <div class="admin-title-icon" style="background:linear-gradient(135deg,#ff3e55,#ff9f1c); color:#fff;"><i class="fa-solid fa-newspaper"></i></div>
+                                    <div>
+                                        <h3>Kelola AgroNEWS</h3>
+                                        <p>Tulis berita dengan preview hero/news card.</p>
+                                    </div>
+                                </div>
+                                <button onclick="resetAdminForm('berita')" class="admin-reset-btn">Reset</button>
+                            </div>
+                            <div class="grid grid-cols-1 gap-4">
+                                <form id="admin-form-berita" class="grid grid-cols-1 gap-3">
+                                    <input type="hidden" id="admin-berita-id">
+                                    <div class="admin-field">
+                                        <label for="admin-berita-judul">Judul berita</label>
+                                        <input id="admin-berita-judul" type="text" placeholder="Judul Berita" class="custom-input p-3 rounded-xl" required>
+                                    </div>
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                        <div class="admin-field">
+                                            <label for="admin-berita-tipe">Kategori</label>
+                                            <input id="admin-berita-tipe" type="text" placeholder="Event / Akademik" class="custom-input p-3 rounded-xl" required>
+                                        </div>
+                                        <div class="admin-field">
+                                            <label for="admin-berita-waktu">Tanggal / waktu</label>
+                                            <input id="admin-berita-waktu" type="text" placeholder="1 Juni 2026" class="custom-input p-3 rounded-xl">
+                                        </div>
+                                    </div>
+                                    <div class="admin-field">
+                                        <label>Poster berita</label>
+                                        <div class="grid grid-cols-1 md:grid-cols-[1fr_auto] gap-3">
+                                            <input id="admin-berita-poster" type="url" placeholder="URL gambar otomatis dari upload, atau tempel manual" class="custom-input p-3 rounded-xl">
+                                            <label class="admin-upload-drop custom-input p-3 rounded-xl cursor-pointer flex items-center justify-between gap-3 text-gray-400 hover:border-tipYellow">
+                                                <span><i class="fa-solid fa-upload mr-2 text-newsRed"></i>Upload Poster</span>
+                                                <input id="admin-berita-file" type="file" accept="image/*" class="hidden">
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <p id="admin-berita-upload-status" class="hidden text-xs text-gray-400 -mt-1"></p>
+                                    <div class="admin-field">
+                                        <label for="admin-berita-ringkasan">Ringkasan</label>
+                                        <textarea id="admin-berita-ringkasan" placeholder="Ringkasan berita" class="custom-input p-3 h-24 rounded-xl" required></textarea>
+                                    </div>
+                                    <div class="admin-field">
+                                        <label for="admin-berita-link">Link detail</label>
+                                        <input id="admin-berita-link" type="url" placeholder="Link berita/detail, boleh kosong" class="custom-input p-3 rounded-xl">
+                                    </div>
+                                    <button class="admin-save-btn bg-newsRed text-white p-3 hover:bg-red-700 transition-all" type="submit"><i class="fa-solid fa-bullhorn mr-2"></i>Publish Berita</button>
+                                </form>
+                                <div class="admin-preview-shell">
+                                    <div class="admin-preview-label"><span>Mockup Hero AgroNEWS</span><span class="admin-live-dot"></span></div>
+                                    <div class="admin-news-mockup">
+                                        <img id="admin-berita-preview-image" src="https://images.unsplash.com/photo-1574943320219-553eb213f72d?q=80&w=1000&auto=format&fit=crop" alt="Preview Berita">
+                                        <div class="admin-news-content">
+                                            <span id="admin-berita-preview-tipe" class="news-type">EVENT</span>
+                                            <h4 id="admin-berita-preview-judul">Judul berita akan tampil di sini</h4>
+                                            <p id="admin-berita-preview-ringkasan">Ringkasan singkat berita akan tampil sebagai preview sebelum dipublish.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <h4 class="admin-mini-list-title">Berita tersimpan</h4>
+                                <div class="admin-list-panel">
+                                    <div id="admin-berita-list" class="space-y-3 max-h-[420px] overflow-y-auto pr-1"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="admin-editor-card border-green-500/30">
+                            <div class="admin-editor-title">
+                                <div class="admin-title-left">
+                                    <div class="admin-title-icon" style="background:linear-gradient(135deg,#28f27d,#b6ff1d);"><i class="fa-regular fa-calendar-days"></i></div>
+                                    <div>
+                                        <h3>Kelola Jadwal</h3>
+                                        <p>Input jadwal kuliah dengan preview kartu jadwal.</p>
+                                    </div>
+                                </div>
+                                <button onclick="resetAdminForm('jadwal')" class="admin-reset-btn">Reset</button>
                             </div>
                             <form id="admin-form-jadwal" class="grid grid-cols-1 md:grid-cols-2 gap-3">
                                 <input type="hidden" id="admin-jadwal-id">
-                                <input id="admin-jadwal-semester" type="number" min="1" placeholder="Semester" class="custom-input p-3 rounded-xl" required>
-                                <select id="admin-jadwal-hari" class="custom-input p-3 rounded-xl" required>
-                                    <option value="">Pilih Hari</option>
-                                    <option>Senin</option><option>Selasa</option><option>Rabu</option><option>Kamis</option><option>Jumat</option><option>Sabtu</option><option>Minggu</option>
-                                </select>
-                                <input id="admin-jadwal-waktu" type="text" placeholder="08.00 - 09.40" class="custom-input p-3 rounded-xl" required>
-                                <input id="admin-jadwal-ruangan" type="text" placeholder="Ruangan" class="custom-input p-3 rounded-xl" required>
-                                <input id="admin-jadwal-matkul" type="text" placeholder="Nama Mata Kuliah" class="custom-input p-3 rounded-xl md:col-span-2" required>
-                                <button class="bg-green-500 text-black font-black p-3 rounded-xl md:col-span-2 hover:bg-green-400 transition-all" type="submit">Simpan Jadwal</button>
-                            </form>
-                            <div id="admin-jadwal-list" class="mt-5 space-y-3 max-h-[420px] overflow-y-auto pr-1"></div>
-                        </div>
-
-                        <div class="glass-panel p-5 rounded-3xl border-newsRed/30">
-                            <div class="flex items-center justify-between gap-3 mb-4">
-                                <h3 class="text-xl font-bold text-white"><i class="fa-solid fa-newspaper text-newsRed mr-2"></i>Kelola AgroNEWS</h3>
-                                <button onclick="resetAdminForm('berita')" class="text-xs px-3 py-1 rounded-full bg-white/10 text-gray-300 hover:bg-white/20">Reset</button>
-                            </div>
-                            <form id="admin-form-berita" class="grid grid-cols-1 gap-3">
-                                <input type="hidden" id="admin-berita-id">
-                                <input id="admin-berita-judul" type="text" placeholder="Judul Berita" class="custom-input p-3 rounded-xl" required>
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                                    <input id="admin-berita-tipe" type="text" placeholder="Kategori, contoh: Event" class="custom-input p-3 rounded-xl" required>
-                                    <input id="admin-berita-waktu" type="text" placeholder="Waktu, contoh: 1 Juni 2026" class="custom-input p-3 rounded-xl">
+                                <div class="admin-field">
+                                    <label for="admin-jadwal-semester">Semester</label>
+                                    <input id="admin-jadwal-semester" type="number" min="1" placeholder="Semester" class="custom-input p-3 rounded-xl" required>
                                 </div>
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                                    <input id="admin-berita-poster" type="url" placeholder="URL Gambar/Poster otomatis dari upload, atau tempel manual" class="custom-input p-3 rounded-xl">
-                                    <label class="custom-input p-3 rounded-xl cursor-pointer flex items-center justify-between gap-3 text-gray-400 hover:border-tipYellow">
-                                        <span><i class="fa-solid fa-upload mr-2 text-newsRed"></i>Upload Poster Berita</span>
-                                        <input id="admin-berita-file" type="file" accept="image/*" class="hidden">
-                                    </label>
+                                <div class="admin-field">
+                                    <label for="admin-jadwal-hari">Hari</label>
+                                    <select id="admin-jadwal-hari" class="custom-input p-3 rounded-xl" required>
+                                        <option value="">Pilih Hari</option>
+                                        <option>Senin</option><option>Selasa</option><option>Rabu</option><option>Kamis</option><option>Jumat</option><option>Sabtu</option><option>Minggu</option>
+                                    </select>
                                 </div>
-                                <p id="admin-berita-upload-status" class="hidden text-xs text-gray-400 -mt-1"></p>
-                                <input id="admin-berita-link" type="url" placeholder="Link berita/detail, boleh kosong" class="custom-input p-3 rounded-xl">
-                                <textarea id="admin-berita-ringkasan" placeholder="Ringkasan berita" class="custom-input p-3 h-24 rounded-xl" required></textarea>
-                                <button class="bg-newsRed text-white font-black p-3 rounded-xl hover:bg-red-700 transition-all" type="submit">Publish Berita</button>
+                                <div class="admin-field">
+                                    <label for="admin-jadwal-waktu">Waktu</label>
+                                    <input id="admin-jadwal-waktu" type="text" placeholder="08.00 - 09.40" class="custom-input p-3 rounded-xl" required>
+                                </div>
+                                <div class="admin-field">
+                                    <label for="admin-jadwal-ruangan">Ruangan</label>
+                                    <input id="admin-jadwal-ruangan" type="text" placeholder="Ruangan" class="custom-input p-3 rounded-xl" required>
+                                </div>
+                                <div class="admin-field md:col-span-2">
+                                    <label for="admin-jadwal-matkul">Nama mata kuliah</label>
+                                    <input id="admin-jadwal-matkul" type="text" placeholder="Nama Mata Kuliah" class="custom-input p-3 rounded-xl" required>
+                                </div>
+                                <button class="admin-save-btn bg-green-500 text-black p-3 md:col-span-2 hover:bg-green-400 transition-all" type="submit"><i class="fa-solid fa-floppy-disk mr-2"></i>Simpan Jadwal</button>
                             </form>
-                            <div id="admin-berita-list" class="mt-5 space-y-3 max-h-[420px] overflow-y-auto pr-1"></div>
-                        </div>
-                    </div>
-
-                    <div class="glass-panel p-5 rounded-3xl border-tipYellow/30">
-                        <div class="flex items-center justify-between gap-3 mb-4">
-                            <h3 class="text-xl font-bold text-white"><i class="fa-solid fa-trophy text-tipYellow mr-2"></i>Kelola Apresiasi</h3>
-                            <button onclick="resetAdminForm('apresiasi')" class="text-xs px-3 py-1 rounded-full bg-white/10 text-gray-300 hover:bg-white/20">Reset</button>
-                        </div>
-                        <form id="admin-form-apresiasi" class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                            <input type="hidden" id="admin-apresiasi-id">
-                            <input id="admin-apresiasi-slug" type="text" placeholder="Slug unik, contoh: nafis-lidm" class="custom-input p-3 rounded-xl" required>
-                            <input id="admin-apresiasi-name" type="text" placeholder="Nama Mahasiswa/Tim" class="custom-input p-3 rounded-xl" required>
-                            <input id="admin-apresiasi-category" type="text" placeholder="Kategori, contoh: LIDM" class="custom-input p-3 rounded-xl" required>
-                            <input id="admin-apresiasi-badge" type="text" placeholder="Badge kartu, contoh: LIDM 2026" class="custom-input p-3 rounded-xl">
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 md:col-span-2">
-                                <input id="admin-apresiasi-image" type="url" placeholder="URL Foto otomatis dari upload, atau tempel manual" class="custom-input p-3 rounded-xl">
-                                <label class="custom-input p-3 rounded-xl cursor-pointer flex items-center justify-between gap-3 text-gray-400 hover:border-tipYellow">
-                                    <span><i class="fa-solid fa-upload mr-2 text-tipYellow"></i>Upload Foto Apresiasi</span>
-                                    <input id="admin-apresiasi-file" type="file" accept="image/*" class="hidden">
-                                </label>
+                            <div class="admin-preview-shell mt-4">
+                                <div class="admin-preview-label"><span>Mockup Kartu Jadwal</span><span class="admin-live-dot"></span></div>
+                                <div class="admin-schedule-mockup">
+                                    <span id="admin-jadwal-preview-semester" class="admin-schedule-pill">Semester 1</span>
+                                    <h4 id="admin-jadwal-preview-matkul">Nama Mata Kuliah</h4>
+                                    <p id="admin-jadwal-preview-time" class="text-gray-400 text-sm mt-3">Pilih hari dan waktu</p>
+                                    <p id="admin-jadwal-preview-room" class="text-gray-500 text-xs mt-2"><i class="fa-solid fa-location-dot mr-1"></i>Ruangan</p>
+                                </div>
                             </div>
-                            <p id="admin-apresiasi-upload-status" class="hidden text-xs text-gray-400 -mt-1 md:col-span-2"></p>
-                            <input id="admin-apresiasi-gradient" type="text" value="from-yellow-400 to-orange-500" placeholder="Gradient Tailwind" class="custom-input p-3 rounded-xl md:col-span-2">
-                            <textarea id="admin-apresiasi-quote" placeholder="Quote/kalimat apresiasi" class="custom-input p-3 h-20 rounded-xl md:col-span-2"></textarea>
-                            <textarea id="admin-apresiasi-achievements" placeholder="Detail prestasi, satu baris satu item. Format: Judul prestasi | Label\nContoh: Lolos Seleksi Nasional LIDM 2026 | Nasional" class="custom-input p-3 h-32 rounded-xl md:col-span-2"></textarea>
-                            <button class="bg-tipYellow text-black font-black p-3 rounded-xl md:col-span-2 hover:bg-yellow-300 transition-all" type="submit">Simpan Apresiasi</button>
-                        </form>
-                        <div id="admin-apresiasi-list" class="mt-5 grid grid-cols-1 md:grid-cols-2 gap-3"></div>
+                            <h4 class="admin-mini-list-title">Jadwal tersimpan</h4>
+                            <div class="admin-list-panel">
+                                <div id="admin-jadwal-list" class="space-y-3 max-h-[420px] overflow-y-auto pr-1"></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
         </section>
 
 
@@ -3946,7 +4445,10 @@
             loginBox.classList.toggle('hidden', isLoggedIn);
             panel.classList.toggle('hidden', !isLoggedIn);
             if (emailEl) emailEl.textContent = email || 'Admin Agronity25';
-            if (isLoggedIn) adminRefreshAll();
+            if (isLoggedIn) {
+                initAdminStudioPreview();
+                adminRefreshAll();
+            }
         }
 
         async function initAdminPage() {
@@ -3977,7 +4479,10 @@
         }
 
         async function adminRefreshAll() {
+            initAdminStudioPreview();
             await Promise.allSettled([adminLoadJadwal(), adminLoadBerita(), adminLoadApresiasi(), syncPublicSchedules(false), loadPublicApresiasi()]);
+            updateAdminStats();
+            updateAllAdminPreviews();
             updateClassCountdown();
             if (document.getElementById('agronews')?.classList.contains('active')) getNews();
         }
@@ -3991,6 +4496,94 @@
                 </div>`;
         }
 
+
+        let adminStudioPreviewReady = false;
+        const adminLocalPreviewUrls = { berita: '', apresiasi: '' };
+        const ADMIN_PREVIEW_FALLBACKS = {
+            berita: 'https://images.unsplash.com/photo-1574943320219-553eb213f72d?q=80&w=1000&auto=format&fit=crop',
+            apresiasi: 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?q=80&w=900&auto=format&fit=crop'
+        };
+
+        function adminTextValue(id, fallback = '') {
+            return document.getElementById(id)?.value?.trim() || fallback;
+        }
+
+        function adminSetText(id, value) {
+            const el = document.getElementById(id);
+            if (el) el.textContent = value;
+        }
+
+        function adminSetImage(id, url) {
+            const el = document.getElementById(id);
+            if (el && url) el.src = url;
+        }
+
+        function updateAdminStats() {
+            adminSetText('admin-stat-jadwal', String(adminCache.jadwal?.length || 0));
+            adminSetText('admin-stat-berita', String(adminCache.berita?.length || 0));
+            adminSetText('admin-stat-apresiasi', String(adminCache.apresiasi?.length || 0));
+        }
+
+        function updateAdminJadwalPreview() {
+            const semester = adminTextValue('admin-jadwal-semester', '1');
+            const hari = adminTextValue('admin-jadwal-hari', 'Pilih hari');
+            const waktu = adminTextValue('admin-jadwal-waktu', 'Isi waktu kuliah');
+            adminSetText('admin-jadwal-preview-semester', `Semester ${semester}`);
+            adminSetText('admin-jadwal-preview-matkul', adminTextValue('admin-jadwal-matkul', 'Nama Mata Kuliah'));
+            adminSetText('admin-jadwal-preview-time', `${hari} • ${waktu}`);
+            adminSetText('admin-jadwal-preview-room', adminTextValue('admin-jadwal-ruangan', 'Ruangan'));
+        }
+
+        function updateAdminBeritaPreview() {
+            const manualUrl = adminTextValue('admin-berita-poster');
+            const imageUrl = adminLocalPreviewUrls.berita || manualUrl || ADMIN_PREVIEW_FALLBACKS.berita;
+            adminSetImage('admin-berita-preview-image', imageUrl);
+            adminSetText('admin-berita-preview-tipe', adminTextValue('admin-berita-tipe', 'EVENT'));
+            adminSetText('admin-berita-preview-judul', adminTextValue('admin-berita-judul', 'Judul berita akan tampil di sini'));
+            adminSetText('admin-berita-preview-ringkasan', adminTextValue('admin-berita-ringkasan', 'Ringkasan singkat berita akan tampil sebagai preview sebelum dipublish.'));
+        }
+
+        function updateAdminApresiasiPreview() {
+            const manualUrl = adminTextValue('admin-apresiasi-image');
+            const imageUrl = adminLocalPreviewUrls.apresiasi || manualUrl || ADMIN_PREVIEW_FALLBACKS.apresiasi;
+            adminSetImage('admin-apresiasi-preview-image', imageUrl);
+            adminSetText('admin-apresiasi-preview-badge', adminTextValue('admin-apresiasi-badge', adminTextValue('admin-apresiasi-category', 'LIDM 2026')));
+            adminSetText('admin-apresiasi-preview-category', adminTextValue('admin-apresiasi-category', 'AGRONITY APRESIASI'));
+            adminSetText('admin-apresiasi-preview-name', adminTextValue('admin-apresiasi-name', 'Nama Mahasiswa / Tim'));
+            adminSetText('admin-apresiasi-preview-quote', adminTextValue('admin-apresiasi-quote', 'Kalimat apresiasi akan tampil di sini secara langsung saat admin mengetik.'));
+        }
+
+        function updateAllAdminPreviews() {
+            updateAdminJadwalPreview();
+            updateAdminBeritaPreview();
+            updateAdminApresiasiPreview();
+            updateAdminStats();
+        }
+
+        function setAdminLocalPreview(type, file) {
+            if (adminLocalPreviewUrls[type]) URL.revokeObjectURL(adminLocalPreviewUrls[type]);
+            adminLocalPreviewUrls[type] = file ? URL.createObjectURL(file) : '';
+            if (type === 'berita') updateAdminBeritaPreview();
+            if (type === 'apresiasi') updateAdminApresiasiPreview();
+        }
+
+        function initAdminStudioPreview() {
+            if (adminStudioPreviewReady) return;
+            const watchMap = {
+                jadwal: ['admin-jadwal-semester', 'admin-jadwal-hari', 'admin-jadwal-waktu', 'admin-jadwal-ruangan', 'admin-jadwal-matkul'],
+                berita: ['admin-berita-judul', 'admin-berita-tipe', 'admin-berita-waktu', 'admin-berita-poster', 'admin-berita-ringkasan'],
+                apresiasi: ['admin-apresiasi-name', 'admin-apresiasi-slug', 'admin-apresiasi-category', 'admin-apresiasi-badge', 'admin-apresiasi-image', 'admin-apresiasi-quote', 'admin-apresiasi-achievements', 'admin-apresiasi-gradient']
+            };
+            watchMap.jadwal.forEach(id => document.getElementById(id)?.addEventListener('input', updateAdminJadwalPreview));
+            watchMap.berita.forEach(id => document.getElementById(id)?.addEventListener('input', updateAdminBeritaPreview));
+            watchMap.apresiasi.forEach(id => document.getElementById(id)?.addEventListener('input', updateAdminApresiasiPreview));
+            document.getElementById('admin-jadwal-hari')?.addEventListener('change', updateAdminJadwalPreview);
+            document.getElementById('admin-berita-file')?.addEventListener('change', (e) => setAdminLocalPreview('berita', e.target.files?.[0] || null));
+            document.getElementById('admin-apresiasi-file')?.addEventListener('change', (e) => setAdminLocalPreview('apresiasi', e.target.files?.[0] || null));
+            adminStudioPreviewReady = true;
+            updateAllAdminPreviews();
+        }
+
         async function adminLoadJadwal() {
             const box = document.getElementById('admin-jadwal-list');
             if (!box || !agronityDb) return;
@@ -3998,6 +4591,7 @@
             const { data, error } = await agronityDb.from('jadwal_perkuliahan').select('*').order('semester', { ascending: true }).order('id', { ascending: true });
             if (error) { box.innerHTML = `<p class="text-red-400 text-sm">Gagal memuat: ${escapeHTML(error.message)}</p>`; return; }
             adminCache.jadwal = data || [];
+            updateAdminStats();
             box.innerHTML = adminCache.jadwal.length ? adminCache.jadwal.map(row => `
                 <div class="bg-white/5 border border-white/10 rounded-2xl p-4">
                     <div class="flex justify-between gap-3">
@@ -4018,6 +4612,7 @@
             const { data, error } = await agronityDb.from('berita').select('*').order('id', { ascending: false }).limit(50);
             if (error) { box.innerHTML = `<p class="text-red-400 text-sm">Gagal memuat: ${escapeHTML(error.message)}</p>`; return; }
             adminCache.berita = data || [];
+            updateAdminStats();
             box.innerHTML = adminCache.berita.length ? adminCache.berita.map(row => `
                 <div class="bg-white/5 border border-white/10 rounded-2xl p-4 flex gap-3">
                     <img src="${escapeHTML(row.poster)}" class="w-20 h-20 rounded-xl object-cover bg-black/40" alt="">
@@ -4037,6 +4632,7 @@
             const { data, error } = await agronityDb.from('apresiasi').select('*').order('id', { ascending: false }).limit(50);
             if (error) { box.innerHTML = `<p class="text-red-400 text-sm">Gagal memuat: ${escapeHTML(error.message)}</p>`; return; }
             adminCache.apresiasi = data || [];
+            updateAdminStats();
             box.innerHTML = adminCache.apresiasi.length ? adminCache.apresiasi.map(row => `
                 <div class="bg-white/5 border border-white/10 rounded-2xl p-4 flex gap-3">
                     <img src="${escapeHTML(row.image)}" class="w-20 h-20 rounded-xl object-cover bg-black/40" alt="">
@@ -4057,7 +4653,12 @@
             if (type === 'apresiasi') document.getElementById('admin-apresiasi-gradient').value = 'from-yellow-400 to-orange-500';
             const fileInput = document.getElementById(`admin-${type}-file`);
             if (fileInput) fileInput.value = '';
+            if (adminLocalPreviewUrls[type]) {
+                URL.revokeObjectURL(adminLocalPreviewUrls[type]);
+                adminLocalPreviewUrls[type] = '';
+            }
             setAdminUploadStatus(type, '');
+            updateAllAdminPreviews();
         }
 
         const AGRONITY_STORAGE_BUCKET = 'agronity-images';
@@ -4129,11 +4730,13 @@
         document.getElementById('admin-berita-file')?.addEventListener('change', (e) => {
             const file = e.target.files?.[0];
             setAdminUploadStatus('berita', file ? `File dipilih: ${file.name}. Akan diupload saat klik Publish Berita.` : '');
+            setAdminLocalPreview('berita', file || null);
         });
 
         document.getElementById('admin-apresiasi-file')?.addEventListener('change', (e) => {
             const file = e.target.files?.[0];
             setAdminUploadStatus('apresiasi', file ? `File dipilih: ${file.name}. Akan diupload saat klik Simpan Apresiasi.` : '');
+            setAdminLocalPreview('apresiasi', file || null);
         });
 
         document.getElementById('admin-form-jadwal')?.addEventListener('submit', async (e) => {
@@ -4195,7 +4798,7 @@
                 name: document.getElementById('admin-apresiasi-name').value.trim(),
                 category: document.getElementById('admin-apresiasi-category').value.trim(),
                 badge: document.getElementById('admin-apresiasi-badge').value.trim(),
-                image: document.getElementById('admin-apresiasi-image').value.trim(),
+                image: apresiasiImageUrl,
                 gradient: document.getElementById('admin-apresiasi-gradient').value.trim() || 'from-yellow-400 to-orange-500',
                 quote: document.getElementById('admin-apresiasi-quote').value.trim(),
                 ringkasan: achievements[0]?.title || document.getElementById('admin-apresiasi-category').value.trim(),
@@ -4217,6 +4820,7 @@
             document.getElementById('admin-jadwal-waktu').value = row.waktu || '';
             document.getElementById('admin-jadwal-matkul').value = row.nama_matkul || '';
             document.getElementById('admin-jadwal-ruangan').value = row.ruangan || '';
+            updateAdminJadwalPreview();
             document.getElementById('admin-form-jadwal').scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
 
@@ -4232,7 +4836,9 @@
             document.getElementById('admin-berita-waktu').value = row.waktu || '';
             const beritaFileInput = document.getElementById('admin-berita-file');
             if (beritaFileInput) beritaFileInput.value = '';
+            if (adminLocalPreviewUrls.berita) { URL.revokeObjectURL(adminLocalPreviewUrls.berita); adminLocalPreviewUrls.berita = ''; }
             setAdminUploadStatus('berita', '');
+            updateAdminBeritaPreview();
             document.getElementById('admin-form-berita').scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
 
@@ -4251,7 +4857,9 @@
             document.getElementById('admin-apresiasi-achievements').value = achievements.map(a => `${a.title || ''} | ${a.medal || 'Apresiasi'}`).join('\n');
             const apresiasiFileInput = document.getElementById('admin-apresiasi-file');
             if (apresiasiFileInput) apresiasiFileInput.value = '';
+            if (adminLocalPreviewUrls.apresiasi) { URL.revokeObjectURL(adminLocalPreviewUrls.apresiasi); adminLocalPreviewUrls.apresiasi = ''; }
             setAdminUploadStatus('apresiasi', '');
+            updateAdminApresiasiPreview();
             document.getElementById('admin-form-apresiasi').scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
 
