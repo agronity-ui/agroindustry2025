@@ -327,6 +327,576 @@
         }
         .floating-birth-btn:hover .birth-tooltip { opacity: 1; }
         @media (min-width: 768px) { .floating-birth-btn { bottom: 40px; right: 40px; } }
+
+
+        /* ============================================================
+           AGRONITY25 NEOMOBILE FULL REDESIGN
+           Inspired by premium dark mobile dashboard UI: black surface,
+           lime/yellow neon, floating pill navigation, finance/fitness cards.
+           Semua selector dibuat override-only agar fitur, ID, dan JS lama aman.
+           ============================================================ */
+        :root {
+            --neo-bg: #050607;
+            --neo-bg-2: #0a0d10;
+            --neo-surface: rgba(16, 18, 23, 0.78);
+            --neo-surface-2: rgba(24, 28, 34, 0.88);
+            --neo-card: #11151b;
+            --neo-card-soft: #171c23;
+            --neo-line: rgba(255, 255, 255, 0.09);
+            --neo-line-strong: rgba(255, 255, 255, 0.16);
+            --neo-text: #f7f7f2;
+            --neo-muted: #9ba3aa;
+            --neo-faint: #68717a;
+            --neo-lime: #b6ff1d;
+            --neo-green: #28f27d;
+            --neo-yellow: #ffd233;
+            --neo-orange: #ff9f1c;
+            --neo-red: #ff4d5f;
+            --neo-shadow: 0 24px 70px rgba(0, 0, 0, 0.50);
+            --neo-inner: inset 0 1px 0 rgba(255,255,255,0.08), inset 0 -1px 0 rgba(0,0,0,0.35);
+            --neo-radius-xl: 30px;
+            --neo-radius-lg: 24px;
+            --neo-radius-md: 18px;
+        }
+
+        html { background: var(--neo-bg) !important; }
+
+        body {
+            background:
+                radial-gradient(circle at 12% -8%, rgba(182, 255, 29, 0.20), transparent 32%),
+                radial-gradient(circle at 88% 0%, rgba(40, 242, 125, 0.12), transparent 28%),
+                radial-gradient(circle at 50% 105%, rgba(255, 210, 51, 0.11), transparent 40%),
+                linear-gradient(145deg, #050607 0%, #090b0d 45%, #050607 100%) !important;
+            color: var(--neo-text) !important;
+            font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: -2;
+            background-image:
+                linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.022) 1px, transparent 1px);
+            background-size: 38px 38px;
+            mask-image: radial-gradient(circle at top, black 0%, transparent 78%);
+        }
+
+        body::after {
+            content: "";
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: -1;
+            background:
+                radial-gradient(circle at 20% 22%, rgba(182,255,29,0.08), transparent 18%),
+                radial-gradient(circle at 76% 18%, rgba(16,185,129,0.07), transparent 20%),
+                radial-gradient(circle at 64% 82%, rgba(255,184,0,0.07), transparent 24%);
+            filter: blur(10px);
+        }
+
+        ::selection { background: rgba(182,255,29,0.35); color: #ffffff; }
+        ::-webkit-scrollbar { width: 8px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #080a0c !important; }
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, var(--neo-lime), var(--neo-green)) !important;
+            border-radius: 999px !important;
+        }
+
+        /* Top app bar */
+        body > nav.fixed.top-0 {
+            top: 14px !important;
+            left: 50% !important;
+            right: auto !important;
+            width: min(calc(100% - 28px), 1180px) !important;
+            transform: translateX(-50%) !important;
+            border-radius: 28px !important;
+            background: rgba(9, 11, 14, 0.74) !important;
+            border: 1px solid rgba(255,255,255,0.10) !important;
+            box-shadow: 0 18px 70px rgba(0,0,0,0.48), inset 0 1px 0 rgba(255,255,255,0.08) !important;
+            backdrop-filter: blur(24px) saturate(150%) !important;
+            -webkit-backdrop-filter: blur(24px) saturate(150%) !important;
+            overflow: hidden !important;
+        }
+
+        body > nav.fixed.top-0::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(182,255,29,0.10), transparent 25%, rgba(40,242,125,0.07) 80%);
+            pointer-events: none;
+        }
+
+        body > nav.fixed.top-0 .h-20 { height: 68px !important; }
+        body > nav.fixed.top-0 img { border-radius: 16px !important; background: rgba(255,255,255,0.05); padding: 3px; }
+        body > nav.fixed.top-0 .font-bold.text-xl { letter-spacing: -0.02em !important; }
+        body > nav.fixed.top-0 .text-\[10px\] { color: rgba(255,255,255,0.48) !important; }
+
+        .nav-btn {
+            border-radius: 999px !important;
+            border: 1px solid transparent !important;
+            color: rgba(255,255,255,0.72) !important;
+            background: rgba(255,255,255,0.03) !important;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
+        }
+        .nav-btn:hover {
+            color: #050607 !important;
+            border-color: rgba(182,255,29,0.65) !important;
+            background: linear-gradient(135deg, var(--neo-lime), var(--neo-green)) !important;
+            box-shadow: 0 10px 28px rgba(182,255,29,0.18) !important;
+        }
+
+        #app {
+            padding-top: 108px !important;
+            max-width: 1180px !important;
+        }
+
+        .tab-content {
+            animation: neoPageIn 0.55s cubic-bezier(0.2, 0.8, 0.2, 1) !important;
+        }
+        @keyframes neoPageIn {
+            from { opacity: 0; transform: translateY(18px) scale(0.985); filter: blur(8px); }
+            to { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+        }
+
+        /* Global cards */
+        .glass-panel,
+        #profile-card,
+        #login-container,
+        #admin-login-box,
+        #admin-panel .glass-panel,
+        #schedule-display > div,
+        .modal-content {
+            background:
+                linear-gradient(180deg, rgba(255,255,255,0.075), rgba(255,255,255,0.028)),
+                var(--neo-surface) !important;
+            border: 1px solid var(--neo-line) !important;
+            box-shadow: var(--neo-shadow), var(--neo-inner) !important;
+            backdrop-filter: blur(24px) saturate(150%) !important;
+            -webkit-backdrop-filter: blur(24px) saturate(150%) !important;
+        }
+
+        .glass-panel:hover {
+            border-color: rgba(182,255,29,0.28) !important;
+            box-shadow: 0 28px 80px rgba(0,0,0,0.55), 0 0 32px rgba(182,255,29,0.08), var(--neo-inner) !important;
+        }
+
+        .rounded-3xl { border-radius: var(--neo-radius-xl) !important; }
+        .rounded-2xl { border-radius: var(--neo-radius-lg) !important; }
+        .rounded-xl { border-radius: var(--neo-radius-md) !important; }
+        .rounded-lg { border-radius: 16px !important; }
+
+        .text-tipYellow, .text-glow, .text-yellow-400, .text-yellow-300 {
+            color: var(--neo-lime) !important;
+            text-shadow: 0 0 18px rgba(182,255,29,0.22) !important;
+        }
+
+        .bg-tipYellow,
+        .bg-yellow-400,
+        button.bg-tipYellow,
+        a.bg-tipYellow {
+            background: linear-gradient(135deg, var(--neo-lime), var(--neo-yellow)) !important;
+            color: #060807 !important;
+            box-shadow: 0 12px 34px rgba(182,255,29,0.22), inset 0 1px 0 rgba(255,255,255,0.45) !important;
+        }
+
+        .border-tipYellow, .border-tipYellow\/50, .border-tipYellow\/40, .border-tipYellow\/30 {
+            border-color: rgba(182,255,29,0.34) !important;
+        }
+
+        p, li, small, label, .text-gray-400, .text-gray-300, .text-gray-500 {
+            color: var(--neo-muted) !important;
+        }
+
+        h1, h2, h3, h4, .text-white {
+            color: var(--neo-text) !important;
+        }
+
+        section h2:first-child,
+        section > .text-center h2,
+        #jadwal > h2 {
+            letter-spacing: -0.055em !important;
+            line-height: 0.95 !important;
+        }
+
+        /* Premium dashboard added on home */
+        .neo-home-dashboard {
+            display: grid;
+            grid-template-columns: minmax(0, 1.08fr) minmax(320px, 0.92fr);
+            gap: 18px;
+            margin-bottom: 22px;
+        }
+        .neo-welcome-card,
+        .neo-feature-stack,
+        .neo-mini-card,
+        .neo-action-tile {
+            border: 1px solid var(--neo-line);
+            background:
+                radial-gradient(circle at 82% 12%, rgba(182,255,29,0.18), transparent 32%),
+                linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.025)),
+                rgba(15,18,23,0.82);
+            box-shadow: var(--neo-shadow), var(--neo-inner);
+            backdrop-filter: blur(24px) saturate(150%);
+            -webkit-backdrop-filter: blur(24px) saturate(150%);
+        }
+        .neo-welcome-card {
+            position: relative;
+            overflow: hidden;
+            border-radius: 34px;
+            min-height: 330px;
+            padding: 22px;
+        }
+        .neo-welcome-card::before {
+            content: "";
+            position: absolute;
+            width: 260px;
+            height: 260px;
+            right: -80px;
+            top: -90px;
+            border-radius: 50%;
+            background: conic-gradient(from 140deg, rgba(182,255,29,0), rgba(182,255,29,0.35), rgba(40,242,125,0.22), rgba(182,255,29,0));
+            filter: blur(4px);
+        }
+        .neo-top-row { display:flex; justify-content:space-between; align-items:center; gap:14px; position:relative; z-index:1; }
+        .neo-user { display:flex; align-items:center; gap:12px; min-width:0; }
+        .neo-avatar {
+            width: 44px; height: 44px; border-radius: 50%; display:grid; place-items:center;
+            background: linear-gradient(145deg, rgba(255,255,255,0.15), rgba(255,255,255,0.03));
+            border: 1px solid rgba(255,255,255,0.13);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,.15), 0 10px 24px rgba(0,0,0,.28);
+            overflow: hidden;
+        }
+        .neo-avatar img { width: 72%; height: 72%; object-fit:contain; filter: drop-shadow(0 0 10px rgba(182,255,29,0.45)); }
+        .neo-kicker { font-size:11px; color:var(--neo-faint); font-weight:700; letter-spacing:.02em; }
+        .neo-user-name { font-size:14px; color:#fff; font-weight:800; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        .neo-icon-btn {
+            width: 42px; height: 42px; border-radius: 16px; display:grid; place-items:center;
+            border:1px solid rgba(255,255,255,0.12); background:rgba(255,255,255,0.06);
+            color:var(--neo-lime); position:relative;
+        }
+        .neo-notification-dot {
+            position:absolute; top:8px; right:9px; width:8px; height:8px; border-radius:50%; background:#ff3d55; box-shadow:0 0 10px #ff3d55;
+        }
+        .neo-main-title { position:relative; z-index:1; margin-top:26px; font-size:clamp(34px, 5vw, 62px); line-height:.92; letter-spacing:-.07em; font-weight:900; }
+        .neo-main-title span { display:block; color: var(--neo-lime); text-shadow: 0 0 28px rgba(182,255,29,0.20); }
+        .neo-subtitle { position:relative; z-index:1; margin-top:12px; max-width:610px; color:var(--neo-muted); font-size:14px; line-height:1.7; }
+        .neo-quick-grid { position:relative; z-index:1; display:grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap:10px; margin-top:22px; }
+        .neo-action-tile {
+            min-height:86px; border-radius:22px; padding:12px; display:flex; flex-direction:column; justify-content:space-between; cursor:pointer; transition:.25s ease;
+        }
+        .neo-action-tile:hover { transform: translateY(-4px); border-color: rgba(182,255,29,0.35); }
+        .neo-action-tile i { color:var(--neo-lime); font-size:18px; }
+        .neo-action-tile strong { font-size:12px; color:#fff; line-height:1.2; }
+        .neo-feature-stack { border-radius:34px; padding:16px; display:grid; gap:12px; }
+        .neo-stat-row { display:grid; grid-template-columns: repeat(3, 1fr); gap:10px; }
+        .neo-mini-card { border-radius:24px; padding:14px; min-height:118px; overflow:hidden; position:relative; }
+        .neo-mini-card::after { content:""; position:absolute; right:-34px; bottom:-42px; width:90px; height:90px; border-radius:50%; background:rgba(182,255,29,0.09); }
+        .neo-mini-card .neo-stat-icon { width:34px; height:34px; border-radius:14px; display:grid; place-items:center; background:rgba(182,255,29,0.11); color:var(--neo-lime); margin-bottom:12px; }
+        .neo-stat-value { font-size:25px; font-weight:900; letter-spacing:-.04em; color:#fff; line-height:1; }
+        .neo-stat-label { margin-top:6px; font-size:10px; color:var(--neo-muted); font-weight:700; line-height:1.3; }
+        .neo-history-card { border-radius:27px; padding:16px; background: linear-gradient(145deg, rgba(182,255,29,0.14), rgba(255,255,255,0.04) 45%, rgba(255,255,255,0.02)); border:1px solid rgba(182,255,29,0.18); }
+        .neo-history-top { display:flex; align-items:center; justify-content:space-between; gap:12px; }
+        .neo-history-top h3 { font-size:15px; font-weight:900; color:#fff; }
+        .neo-history-top small { font-size:10px; color:var(--neo-muted); }
+        .neo-progress-line { height:10px; border-radius:999px; background:rgba(255,255,255,0.07); overflow:hidden; margin:14px 0; border:1px solid rgba(255,255,255,0.06); }
+        .neo-progress-line span { display:block; height:100%; width:73%; border-radius:999px; background:linear-gradient(90deg,var(--neo-lime),var(--neo-green),var(--neo-yellow)); box-shadow:0 0 20px rgba(182,255,29,0.32); }
+        .neo-chip-row { display:flex; flex-wrap:wrap; gap:8px; }
+        .neo-chip { padding:8px 10px; border-radius:999px; background:rgba(0,0,0,0.24); border:1px solid rgba(255,255,255,0.09); color:#dfe7df; font-size:10px; font-weight:800; }
+
+        /* Home main class card */
+        #next-class-card {
+            border-radius: 34px !important;
+            min-height: 260px !important;
+            border: 1px solid rgba(182,255,29,0.22) !important;
+            box-shadow: 0 24px 80px rgba(0,0,0,0.52), 0 0 46px rgba(40,242,125,0.12) !important;
+        }
+        #next-class-card::after {
+            content:"";
+            position:absolute;
+            inset: 1px;
+            border-radius: 33px;
+            pointer-events:none;
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+        #widget-countdown { color:#fff !important; text-shadow:0 0 26px rgba(182,255,29,0.20), 0 7px 28px rgba(0,0,0,.72) !important; }
+        #widget-course { letter-spacing:-.06em !important; }
+        #widget-time-label { border-radius:999px !important; border-color:rgba(182,255,29,.32) !important; background:rgba(5,6,7,.62) !important; }
+        #widget-progress-bar { background:linear-gradient(90deg,var(--neo-lime),var(--neo-green)) !important; }
+
+        #main-hero-banner {
+            height: auto !important;
+            min-height: 560px !important;
+            border-radius: 38px !important;
+            text-align: left !important;
+            justify-content: flex-start !important;
+            padding: clamp(24px, 5vw, 60px) !important;
+            border-color: rgba(255,255,255,0.10) !important;
+        }
+        #main-hero-banner h1 { letter-spacing:-.075em !important; line-height:.96 !important; }
+        #main-hero-banner .relative.z-10 { margin-left:0 !important; max-width: 760px !important; }
+        #main-hero-banner img { opacity: .38 !important; filter:saturate(1.2) contrast(1.08); }
+        #main-hero-banner .absolute.inset-0.bg-gradient-to-t {
+            background: linear-gradient(90deg, rgba(5,6,7,.98), rgba(5,6,7,.70), rgba(5,6,7,.28)) !important;
+        }
+        #main-hero-banner .inline-block {
+            border-radius: 999px !important;
+            color:#071006 !important;
+            border:0 !important;
+            background:linear-gradient(135deg,var(--neo-lime),var(--neo-yellow)) !important;
+            box-shadow:0 12px 30px rgba(182,255,29,.20) !important;
+        }
+
+        /* News app style */
+        #agronews .news-ticker-wrap,
+        .news-ticker-wrap { background: rgba(255,255,255,0.04) !important; }
+        #agronews .bg-newsRed { background: linear-gradient(135deg, #ff3e55, #ff9f1c) !important; border-radius: 999px; margin-left:8px; height: 34px !important; }
+        #hero-news {
+            border-radius: 34px !important;
+            border:1px solid var(--neo-line) !important;
+            box-shadow: var(--neo-shadow) !important;
+            height: 500px !important;
+        }
+        #hero-type { border-radius:999px !important; background:linear-gradient(135deg,#ff3e55,#ff9f1c) !important; }
+        #hero-title { letter-spacing:-.045em !important; }
+        #sub-news-container > div,
+        #sidebar-news-container > div {
+            border-radius: 26px !important;
+            border: 1px solid var(--neo-line) !important;
+            background: rgba(255,255,255,0.045) !important;
+            box-shadow: var(--neo-inner) !important;
+            overflow:hidden;
+        }
+
+        /* Apresiasi cards */
+        #apresiasi-grid { gap: 18px !important; }
+        #apresiasi-grid > div {
+            border-radius: 34px !important;
+            box-shadow: 0 24px 62px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.08) !important;
+            border: 1px solid rgba(255,255,255,0.12) !important;
+        }
+        #apresiasi-grid > div::after {
+            content:"";
+            position:absolute;
+            inset:0;
+            background:linear-gradient(180deg, rgba(255,255,255,0.12), transparent 30%, rgba(0,0,0,.88));
+            pointer-events:none;
+        }
+        #apresiasi-grid h3 { letter-spacing:-.035em !important; }
+        #apresiasi-modal .modal-content { border-radius: 34px !important; }
+
+        /* Forms, inputs, admin */
+        .custom-input,
+        input, textarea, select {
+            background: rgba(3, 5, 7, 0.72) !important;
+            border: 1px solid rgba(255,255,255,0.10) !important;
+            color: #f8fafc !important;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.04), 0 10px 26px rgba(0,0,0,0.18) !important;
+        }
+        .custom-input:focus,
+        input:focus, textarea:focus, select:focus {
+            border-color: rgba(182,255,29,0.65) !important;
+            box-shadow: 0 0 0 4px rgba(182,255,29,0.10), 0 0 24px rgba(182,255,29,0.12) !important;
+        }
+        input::placeholder, textarea::placeholder { color: rgba(255,255,255,0.36) !important; }
+        select option { background:#0b0f12 !important; color:#fff !important; }
+
+        button, a { -webkit-tap-highlight-color: transparent; }
+        button:not(.bottom-nav-item):not(.nav-btn),
+        a[class*="bg-"],
+        form button[type="submit"] {
+            transition: transform .23s ease, box-shadow .23s ease, border-color .23s ease, background .23s ease !important;
+        }
+        button:not(.bottom-nav-item):not(.nav-btn):hover,
+        a[class*="bg-"]:hover,
+        form button[type="submit"]:hover {
+            transform: translateY(-2px) !important;
+        }
+
+        table { border-collapse: separate !important; border-spacing: 0 8px !important; }
+        thead { background: transparent !important; }
+        tbody tr { background: rgba(255,255,255,0.045); border-radius: 18px; }
+        th, td { border: 0 !important; }
+        tbody tr td:first-child { border-top-left-radius:18px; border-bottom-left-radius:18px; }
+        tbody tr td:last-child { border-top-right-radius:18px; border-bottom-right-radius:18px; }
+
+        /* Schedule app cards */
+        #jadwal .grid button {
+            min-height: 74px;
+            border-radius: 24px !important;
+            background: linear-gradient(180deg, rgba(255,255,255,0.075), rgba(255,255,255,0.03)) !important;
+            border: 1px solid var(--neo-line) !important;
+            box-shadow: var(--neo-inner) !important;
+        }
+        #jadwal .grid button:hover {
+            background: linear-gradient(135deg, var(--neo-lime), var(--neo-green)) !important;
+            color: #050607 !important;
+            border-color: rgba(182,255,29,0.55) !important;
+        }
+        #schedule-display .bg-tipYellow {
+            background: linear-gradient(135deg, rgba(182,255,29,0.94), rgba(40,242,125,0.88)) !important;
+            border-radius: 0 0 26px 26px !important;
+        }
+        #schedule-display li {
+            background: rgba(0,0,0,0.18);
+            border: 1px solid rgba(255,255,255,0.07) !important;
+            padding: 12px !important;
+            border-radius: 18px;
+        }
+        .day-highlight {
+            background: linear-gradient(145deg, rgba(182,255,29,0.18), rgba(40,242,125,0.09)) !important;
+            border-color: rgba(182,255,29,0.62) !important;
+            box-shadow: 0 0 32px rgba(182,255,29,0.12), var(--neo-inner) !important;
+        }
+        .day-highlight::before { background: linear-gradient(135deg, var(--neo-lime), var(--neo-green)) !important; color:#060807 !important; }
+
+        /* IPK simulator and docs */
+        #courseList > div,
+        #doc-content > div,
+        #links a,
+        #dokumentasi .group {
+            border-radius: 28px !important;
+            border: 1px solid var(--neo-line) !important;
+            background: linear-gradient(180deg, rgba(255,255,255,0.075), rgba(255,255,255,0.026)) !important;
+            box-shadow: var(--neo-inner), 0 16px 40px rgba(0,0,0,0.25) !important;
+        }
+        #links a:hover,
+        #dokumentasi .group:hover {
+            transform: translateY(-4px) !important;
+            border-color: rgba(182,255,29,0.32) !important;
+        }
+
+        /* Profile/login */
+        #profile-card .bg-gradient-to-r {
+            background:
+                radial-gradient(circle at 30% 15%, rgba(255,255,255,.35), transparent 10%),
+                linear-gradient(135deg, var(--neo-lime), var(--neo-green)) !important;
+        }
+        #profile-card .w-24.h-24 {
+            background:#07090b !important;
+            border-color: rgba(182,255,29,.85) !important;
+            box-shadow:0 14px 34px rgba(0,0,0,.35), 0 0 26px rgba(182,255,29,.20) !important;
+        }
+        #login-container i.fa-user-graduate {
+            color:var(--neo-lime) !important;
+            filter:drop-shadow(0 0 22px rgba(182,255,29,.20));
+        }
+
+        /* Admin dashboard lists */
+        #admin-panel .grid > .glass-panel { overflow:hidden; }
+        #admin-jadwal-list > div,
+        #admin-berita-list > div,
+        #admin-apresiasi-list > div {
+            border: 1px solid var(--neo-line) !important;
+            border-radius: 22px !important;
+            background: rgba(255,255,255,0.045) !important;
+            box-shadow: var(--neo-inner) !important;
+        }
+
+        /* Floating birthday button */
+        .floating-birth-btn {
+            background: linear-gradient(135deg, var(--neo-lime), var(--neo-green)) !important;
+            color:#050607 !important;
+            box-shadow: 0 18px 42px rgba(182,255,29,0.25), 0 0 0 8px rgba(182,255,29,0.07) !important;
+        }
+        .floating-birth-btn i { color:#050607 !important; }
+
+        /* Modals */
+        .modal-overlay,
+        #pwa-manual-modal,
+        #notification-onboarding-modal {
+            background: rgba(0,0,0,0.68) !important;
+            backdrop-filter: blur(18px) saturate(120%) !important;
+            -webkit-backdrop-filter: blur(18px) saturate(120%) !important;
+        }
+
+        /* Mobile dock */
+        nav.md\:hidden.fixed.bottom-4 {
+            bottom: 16px !important;
+            left: 14px !important;
+            right: 14px !important;
+            max-width: 430px !important;
+            margin-inline: auto !important;
+        }
+        nav.md\:hidden.fixed.bottom-4 > div {
+            border-radius: 30px !important;
+            background: rgba(9, 11, 14, 0.84) !important;
+            border: 1px solid rgba(255,255,255,0.12) !important;
+            box-shadow: 0 24px 70px rgba(0,0,0,0.58), inset 0 1px 0 rgba(255,255,255,0.08) !important;
+            backdrop-filter: blur(26px) saturate(150%) !important;
+            -webkit-backdrop-filter: blur(26px) saturate(150%) !important;
+        }
+        .bottom-nav-item {
+            min-width: 58px !important;
+            height: 54px !important;
+            border-radius: 22px !important;
+            color: rgba(255,255,255,0.42) !important;
+        }
+        .bottom-nav-item.active-nav {
+            color: #050607 !important;
+            background: linear-gradient(135deg, var(--neo-lime), var(--neo-green)) !important;
+            box-shadow: 0 12px 30px rgba(182,255,29,0.23), inset 0 1px 0 rgba(255,255,255,0.34) !important;
+        }
+        .bottom-nav-item.active-nav .nav-label { color:#050607 !important; }
+        .bottom-nav-item i { font-size: 17px !important; }
+
+        /* Keep every image premium */
+        img { image-rendering: auto; }
+        .object-cover { filter: saturate(1.05) contrast(1.03); }
+
+        @media (max-width: 1024px) {
+            .neo-home-dashboard { grid-template-columns: 1fr; }
+            .neo-feature-stack { grid-template-columns: 1fr; }
+            #hero-news { height: 420px !important; }
+        }
+
+        @media (max-width: 768px) {
+            body > nav.fixed.top-0 {
+                top: 10px !important;
+                width: calc(100% - 20px) !important;
+                border-radius: 24px !important;
+            }
+            body > nav.fixed.top-0 .h-20 { height: 62px !important; }
+            body > nav.fixed.top-0 .font-bold.text-xl { font-size: 15px !important; }
+            body > nav.fixed.top-0 .text-\[10px\] { font-size: 8px !important; letter-spacing: .12em !important; }
+            #app {
+                padding-left: 12px !important;
+                padding-right: 12px !important;
+                padding-top: 88px !important;
+                padding-bottom: 104px !important;
+            }
+            .neo-welcome-card { min-height: auto; padding: 18px; border-radius: 30px; }
+            .neo-main-title { font-size: 38px; margin-top: 22px; }
+            .neo-subtitle { font-size: 12px; }
+            .neo-quick-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+            .neo-stat-row { grid-template-columns: repeat(3, minmax(0,1fr)); }
+            .neo-mini-card { min-height: 104px; padding:12px; }
+            .neo-stat-value { font-size:21px; }
+            #next-class-card { min-height: 285px !important; border-radius: 30px !important; }
+            #widget-countdown { font-size: 38px !important; }
+            #widget-course { font-size: 30px !important; }
+            #main-hero-banner {
+                min-height: 520px !important;
+                border-radius: 32px !important;
+                padding: 22px !important;
+            }
+            #main-hero-banner h1 { font-size: 36px !important; }
+            #main-hero-banner h1 span:last-child { font-size: 22px !important; }
+            #hero-news { height: 390px !important; }
+            #hero-news .p-8 { padding: 20px !important; }
+            #hero-title { font-size: 26px !important; }
+            #apresiasi-grid { grid-template-columns: 1fr !important; }
+            .glass-panel { border-radius: 26px !important; }
+            .floating-birth-btn { bottom: 92px !important; right: 18px !important; width:54px !important; height:54px !important; }
+        }
+
+        @media (max-width: 390px) {
+            .neo-stat-row { grid-template-columns: 1fr; }
+            .neo-mini-card { min-height: 86px; }
+            .bottom-nav-item { min-width: 54px !important; }
+        }
+
     </style>
 </head>
 <body class="relative min-h-screen loading-active">
@@ -501,6 +1071,88 @@
     <main id="app" class="pt-24 pb-28 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto min-h-screen md:mb-0">
 
         <section id="beranda" class="tab-content active">
+
+
+            <!-- NEO MOBILE DASHBOARD REDESIGN: quick app-style overview, fitur lama tetap ada di bawah -->
+            <div class="neo-home-dashboard" aria-label="Dashboard cepat Agronity25">
+                <div class="neo-welcome-card">
+                    <div class="neo-top-row">
+                        <div class="neo-user">
+                            <div class="neo-avatar">
+                                <img src="https://image2url.com/r2/default/images/1771202156309-5a871b50-95dc-4ef2-930b-ed8f94f23541.png" alt="Logo Agronity25">
+                            </div>
+                            <div class="min-w-0">
+                                <div class="neo-kicker">Good Morning</div>
+                                <div class="neo-user-name">Agronity 25</div>
+                            </div>
+                        </div>
+                        <button class="neo-icon-btn" onclick="manualRequestNotification()" aria-label="Aktifkan notifikasi">
+                            <i class="fa-regular fa-bell"></i>
+                            <span class="neo-notification-dot"></span>
+                        </button>
+                    </div>
+
+                    <h2 class="neo-main-title">Welcome Back,<span>TIP ULM 2025</span></h2>
+                    <p class="neo-subtitle">Portal mahasiswa TIP 2025: jadwal, AgroNEWS, apresiasi, simulasi IPK, dokumentasi, layanan.</p>
+
+                    <div class="neo-quick-grid">
+                        <button class="neo-action-tile" onclick="showSchedule(2)">
+                            <i class="fa-regular fa-calendar-days"></i>
+                            <strong>Jadwal Kuliah</strong>
+                        </button>
+                        <button class="neo-action-tile" onclick="switchTab('agronews')">
+                            <i class="fa-solid fa-newspaper"></i>
+                            <strong>AgroNEWS</strong>
+                        </button>
+                        <button class="neo-action-tile" onclick="switchTab('apresiasi')">
+                            <i class="fa-solid fa-trophy"></i>
+                            <strong>Apresiasi</strong>
+                        </button>
+                        <button class="neo-action-tile" onclick="window.open('https://simari.ulm.ac.id/login/', '_blank')">
+                            <i class="fa-solid fa-graduation-cap"></i>
+                            <strong>SIMARI</strong>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="neo-feature-stack">
+                    <div class="neo-stat-row">
+                        <div class="neo-mini-card">
+                            <div class="neo-stat-icon"><i class="fa-solid fa-user-group"></i></div>
+                            <div class="neo-stat-value">60+</div>
+                            <div class="neo-stat-label">Mahasiswa Baru</div>
+                        </div>
+                        <div class="neo-mini-card">
+                            <div class="neo-stat-icon"><i class="fa-solid fa-certificate"></i></div>
+                            <div class="neo-stat-value">A</div>
+                            <div class="neo-stat-label">BAN-PT</div>
+                        </div>
+                        <div class="neo-mini-card">
+                            <div class="neo-stat-icon"><i class="fa-solid fa-globe"></i></div>
+                            <div class="neo-stat-value">ASIIN</div>
+                            <div class="neo-stat-label">Internasional</div>
+                        </div>
+                    </div>
+
+                    <div class="neo-history-card">
+                        <div class="neo-history-top">
+                            <div>
+                                <small>Current portal progress</small>
+                                <h3>Fitur Agronity25</h3>
+                            </div>
+                            <button class="neo-icon-btn" onclick="switchTab('links')" aria-label="Buka layanan"><i class="fa-solid fa-arrow-up-right-from-square"></i></button>
+                        </div>
+                        <div class="neo-progress-line"><span></span></div>
+                        <div class="neo-chip-row">
+                            <span class="neo-chip">Kuliah</span>
+                            <span class="neo-chip">News</span>
+                            <span class="neo-chip">Prestasi</span>
+                            <span class="neo-chip">IPK</span>
+                            <span class="neo-chip">Admin</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
             
             <div id="home-widget-wrapper" class="opacity-0 translate-y-10 transition-all duration-700 ease-out">
                 
