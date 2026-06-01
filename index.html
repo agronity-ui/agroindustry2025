@@ -1970,6 +1970,11 @@
             }
         };
 
+        // Salinan jadwal bawaan. Data dari Supabase akan DITAMBAHKAN ke jadwal bawaan,
+        // bukan mengganti seluruh jadwal lama. Jadi saat admin menambah jadwal baru,
+        // jadwal default yang sudah ada tidak hilang dari halaman publik.
+        const BASE_SCHEDULES = JSON.parse(JSON.stringify(schedules));
+
         async function showSchedule(sem) {
             await syncPublicSchedules(false);
             if(schedules[sem]) {
@@ -2444,30 +2449,65 @@
             return data.map(normalizeNewsRow);
         }
 
+        function normalizeScheduleDayName(dayName) {
+            const rawDay = String(dayName || 'Senin').trim();
+            return ADMIN_DAY_ORDER.find(day => day.toLowerCase() === rawDay.toLowerCase()) || rawDay || 'Senin';
+        }
+
+        function restoreBaseSchedules() {
+            Object.keys(schedules).forEach(key => delete schedules[key]);
+            Object.assign(schedules, JSON.parse(JSON.stringify(BASE_SCHEDULES)));
+        }
+
+        function appendCourseToSchedule(semesterValue, dayName, course) {
+            const semester = String(Number(semesterValue || 1));
+            const day = normalizeScheduleDayName(dayName);
+
+            if (!schedules[semester]) {
+                schedules[semester] = {
+                    title: `Semester ${semester}`,
+                    days: []
+                };
+            }
+
+            let dayBlock = schedules[semester].days.find(item => item.day === day);
+            if (!dayBlock) {
+                dayBlock = {
+                    day,
+                    color: ADMIN_DAY_COLORS[day] || 'green',
+                    courses: []
+                };
+                schedules[semester].days.push(dayBlock);
+                schedules[semester].days.sort((a, b) => {
+                    const orderA = ADMIN_DAY_ORDER.indexOf(a.day);
+                    const orderB = ADMIN_DAY_ORDER.indexOf(b.day);
+                    return (orderA === -1 ? 99 : orderA) - (orderB === -1 ? 99 : orderB);
+                });
+            }
+
+            const cleanCourse = {
+                time: String(course.time || '-').trim(),
+                name: String(course.name || 'Mata Kuliah').trim(),
+                room: String(course.room || '-').trim()
+            };
+
+            const duplicate = dayBlock.courses.some(item =>
+                String(item.time || '').trim().toLowerCase() === cleanCourse.time.toLowerCase() &&
+                String(item.name || '').trim().toLowerCase() === cleanCourse.name.toLowerCase() &&
+                String(item.room || '').trim().toLowerCase() === cleanCourse.room.toLowerCase()
+            );
+
+            if (!duplicate) dayBlock.courses.push(cleanCourse);
+        }
+
         function groupScheduleRows(rows) {
-            const grouped = {};
-            rows.forEach(row => {
-                const semester = Number(row.semester || 1);
-                const hari = row.hari || 'Senin';
-                grouped[semester] ??= {};
-                grouped[semester][hari] ??= [];
-                grouped[semester][hari].push({
+            restoreBaseSchedules();
+            (rows || []).forEach(row => {
+                appendCourseToSchedule(row.semester || 1, row.hari || 'Senin', {
                     time: row.waktu || '-',
                     name: row.nama_matkul || row.nama_kegiatan || 'Mata Kuliah',
                     room: row.ruangan || row.lokasi || '-'
                 });
-            });
-
-            Object.keys(grouped).forEach(semester => {
-                const days = ADMIN_DAY_ORDER.filter(day => grouped[semester][day]).map(day => ({
-                    day,
-                    color: ADMIN_DAY_COLORS[day] || 'green',
-                    courses: grouped[semester][day]
-                }));
-                schedules[semester] = {
-                    title: `Semester ${semester}`,
-                    days
-                };
             });
         }
 
