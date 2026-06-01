@@ -26,6 +26,7 @@
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <script>
@@ -326,6 +327,15 @@
         }
         .floating-birth-btn:hover .birth-tooltip { opacity: 1; }
         @media (min-width: 768px) { .floating-birth-btn { bottom: 40px; right: 40px; } }
+
+        /* --- ADMIN CMS SUPABASE --- */
+        .cms-panel code, #cms-sql-setup code { color: #facc15; }
+        .cms-tab-btn { white-space: nowrap; }
+        #admin pre::-webkit-scrollbar { height: 6px; width: 6px; }
+        #admin pre::-webkit-scrollbar-thumb { background: #eab308; border-radius: 999px; }
+        .line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .line-clamp-3 { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+
     </style>
 </head>
 <body class="relative min-h-screen loading-active">
@@ -421,6 +431,7 @@
                         <button onclick="switchTab('simulasi')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-tipYellow hover:bg-white/5 transition-all">Simulasi IPK</button>
                         <button onclick="switchTab('dokumentasi')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-tipYellow hover:bg-white/5 transition-all">Dokumentasi</button>
                         <button onclick="switchTab('links')" class="nav-btn px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-tipYellow hover:bg-white/5 transition-all">Layanan</button>
+                        <button onclick="switchTab('admin')" class="nav-btn px-3 py-2 rounded-md text-sm font-bold text-tipYellow hover:text-black hover:bg-tipYellow transition-all flex items-center gap-2"><i class="fa-solid fa-screwdriver-wrench"></i> Admin</button>
                     </div>
                 </div>
             </div>
@@ -480,6 +491,11 @@
                 <button onclick="switchTab('links')" class="bottom-nav-item flex flex-col items-center justify-center min-w-[60px] px-2 h-[50px] rounded-full transition-all duration-500 ease-out shrink-0 snap-center text-gray-500 hover:bg-white/5 focus:outline-none">
                     <i class="fa-solid fa-link text-lg transition-transform duration-500"></i>
                     <span class="nav-label text-[10px] font-bold transition-all duration-500 ease-out overflow-hidden max-h-0 opacity-0 mt-0">Link</span>
+                </button>
+
+                <button onclick="switchTab('admin')" class="bottom-nav-item flex flex-col items-center justify-center min-w-[60px] px-2 h-[50px] rounded-full transition-all duration-500 ease-out shrink-0 snap-center text-tipYellow hover:bg-white/5 focus:outline-none">
+                    <i class="fa-solid fa-screwdriver-wrench text-lg transition-transform duration-500"></i>
+                    <span class="nav-label text-[10px] font-bold transition-all duration-500 ease-out overflow-hidden max-h-0 opacity-0 mt-0">Admin</span>
                 </button>
                 
             </div>
@@ -1180,6 +1196,200 @@
                 </a>
             </div>
         </section>
+
+        <!-- ================= ADMIN CMS SUPABASE ================= -->
+        <section id="admin" class="tab-content">
+            <div class="max-w-7xl mx-auto space-y-8">
+                <div class="glass-panel p-6 md:p-8 rounded-3xl border border-tipYellow/40 relative overflow-hidden">
+                    <div class="absolute -top-16 -right-16 w-48 h-48 bg-tipYellow/10 rounded-full blur-3xl"></div>
+                    <div class="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                        <div>
+                            <span class="inline-flex items-center gap-2 bg-tipYellow/10 text-tipYellow border border-tipYellow/30 px-3 py-1 rounded-full text-xs font-bold tracking-widest mb-3">
+                                <i class="fa-solid fa-lock"></i> ADMIN SUPABASE CMS
+                            </span>
+                            <h2 class="text-3xl md:text-5xl font-extrabold text-white leading-tight">Kelola Isi Website Agronity 25</h2>
+                            <p class="text-gray-400 mt-3 max-w-2xl">Edit jadwal, berita, apresiasi, data mahasiswa, dan teks beranda langsung dari website. Data akan tersimpan di Supabase.</p>
+                        </div>
+                        <div class="bg-black/40 rounded-2xl p-4 border border-white/10 min-w-[220px]">
+                            <p class="text-xs text-gray-500 uppercase font-bold tracking-widest">Status koneksi</p>
+                            <div id="admin-connection-status" class="mt-2 text-sm font-bold text-gray-300 flex items-center gap-2">
+                                <span class="w-2.5 h-2.5 rounded-full bg-gray-500 animate-pulse"></span> Menunggu login
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="admin-login-view" class="glass-panel rounded-3xl p-6 md:p-8 max-w-md mx-auto border-t-4 border-tipYellow">
+                    <div class="text-center mb-6">
+                        <div class="w-20 h-20 mx-auto rounded-3xl bg-tipYellow/10 border border-tipYellow/40 flex items-center justify-center mb-4 shadow-[0_0_30px_rgba(234,179,8,0.25)]">
+                            <i class="fa-solid fa-user-shield text-4xl text-tipYellow"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-white">Login Admin</h3>
+                        <p class="text-sm text-gray-400 mt-1">Gunakan akun Supabase Auth yang sudah didaftarkan sebagai admin.</p>
+                    </div>
+                    <form id="cms-login-form" class="space-y-4">
+                        <input id="cms-login-email" type="email" class="custom-input w-full px-4 py-3 rounded-xl" placeholder="Email admin" required>
+                        <input id="cms-login-password" type="password" class="custom-input w-full px-4 py-3 rounded-xl" placeholder="Password admin" required>
+                        <button class="w-full bg-tipYellow text-black font-black py-3 rounded-xl hover:bg-yellow-400 hover:scale-[1.02] transition-all">
+                            Masuk Dashboard Admin
+                        </button>
+                    </form>
+                    <p id="cms-login-error" class="hidden mt-4 text-sm text-red-400 text-center"></p>
+                    <details class="mt-6 bg-black/30 border border-white/10 rounded-2xl p-4">
+                        <summary class="cursor-pointer text-tipYellow font-bold text-sm">Belum ada tabel Supabase? Klik lihat SQL setup</summary>
+                        <pre class="mt-4 text-[10px] leading-relaxed text-gray-300 whitespace-pre-wrap overflow-x-auto max-h-80" id="cms-sql-setup"></pre>
+                    </details>
+                </div>
+
+                <div id="admin-dashboard-view" class="hidden space-y-6">
+                    <div class="glass-panel rounded-3xl p-4 md:p-5 flex flex-col lg:flex-row gap-4 lg:items-center lg:justify-between">
+                        <div>
+                            <p class="text-xs text-gray-500 uppercase font-bold tracking-widest">Login sebagai</p>
+                            <h3 id="cms-current-user" class="text-white font-bold text-lg">Admin</h3>
+                        </div>
+                        <div class="flex gap-2 overflow-x-auto no-scrollbar pb-1">
+                            <button type="button" data-cms-panel="cms-panel-overview" class="cms-tab-btn active px-4 py-2 rounded-xl text-sm font-bold bg-tipYellow text-black shrink-0">Ringkasan</button>
+                            <button type="button" data-cms-panel="cms-panel-schedule" class="cms-tab-btn px-4 py-2 rounded-xl text-sm font-bold bg-white/5 text-gray-300 border border-white/10 shrink-0">Jadwal</button>
+                            <button type="button" data-cms-panel="cms-panel-news" class="cms-tab-btn px-4 py-2 rounded-xl text-sm font-bold bg-white/5 text-gray-300 border border-white/10 shrink-0">Berita</button>
+                            <button type="button" data-cms-panel="cms-panel-achievement" class="cms-tab-btn px-4 py-2 rounded-xl text-sm font-bold bg-white/5 text-gray-300 border border-white/10 shrink-0">Apresiasi</button>
+                            <button type="button" data-cms-panel="cms-panel-student" class="cms-tab-btn px-4 py-2 rounded-xl text-sm font-bold bg-white/5 text-gray-300 border border-white/10 shrink-0">Mahasiswa</button>
+                            <button type="button" data-cms-panel="cms-panel-config" class="cms-tab-btn px-4 py-2 rounded-xl text-sm font-bold bg-white/5 text-gray-300 border border-white/10 shrink-0">Beranda</button>
+                        </div>
+                        <button type="button" onclick="cmsLogout()" class="px-4 py-2 rounded-xl text-sm font-bold bg-red-500/10 text-red-300 border border-red-500/30 hover:bg-red-500 hover:text-white transition-all">
+                            <i class="fa-solid fa-right-from-bracket mr-1"></i> Logout
+                        </button>
+                    </div>
+
+                    <div id="cms-alert" class="hidden rounded-2xl p-4 border text-sm"></div>
+
+                    <div id="cms-panel-overview" class="cms-panel space-y-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+                            <div class="glass-panel p-5 rounded-2xl"><p class="text-xs text-gray-500 font-bold uppercase">Jadwal kuliah</p><h4 id="cms-count-schedule" class="text-3xl font-black text-tipYellow mt-2">0</h4></div>
+                            <div class="glass-panel p-5 rounded-2xl"><p class="text-xs text-gray-500 font-bold uppercase">Berita CMS</p><h4 id="cms-count-news" class="text-3xl font-black text-newsRed mt-2">0</h4></div>
+                            <div class="glass-panel p-5 rounded-2xl"><p class="text-xs text-gray-500 font-bold uppercase">Apresiasi CMS</p><h4 id="cms-count-achievement" class="text-3xl font-black text-yellow-400 mt-2">0</h4></div>
+                            <div class="glass-panel p-5 rounded-2xl"><p class="text-xs text-gray-500 font-bold uppercase">Mahasiswa CMS</p><h4 id="cms-count-student" class="text-3xl font-black text-green-400 mt-2">0</h4></div>
+                        </div>
+                        <div class="glass-panel p-6 rounded-3xl border border-tipYellow/20">
+                            <h4 class="text-xl font-bold text-white mb-3">Cara pakai cepat</h4>
+                            <div class="grid md:grid-cols-3 gap-4 text-sm text-gray-300">
+                                <div class="bg-white/5 rounded-2xl p-4"><b class="text-tipYellow">1. Login admin</b><br>Admin harus akun Supabase Auth dan masuk tabel <code>admin_users</code>.</div>
+                                <div class="bg-white/5 rounded-2xl p-4"><b class="text-tipYellow">2. Isi data</b><br>Gunakan tab Jadwal, Berita, Apresiasi, Mahasiswa, atau Beranda.</div>
+                                <div class="bg-white/5 rounded-2xl p-4"><b class="text-tipYellow">3. Publik otomatis update</b><br>Website mengambil data Supabase. Jika tabel kosong, data bawaan tetap tampil.</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="cms-panel-schedule" class="cms-panel hidden space-y-6">
+                        <div class="glass-panel p-6 rounded-3xl">
+                            <h3 class="text-2xl font-bold text-white mb-1">Kelola Jadwal Perkuliahan</h3>
+                            <p class="text-sm text-gray-400 mb-5">Data ini akan menggantikan tampilan jadwal semester jika tersedia di Supabase.</p>
+                            <form id="cms-schedule-form" class="grid grid-cols-1 md:grid-cols-6 gap-3">
+                                <input type="hidden" id="cms-schedule-id">
+                                <input id="cms-schedule-semester" type="number" min="1" max="8" class="custom-input p-3 rounded-xl md:col-span-1" placeholder="Semester" required>
+                                <select id="cms-schedule-hari" class="custom-input p-3 rounded-xl md:col-span-1" required>
+                                    <option value="">Hari</option><option>Senin</option><option>Selasa</option><option>Rabu</option><option>Kamis</option><option>Jumat</option><option>Sabtu</option><option>Minggu</option>
+                                </select>
+                                <input id="cms-schedule-waktu" class="custom-input p-3 rounded-xl md:col-span-1" placeholder="08.00 - 09.40" required>
+                                <input id="cms-schedule-matkul" class="custom-input p-3 rounded-xl md:col-span-2" placeholder="Nama mata kuliah" required>
+                                <input id="cms-schedule-ruangan" class="custom-input p-3 rounded-xl md:col-span-1" placeholder="Ruangan">
+                                <select id="cms-schedule-warna" class="custom-input p-3 rounded-xl md:col-span-2">
+                                    <option value="blue">Biru</option><option value="green">Hijau</option><option value="yellow">Kuning</option><option value="purple">Ungu</option><option value="red">Merah</option><option value="cyan">Cyan</option>
+                                </select>
+                                <input id="cms-schedule-urutan" type="number" class="custom-input p-3 rounded-xl md:col-span-2" placeholder="Urutan tampil, contoh 1">
+                                <div class="flex gap-2 md:col-span-2">
+                                    <button class="flex-1 bg-tipYellow text-black font-black p-3 rounded-xl">Simpan</button>
+                                    <button type="button" onclick="cmsResetScheduleForm()" class="px-4 bg-white/5 border border-white/10 rounded-xl text-gray-300">Reset</button>
+                                </div>
+                            </form>
+                        </div>
+                        <div id="cms-schedule-list" class="grid grid-cols-1 lg:grid-cols-2 gap-4"></div>
+                    </div>
+
+                    <div id="cms-panel-news" class="cms-panel hidden space-y-6">
+                        <div class="glass-panel p-6 rounded-3xl">
+                            <h3 class="text-2xl font-bold text-white mb-1">Kelola AgroNEWS</h3>
+                            <p class="text-sm text-gray-400 mb-5">Berita dari CMS akan diprioritaskan. Jika kosong, website memakai berita fallback/API bawaan.</p>
+                            <form id="cms-news-form" class="grid grid-cols-1 md:grid-cols-6 gap-3">
+                                <input type="hidden" id="cms-news-id">
+                                <input id="cms-news-title" class="custom-input p-3 rounded-xl md:col-span-3" placeholder="Judul berita" required>
+                                <input id="cms-news-type" class="custom-input p-3 rounded-xl md:col-span-1" placeholder="Kategori">
+                                <input id="cms-news-time" class="custom-input p-3 rounded-xl md:col-span-2" placeholder="Waktu, contoh: Hari ini">
+                                <input id="cms-news-link" class="custom-input p-3 rounded-xl md:col-span-3" placeholder="Link berita">
+                                <input id="cms-news-poster" class="custom-input p-3 rounded-xl md:col-span-3" placeholder="URL gambar poster">
+                                <textarea id="cms-news-summary" class="custom-input p-3 rounded-xl md:col-span-4" placeholder="Ringkasan singkat"></textarea>
+                                <input id="cms-news-order" type="number" class="custom-input p-3 rounded-xl md:col-span-1" placeholder="Urutan">
+                                <label class="bg-white/5 border border-white/10 rounded-xl p-3 md:col-span-1 flex items-center gap-2 text-sm text-gray-300"><input id="cms-news-active" type="checkbox" checked> Aktif</label>
+                                <div class="flex gap-2 md:col-span-6">
+                                    <button class="flex-1 bg-newsRed text-white font-black p-3 rounded-xl">Simpan Berita</button>
+                                    <button type="button" onclick="cmsResetNewsForm()" class="px-4 bg-white/5 border border-white/10 rounded-xl text-gray-300">Reset</button>
+                                </div>
+                            </form>
+                        </div>
+                        <div id="cms-news-list" class="grid grid-cols-1 lg:grid-cols-2 gap-4"></div>
+                    </div>
+
+                    <div id="cms-panel-achievement" class="cms-panel hidden space-y-6">
+                        <div class="glass-panel p-6 rounded-3xl">
+                            <h3 class="text-2xl font-bold text-white mb-1">Kelola Agronity Apresiasi</h3>
+                            <p class="text-sm text-gray-400 mb-5">Masukkan prestasi satu baris per item. Format: <code>Judul Prestasi | Label</code>.</p>
+                            <form id="cms-achievement-form" class="grid grid-cols-1 md:grid-cols-6 gap-3">
+                                <input type="hidden" id="cms-achievement-id">
+                                <input id="cms-achievement-slug" class="custom-input p-3 rounded-xl md:col-span-2" placeholder="Slug unik, contoh: faris-lidm" required>
+                                <input id="cms-achievement-name" class="custom-input p-3 rounded-xl md:col-span-2" placeholder="Nama mahasiswa/tim" required>
+                                <input id="cms-achievement-category" class="custom-input p-3 rounded-xl md:col-span-2" placeholder="Kategori prestasi">
+                                <input id="cms-achievement-photo" class="custom-input p-3 rounded-xl md:col-span-3" placeholder="URL foto / poster">
+                                <input id="cms-achievement-color" class="custom-input p-3 rounded-xl md:col-span-3" placeholder="Warna gradient, contoh: from-yellow-500 to-orange-500">
+                                <textarea id="cms-achievement-quote" class="custom-input p-3 rounded-xl md:col-span-6" placeholder="Quote / deskripsi singkat"></textarea>
+                                <textarea id="cms-achievement-items" class="custom-input p-3 rounded-xl md:col-span-6 min-h-[120px]" placeholder="Lolos LIDM 2026 | Nasional&#10;Cabang Video Digital Pendidikan | Kategori"></textarea>
+                                <label class="bg-white/5 border border-white/10 rounded-xl p-3 md:col-span-2 flex items-center gap-2 text-sm text-gray-300"><input id="cms-achievement-active" type="checkbox" checked> Aktif</label>
+                                <div class="flex gap-2 md:col-span-4">
+                                    <button class="flex-1 bg-tipYellow text-black font-black p-3 rounded-xl">Simpan Apresiasi</button>
+                                    <button type="button" onclick="cmsResetAchievementForm()" class="px-4 bg-white/5 border border-white/10 rounded-xl text-gray-300">Reset</button>
+                                </div>
+                            </form>
+                        </div>
+                        <div id="cms-achievement-list" class="grid grid-cols-1 lg:grid-cols-2 gap-4"></div>
+                    </div>
+
+                    <div id="cms-panel-student" class="cms-panel hidden space-y-6">
+                        <div class="glass-panel p-6 rounded-3xl">
+                            <h3 class="text-2xl font-bold text-white mb-1">Kelola Data Login Mahasiswa</h3>
+                            <p class="text-sm text-gray-400 mb-5">Mahasiswa bisa login memakai nama lengkap dan tanggal lahir. Data Supabase akan dicek dulu, lalu fallback ke data bawaan HTML.</p>
+                            <form id="cms-student-form" class="grid grid-cols-1 md:grid-cols-6 gap-3">
+                                <input type="hidden" id="cms-student-id">
+                                <input id="cms-student-name" class="custom-input p-3 rounded-xl md:col-span-3" placeholder="Nama lengkap" required>
+                                <input id="cms-student-dob" type="date" class="custom-input p-3 rounded-xl md:col-span-1" required>
+                                <input id="cms-student-pob" class="custom-input p-3 rounded-xl md:col-span-2" placeholder="Tempat lahir">
+                                <input id="cms-student-nim" class="custom-input p-3 rounded-xl md:col-span-2" placeholder="NIM">
+                                <input id="cms-student-prodi" class="custom-input p-3 rounded-xl md:col-span-2" placeholder="Prodi" value="Teknologi Industri Pertanian">
+                                <input id="cms-student-angkatan" class="custom-input p-3 rounded-xl md:col-span-1" placeholder="Angkatan" value="2025">
+                                <label class="bg-white/5 border border-white/10 rounded-xl p-3 md:col-span-1 flex items-center gap-2 text-sm text-gray-300"><input id="cms-student-active" type="checkbox" checked> Aktif</label>
+                                <div class="flex gap-2 md:col-span-6">
+                                    <button class="flex-1 bg-green-500 text-black font-black p-3 rounded-xl">Simpan Mahasiswa</button>
+                                    <button type="button" onclick="cmsResetStudentForm()" class="px-4 bg-white/5 border border-white/10 rounded-xl text-gray-300">Reset</button>
+                                </div>
+                            </form>
+                        </div>
+                        <div id="cms-student-list" class="grid grid-cols-1 lg:grid-cols-2 gap-4"></div>
+                    </div>
+
+                    <div id="cms-panel-config" class="cms-panel hidden space-y-6">
+                        <div class="glass-panel p-6 rounded-3xl">
+                            <h3 class="text-2xl font-bold text-white mb-1">Kelola Teks Beranda</h3>
+                            <p class="text-sm text-gray-400 mb-5">Ubah badge, judul, subtitle, dan background hero tanpa membuka kode.</p>
+                            <form id="cms-config-form" class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                <input id="cms-config-badge" class="custom-input p-3 rounded-xl" placeholder="Badge hero">
+                                <input id="cms-config-bg" class="custom-input p-3 rounded-xl" placeholder="URL background hero">
+                                <textarea id="cms-config-title" class="custom-input p-3 rounded-xl md:col-span-2 min-h-[100px]" placeholder="Judul hero. Boleh pakai enter untuk baris baru."></textarea>
+                                <textarea id="cms-config-subtitle" class="custom-input p-3 rounded-xl md:col-span-2" placeholder="Subtitle hero"></textarea>
+                                <button class="bg-tipYellow text-black font-black p-3 rounded-xl md:col-span-2">Simpan Teks Beranda</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
 
     </main>
 
@@ -2417,6 +2627,839 @@
         }
 
         setInterval(checkAndSendNotification, 60000);
+
+
+        // ================= ADMIN CMS SUPABASE LAYER =================
+        // Data public tetap aman selama RLS Supabase aktif. Jangan pernah taruh service_role key di frontend.
+        const AGRONITY_SUPABASE_URL = "https://wanbuxzodilgsajsepkb.supabase.co";
+        const AGRONITY_SUPABASE_KEY = "sb_publishable_WCOKeI7uPMq_oGVcXK_2ww_dr4QLbfI";
+        const cmsDb = window.supabase ? window.supabase.createClient(AGRONITY_SUPABASE_URL, AGRONITY_SUPABASE_KEY) : null;
+
+        const CMS_SQL_SETUP = `-- Jalankan SQL ini di Supabase SQL Editor.
+-- Setelah itu buat akun admin di Authentication, lalu masukkan user_id ke tabel admin_users.
+
+create table if not exists public.admin_users (
+  user_id uuid primary key references auth.users(id) on delete cascade,
+  email text,
+  role text default 'admin',
+  created_at timestamptz default now()
+);
+
+create or replace function public.is_admin()
+returns boolean
+language sql
+security definer
+set search_path = public
+as $$
+  select exists (
+    select 1 from public.admin_users
+    where user_id = auth.uid()
+  );
+$$;
+
+create table if not exists public.jadwal_perkuliahan (
+  id uuid primary key default gen_random_uuid(),
+  semester int not null,
+  hari text not null,
+  warna text default 'blue',
+  waktu text not null,
+  nama_matkul text not null,
+  ruangan text,
+  urutan int default 0,
+  created_at timestamptz default now()
+);
+
+create table if not exists public.jadwal_kegiatan (
+  id uuid primary key default gen_random_uuid(),
+  nama_kegiatan text not null,
+  tanggal date not null,
+  waktu time,
+  lokasi text,
+  keterangan text,
+  created_at timestamptz default now()
+);
+
+create table if not exists public.berita (
+  id uuid primary key default gen_random_uuid(),
+  judul text not null,
+  tipe text,
+  poster text,
+  link text,
+  waktu text,
+  ringkasan text,
+  urutan int default 0,
+  is_active boolean default true,
+  created_at timestamptz default now()
+);
+
+create table if not exists public.apresiasi (
+  id uuid primary key default gen_random_uuid(),
+  slug text unique not null,
+  nama text not null,
+  kategori text,
+  quote text,
+  foto_url text,
+  warna text default 'from-yellow-500 to-orange-500',
+  prestasi_json jsonb default '[]'::jsonb,
+  is_active boolean default true,
+  created_at timestamptz default now()
+);
+
+create table if not exists public.mahasiswa (
+  id uuid primary key default gen_random_uuid(),
+  nama text not null,
+  tanggal_lahir date not null,
+  tempat_lahir text,
+  nim text,
+  prodi text default 'Teknologi Industri Pertanian',
+  angkatan text default '2025',
+  is_active boolean default true,
+  created_at timestamptz default now()
+);
+
+create table if not exists public.site_config (
+  key text primary key,
+  value text,
+  updated_at timestamptz default now()
+);
+
+alter table public.admin_users enable row level security;
+alter table public.jadwal_perkuliahan enable row level security;
+alter table public.jadwal_kegiatan enable row level security;
+alter table public.berita enable row level security;
+alter table public.apresiasi enable row level security;
+alter table public.mahasiswa enable row level security;
+alter table public.site_config enable row level security;
+
+-- Public read untuk konten website.
+drop policy if exists "Public read jadwal_perkuliahan" on public.jadwal_perkuliahan;
+create policy "Public read jadwal_perkuliahan" on public.jadwal_perkuliahan for select to anon, authenticated using (true);
+drop policy if exists "Public read jadwal_kegiatan" on public.jadwal_kegiatan;
+create policy "Public read jadwal_kegiatan" on public.jadwal_kegiatan for select to anon, authenticated using (true);
+drop policy if exists "Public read berita" on public.berita;
+create policy "Public read berita" on public.berita for select to anon, authenticated using (is_active = true);
+drop policy if exists "Public read apresiasi" on public.apresiasi;
+create policy "Public read apresiasi" on public.apresiasi for select to anon, authenticated using (is_active = true);
+drop policy if exists "Public read site_config" on public.site_config;
+create policy "Public read site_config" on public.site_config for select to anon, authenticated using (true);
+
+-- Mahasiswa sebaiknya tidak public read penuh karena berisi tanggal lahir.
+drop policy if exists "Admin read mahasiswa" on public.mahasiswa;
+create policy "Admin read mahasiswa" on public.mahasiswa for select to authenticated using (public.is_admin());
+
+-- Admin CRUD semua konten.
+drop policy if exists "Admin manage jadwal_perkuliahan" on public.jadwal_perkuliahan;
+create policy "Admin manage jadwal_perkuliahan" on public.jadwal_perkuliahan for all to authenticated using (public.is_admin()) with check (public.is_admin());
+drop policy if exists "Admin manage jadwal_kegiatan" on public.jadwal_kegiatan;
+create policy "Admin manage jadwal_kegiatan" on public.jadwal_kegiatan for all to authenticated using (public.is_admin()) with check (public.is_admin());
+drop policy if exists "Admin manage berita" on public.berita;
+create policy "Admin manage berita" on public.berita for all to authenticated using (public.is_admin()) with check (public.is_admin());
+drop policy if exists "Admin manage apresiasi" on public.apresiasi;
+create policy "Admin manage apresiasi" on public.apresiasi for all to authenticated using (public.is_admin()) with check (public.is_admin());
+drop policy if exists "Admin manage mahasiswa" on public.mahasiswa;
+create policy "Admin manage mahasiswa" on public.mahasiswa for all to authenticated using (public.is_admin()) with check (public.is_admin());
+drop policy if exists "Admin manage site_config" on public.site_config;
+create policy "Admin manage site_config" on public.site_config for all to authenticated using (public.is_admin()) with check (public.is_admin());
+
+-- Setelah membuat user di Auth, jalankan contoh ini dengan ID user admin kamu:
+-- insert into public.admin_users (user_id, email) values ('PASTE_USER_ID_AUTH_DI_SINI', 'emailadmin@contoh.com');`;
+
+        const cmsState = {
+            schedules: [],
+            news: [],
+            achievements: [],
+            students: [],
+            config: {}
+        };
+
+        function cmsEscape(value = '') {
+            return String(value ?? '').replace(/[&<>'"]/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[char]));
+        }
+
+        function cmsSafeUrl(value = '') {
+            const url = String(value || '').trim();
+            if (!url) return '#';
+            if (/^(https?:\/\/|mailto:|tel:|#)/i.test(url)) return url;
+            return '#';
+        }
+
+        function cmsSetConnection(status, type = 'idle') {
+            const el = document.getElementById('admin-connection-status');
+            if (!el) return;
+            const colors = { ok: 'bg-green-400', error: 'bg-red-500', warn: 'bg-yellow-400', idle: 'bg-gray-500' };
+            el.innerHTML = `<span class="w-2.5 h-2.5 rounded-full ${colors[type] || colors.idle} ${type === 'idle' ? 'animate-pulse' : ''}"></span> ${cmsEscape(status)}`;
+        }
+
+        function cmsAlert(message, type = 'ok') {
+            const box = document.getElementById('cms-alert');
+            if (!box) return;
+            const style = type === 'error'
+                ? 'bg-red-500/10 border-red-500/30 text-red-200'
+                : type === 'warn'
+                    ? 'bg-yellow-500/10 border-yellow-500/30 text-yellow-100'
+                    : 'bg-green-500/10 border-green-500/30 text-green-100';
+            box.className = `rounded-2xl p-4 border text-sm ${style}`;
+            box.textContent = message;
+            box.classList.remove('hidden');
+            clearTimeout(window.__cmsAlertTimer);
+            window.__cmsAlertTimer = setTimeout(() => box.classList.add('hidden'), 4500);
+        }
+
+        function cmsParseAchievementLines(text) {
+            return String(text || '').split('\n').map(line => line.trim()).filter(Boolean).map(line => {
+                const [title, medal] = line.split('|').map(part => part.trim());
+                return { title: title || '-', medal: medal || 'Prestasi' };
+            });
+        }
+
+        function cmsAchievementLines(items) {
+            if (!Array.isArray(items)) return '';
+            return items.map(item => `${item.title || ''} | ${item.medal || 'Prestasi'}`).join('\n');
+        }
+
+        async function cmsIsAdmin() {
+            if (!cmsDb) return false;
+            const { data: { user } } = await cmsDb.auth.getUser();
+            if (!user) return false;
+            const { data, error } = await cmsDb.from('admin_users').select('user_id,email').eq('user_id', user.id).maybeSingle();
+            if (error || !data) return false;
+            return true;
+        }
+
+        async function cmsBoot() {
+            const setupBox = document.getElementById('cms-sql-setup');
+            if (setupBox) setupBox.textContent = CMS_SQL_SETUP;
+
+            if (!cmsDb) {
+                cmsSetConnection('CDN Supabase gagal dimuat', 'error');
+                return;
+            }
+
+            const { data: { session } } = await cmsDb.auth.getSession();
+            if (session) {
+                const ok = await cmsIsAdmin();
+                if (ok) await cmsShowDashboard(session.user);
+                else cmsSetConnection('Login ada, tetapi belum terdaftar admin_users', 'warn');
+            } else {
+                cmsSetConnection('Belum login', 'idle');
+            }
+
+            await cmsLoadPublicContent();
+        }
+
+        async function cmsShowDashboard(user) {
+            document.getElementById('admin-login-view')?.classList.add('hidden');
+            document.getElementById('admin-dashboard-view')?.classList.remove('hidden');
+            const current = document.getElementById('cms-current-user');
+            if (current) current.textContent = user.email || 'Admin';
+            cmsSetConnection('Terhubung sebagai admin', 'ok');
+            await cmsLoadAllAdminData();
+        }
+
+        async function cmsLogin(event) {
+            event.preventDefault();
+            const errorBox = document.getElementById('cms-login-error');
+            if (errorBox) errorBox.classList.add('hidden');
+
+            const email = document.getElementById('cms-login-email').value.trim();
+            const password = document.getElementById('cms-login-password').value;
+            const { data, error } = await cmsDb.auth.signInWithPassword({ email, password });
+
+            if (error) {
+                if (errorBox) {
+                    errorBox.textContent = 'Login gagal: ' + error.message;
+                    errorBox.classList.remove('hidden');
+                }
+                cmsSetConnection('Login gagal', 'error');
+                return;
+            }
+
+            const ok = await cmsIsAdmin();
+            if (!ok) {
+                await cmsDb.auth.signOut();
+                if (errorBox) {
+                    errorBox.textContent = 'Akun ini belum masuk tabel admin_users. Tambahkan user_id akun ini ke tabel admin_users di Supabase.';
+                    errorBox.classList.remove('hidden');
+                }
+                cmsSetConnection('Akun belum punya akses admin', 'warn');
+                return;
+            }
+
+            await cmsShowDashboard(data.user);
+            cmsAlert('Berhasil login admin.');
+        }
+
+        async function cmsLogout() {
+            if (!cmsDb) return;
+            await cmsDb.auth.signOut();
+            document.getElementById('admin-login-view')?.classList.remove('hidden');
+            document.getElementById('admin-dashboard-view')?.classList.add('hidden');
+            cmsSetConnection('Logout berhasil', 'idle');
+        }
+
+        function cmsShowPanel(panelId) {
+            document.querySelectorAll('.cms-panel').forEach(panel => panel.classList.add('hidden'));
+            document.getElementById(panelId)?.classList.remove('hidden');
+            document.querySelectorAll('.cms-tab-btn').forEach(btn => {
+                btn.classList.remove('active', 'bg-tipYellow', 'text-black');
+                btn.classList.add('bg-white/5', 'text-gray-300', 'border', 'border-white/10');
+            });
+            const active = document.querySelector(`[data-cms-panel="${panelId}"]`);
+            if (active) {
+                active.classList.add('active', 'bg-tipYellow', 'text-black');
+                active.classList.remove('bg-white/5', 'text-gray-300', 'border', 'border-white/10');
+            }
+        }
+
+        async function cmsLoadAllAdminData() {
+            await Promise.allSettled([
+                cmsLoadSchedules(),
+                cmsLoadNews(),
+                cmsLoadAchievements(),
+                cmsLoadStudents(),
+                cmsLoadConfig()
+            ]);
+            cmsUpdateCounts();
+        }
+
+        function cmsUpdateCounts() {
+            const pairs = [
+                ['cms-count-schedule', cmsState.schedules.length],
+                ['cms-count-news', cmsState.news.length],
+                ['cms-count-achievement', cmsState.achievements.length],
+                ['cms-count-student', cmsState.students.length]
+            ];
+            pairs.forEach(([id, value]) => { const el = document.getElementById(id); if (el) el.textContent = value; });
+        }
+
+        async function cmsLoadPublicContent() {
+            await Promise.allSettled([
+                cmsApplySiteConfig(),
+                cmsRenderPublicScheduleButtons(),
+                cmsRenderPublicActivities(),
+                cmsRenderPublicAchievements()
+            ]);
+        }
+
+        async function cmsLoadSchedules() {
+            const { data, error } = await cmsDb.from('jadwal_perkuliahan').select('*').order('semester').order('urutan').order('hari');
+            if (error) throw error;
+            cmsState.schedules = data || [];
+            cmsRenderScheduleList();
+            cmsUpdateCounts();
+        }
+
+        function cmsResetScheduleForm() {
+            ['cms-schedule-id','cms-schedule-semester','cms-schedule-waktu','cms-schedule-matkul','cms-schedule-ruangan','cms-schedule-urutan'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+            const hari = document.getElementById('cms-schedule-hari'); if (hari) hari.value = '';
+            const warna = document.getElementById('cms-schedule-warna'); if (warna) warna.value = 'blue';
+        }
+
+        function cmsEditSchedule(id) {
+            const item = cmsState.schedules.find(row => row.id === id);
+            if (!item) return;
+            document.getElementById('cms-schedule-id').value = item.id;
+            document.getElementById('cms-schedule-semester').value = item.semester || '';
+            document.getElementById('cms-schedule-hari').value = item.hari || '';
+            document.getElementById('cms-schedule-waktu').value = item.waktu || '';
+            document.getElementById('cms-schedule-matkul').value = item.nama_matkul || '';
+            document.getElementById('cms-schedule-ruangan').value = item.ruangan || '';
+            document.getElementById('cms-schedule-warna').value = item.warna || 'blue';
+            document.getElementById('cms-schedule-urutan').value = item.urutan || '';
+            document.getElementById('cms-schedule-form')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        async function cmsDeleteSchedule(id) {
+            if (!confirm('Hapus jadwal ini?')) return;
+            const { error } = await cmsDb.from('jadwal_perkuliahan').delete().eq('id', id);
+            if (error) return cmsAlert('Gagal hapus jadwal: ' + error.message, 'error');
+            await cmsLoadSchedules();
+            await cmsRenderPublicScheduleButtons();
+            cmsAlert('Jadwal dihapus.');
+        }
+
+        function cmsRenderScheduleList() {
+            const box = document.getElementById('cms-schedule-list');
+            if (!box) return;
+            if (!cmsState.schedules.length) {
+                box.innerHTML = `<div class="glass-panel p-5 rounded-2xl text-gray-400">Belum ada jadwal dari Supabase.</div>`;
+                return;
+            }
+            box.innerHTML = cmsState.schedules.map(item => `
+                <div class="glass-panel p-5 rounded-2xl border-l-4 border-${cmsEscape(item.warna || 'blue')}-500">
+                    <div class="flex justify-between gap-3">
+                        <div>
+                            <p class="text-xs text-tipYellow font-bold uppercase">Semester ${cmsEscape(item.semester)} • ${cmsEscape(item.hari)}</p>
+                            <h4 class="text-white font-bold text-lg">${cmsEscape(item.nama_matkul)}</h4>
+                            <p class="text-sm text-gray-400">${cmsEscape(item.waktu)} • ${cmsEscape(item.ruangan || '-')}</p>
+                        </div>
+                        <div class="flex gap-2 shrink-0">
+                            <button type="button" onclick="cmsEditSchedule('${item.id}')" class="w-9 h-9 rounded-lg bg-white/10 text-white"><i class="fa-solid fa-pen"></i></button>
+                            <button type="button" onclick="cmsDeleteSchedule('${item.id}')" class="w-9 h-9 rounded-lg bg-red-500/10 text-red-300"><i class="fa-solid fa-trash"></i></button>
+                        </div>
+                    </div>
+                </div>`).join('');
+        }
+
+        async function cmsSaveSchedule(event) {
+            event.preventDefault();
+            const id = document.getElementById('cms-schedule-id').value;
+            const payload = {
+                semester: Number(document.getElementById('cms-schedule-semester').value),
+                hari: document.getElementById('cms-schedule-hari').value,
+                warna: document.getElementById('cms-schedule-warna').value || 'blue',
+                waktu: document.getElementById('cms-schedule-waktu').value.trim(),
+                nama_matkul: document.getElementById('cms-schedule-matkul').value.trim(),
+                ruangan: document.getElementById('cms-schedule-ruangan').value.trim(),
+                urutan: Number(document.getElementById('cms-schedule-urutan').value || 0)
+            };
+            const query = id ? cmsDb.from('jadwal_perkuliahan').update(payload).eq('id', id) : cmsDb.from('jadwal_perkuliahan').insert(payload);
+            const { error } = await query;
+            if (error) return cmsAlert('Gagal simpan jadwal: ' + error.message, 'error');
+            cmsResetScheduleForm();
+            await cmsLoadSchedules();
+            await cmsRenderPublicScheduleButtons();
+            cmsAlert('Jadwal berhasil disimpan.');
+        }
+
+        async function cmsRenderPublicScheduleButtons() {
+            if (!cmsDb) return;
+            const { data, error } = await cmsDb.from('jadwal_perkuliahan').select('*').order('semester').order('urutan');
+            if (error || !data || !data.length) return;
+            cmsState.schedules = data;
+            const semesterSet = [...new Set(data.map(row => Number(row.semester)).filter(Boolean))];
+            const grid = document.querySelector('#jadwal .grid.grid-cols-2');
+            if (grid) {
+                grid.innerHTML = Array.from({ length: 8 }, (_, i) => {
+                    const sem = i + 1;
+                    const enabled = semesterSet.includes(sem);
+                    return enabled
+                        ? `<button onclick="showSchedule(${sem})" class="p-4 glass-panel rounded-xl hover:bg-tipYellow hover:text-black transition-all font-bold group">Semester ${sem} <i class="fa-solid fa-arrow-right float-right opacity-0 group-hover:opacity-100 transition-opacity"></i></button>`
+                        : `<button class="p-4 glass-panel rounded-xl opacity-50 cursor-not-allowed">Semester ${sem}</button>`;
+                }).join('');
+            }
+        }
+
+        const legacyShowSchedule = window.showSchedule;
+        window.showSchedule = function(sem) {
+            const supaRows = cmsState.schedules.filter(row => Number(row.semester) === Number(sem));
+            if (!supaRows.length) return legacyShowSchedule ? legacyShowSchedule(sem) : alert('Jadwal belum tersedia.');
+
+            const display = document.getElementById('schedule-display');
+            if (!display) return;
+            const dayOrder = ['Senin','Selasa','Rabu','Kamis','Jumat','Sabtu','Minggu'];
+            const grouped = dayOrder.map(day => ({ day, rows: supaRows.filter(row => row.hari === day) })).filter(group => group.rows.length);
+            const todayIndex = new Date().getDay();
+            const currentDayName = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'][todayIndex];
+            let html = `<div class="glass-panel rounded-2xl overflow-hidden animate-pop-in"><div class="bg-tipYellow p-4 flex justify-between items-center text-black"><h3 class="font-bold text-xl">Semester ${sem} dari Admin CMS</h3><i class="fa-regular fa-calendar-days text-xl"></i></div><div class="p-6 grid gap-6 md:grid-cols-2">`;
+            grouped.forEach(group => {
+                const color = group.rows[0].warna || 'blue';
+                const isToday = group.day === currentDayName;
+                const highlightClass = isToday ? 'day-highlight' : `bg-white/5 border-${color}-500`;
+                const titleColor = isToday ? 'text-[#10b981] text-glow' : `text-${color}-400`;
+                html += `<div class="rounded-xl p-4 border-l-4 ${highlightClass} transition-all duration-300"><h4 class="font-bold text-lg mb-3 ${titleColor}">${cmsEscape(group.day)}</h4><ul class="space-y-3">`;
+                group.rows.forEach(item => {
+                    html += `<li class="flex justify-between border-b border-gray-700 pb-2 gap-3"><span class="text-sm font-medium text-gray-300">${cmsEscape(item.waktu)}</span><span class="text-right text-sm"><span class="font-bold text-white">${cmsEscape(item.nama_matkul)}</span><br><small class="text-gray-400">${cmsEscape(item.ruangan || '-')}</small></span></li>`;
+                });
+                html += `</ul></div>`;
+            });
+            html += `</div></div>`;
+            display.innerHTML = html;
+            display.classList.remove('hidden');
+            display.scrollIntoView({ behavior: 'smooth' });
+        };
+
+        async function cmsRenderPublicActivities() {
+            if (!cmsDb) return;
+            const { data, error } = await cmsDb.from('jadwal_kegiatan').select('*').order('tanggal', { ascending: true }).limit(8);
+            const section = document.getElementById('jadwal');
+            if (!section || error || !data || !data.length) return;
+            let box = document.getElementById('cms-public-kegiatan');
+            if (!box) {
+                box = document.createElement('div');
+                box.id = 'cms-public-kegiatan';
+                box.className = 'glass-panel rounded-3xl p-6 mb-8 border border-green-500/20';
+                const scheduleDisplay = document.getElementById('schedule-display');
+                section.insertBefore(box, scheduleDisplay);
+            }
+            box.innerHTML = `<div class="flex items-center gap-3 mb-4"><i class="fa-solid fa-calendar-check text-green-400 text-2xl"></i><div><h3 class="text-xl font-bold text-white">Jadwal Kegiatan Angkatan</h3><p class="text-xs text-gray-400">Data dari Supabase CMS</p></div></div><div class="grid md:grid-cols-2 gap-3">${data.map(item => `<div class="bg-white/5 rounded-2xl p-4 border border-white/10"><h4 class="font-bold text-white">${cmsEscape(item.nama_kegiatan)}</h4><p class="text-sm text-green-300 mt-1">${cmsEscape(item.tanggal)} ${cmsEscape(item.waktu || '')}</p><p class="text-xs text-gray-400 mt-1"><i class="fa-solid fa-location-dot"></i> ${cmsEscape(item.lokasi || '-')}</p><p class="text-xs text-gray-500 mt-2">${cmsEscape(item.keterangan || '')}</p></div>`).join('')}</div>`;
+        }
+
+        async function cmsLoadNews() {
+            const { data, error } = await cmsDb.from('berita').select('*').order('urutan').order('created_at', { ascending: false });
+            if (error) throw error;
+            cmsState.news = data || [];
+            cmsRenderNewsList();
+            cmsUpdateCounts();
+        }
+
+        function cmsResetNewsForm() {
+            ['cms-news-id','cms-news-title','cms-news-type','cms-news-time','cms-news-link','cms-news-poster','cms-news-summary','cms-news-order'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+            const active = document.getElementById('cms-news-active'); if (active) active.checked = true;
+        }
+
+        function cmsEditNews(id) {
+            const item = cmsState.news.find(row => row.id === id);
+            if (!item) return;
+            document.getElementById('cms-news-id').value = item.id;
+            document.getElementById('cms-news-title').value = item.judul || '';
+            document.getElementById('cms-news-type').value = item.tipe || '';
+            document.getElementById('cms-news-time').value = item.waktu || '';
+            document.getElementById('cms-news-link').value = item.link || '';
+            document.getElementById('cms-news-poster').value = item.poster || '';
+            document.getElementById('cms-news-summary').value = item.ringkasan || '';
+            document.getElementById('cms-news-order').value = item.urutan || '';
+            document.getElementById('cms-news-active').checked = item.is_active !== false;
+            document.getElementById('cms-news-form')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        async function cmsDeleteNews(id) {
+            if (!confirm('Hapus berita ini?')) return;
+            const { error } = await cmsDb.from('berita').delete().eq('id', id);
+            if (error) return cmsAlert('Gagal hapus berita: ' + error.message, 'error');
+            await cmsLoadNews();
+            await getNews();
+            cmsAlert('Berita dihapus.');
+        }
+
+        function cmsRenderNewsList() {
+            const box = document.getElementById('cms-news-list');
+            if (!box) return;
+            if (!cmsState.news.length) {
+                box.innerHTML = `<div class="glass-panel p-5 rounded-2xl text-gray-400">Belum ada berita CMS.</div>`;
+                return;
+            }
+            box.innerHTML = cmsState.news.map(item => `
+                <div class="glass-panel rounded-2xl overflow-hidden flex gap-4 p-4">
+                    <img src="${cmsSafeUrl(item.poster)}" class="w-24 h-24 rounded-xl object-cover bg-gray-800" onerror="this.src='https://images.unsplash.com/photo-1523741543316-beb7fc7023d8?q=80&w=600&auto=format&fit=crop'">
+                    <div class="flex-1 min-w-0">
+                        <p class="text-xs text-newsRed font-bold uppercase">${cmsEscape(item.tipe || 'Berita')} ${item.is_active === false ? '• Nonaktif' : ''}</p>
+                        <h4 class="text-white font-bold line-clamp-2">${cmsEscape(item.judul)}</h4>
+                        <p class="text-xs text-gray-500 mt-1">${cmsEscape(item.waktu || '-')}</p>
+                    </div>
+                    <div class="flex flex-col gap-2">
+                        <button type="button" onclick="cmsEditNews('${item.id}')" class="w-9 h-9 rounded-lg bg-white/10 text-white"><i class="fa-solid fa-pen"></i></button>
+                        <button type="button" onclick="cmsDeleteNews('${item.id}')" class="w-9 h-9 rounded-lg bg-red-500/10 text-red-300"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                </div>`).join('');
+        }
+
+        async function cmsSaveNews(event) {
+            event.preventDefault();
+            const id = document.getElementById('cms-news-id').value;
+            const payload = {
+                judul: document.getElementById('cms-news-title').value.trim(),
+                tipe: document.getElementById('cms-news-type').value.trim() || 'Berita',
+                waktu: document.getElementById('cms-news-time').value.trim() || 'Baru saja',
+                link: document.getElementById('cms-news-link').value.trim() || '#',
+                poster: document.getElementById('cms-news-poster').value.trim() || 'https://images.unsplash.com/photo-1523741543316-beb7fc7023d8?q=80&w=1000&auto=format&fit=crop',
+                ringkasan: document.getElementById('cms-news-summary').value.trim(),
+                urutan: Number(document.getElementById('cms-news-order').value || 0),
+                is_active: document.getElementById('cms-news-active').checked
+            };
+            const query = id ? cmsDb.from('berita').update(payload).eq('id', id) : cmsDb.from('berita').insert(payload);
+            const { error } = await query;
+            if (error) return cmsAlert('Gagal simpan berita: ' + error.message, 'error');
+            cmsResetNewsForm();
+            await cmsLoadNews();
+            await getNews();
+            cmsAlert('Berita berhasil disimpan.');
+        }
+
+        const legacyGetNews = window.getNews;
+        window.getNews = async function() {
+            if (cmsDb) {
+                try {
+                    const { data, error } = await cmsDb.from('berita').select('*').eq('is_active', true).order('urutan').order('created_at', { ascending: false });
+                    if (!error && data && data.length) {
+                        renderNews(data.map(item => ({
+                            judul: item.judul,
+                            poster: item.poster || 'https://images.unsplash.com/photo-1523741543316-beb7fc7023d8?q=80&w=1000&auto=format&fit=crop',
+                            link: item.link || '#',
+                            tipe: item.tipe || 'Berita',
+                            waktu: item.waktu || 'Baru saja'
+                        })));
+                        return;
+                    }
+                } catch (err) { console.warn('CMS berita fallback:', err.message); }
+            }
+            if (legacyGetNews) return legacyGetNews();
+        };
+
+        async function cmsLoadAchievements() {
+            const { data, error } = await cmsDb.from('apresiasi').select('*').order('created_at', { ascending: false });
+            if (error) throw error;
+            cmsState.achievements = data || [];
+            cmsRenderAchievementList();
+            cmsUpdateCounts();
+        }
+
+        function cmsResetAchievementForm() {
+            ['cms-achievement-id','cms-achievement-slug','cms-achievement-name','cms-achievement-category','cms-achievement-photo','cms-achievement-color','cms-achievement-quote','cms-achievement-items'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+            const active = document.getElementById('cms-achievement-active'); if (active) active.checked = true;
+        }
+
+        function cmsEditAchievement(id) {
+            const item = cmsState.achievements.find(row => row.id === id);
+            if (!item) return;
+            document.getElementById('cms-achievement-id').value = item.id;
+            document.getElementById('cms-achievement-slug').value = item.slug || '';
+            document.getElementById('cms-achievement-name').value = item.nama || '';
+            document.getElementById('cms-achievement-category').value = item.kategori || '';
+            document.getElementById('cms-achievement-photo').value = item.foto_url || '';
+            document.getElementById('cms-achievement-color').value = item.warna || '';
+            document.getElementById('cms-achievement-quote').value = item.quote || '';
+            document.getElementById('cms-achievement-items').value = cmsAchievementLines(item.prestasi_json || []);
+            document.getElementById('cms-achievement-active').checked = item.is_active !== false;
+            document.getElementById('cms-achievement-form')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        async function cmsDeleteAchievement(id) {
+            if (!confirm('Hapus apresiasi ini?')) return;
+            const { error } = await cmsDb.from('apresiasi').delete().eq('id', id);
+            if (error) return cmsAlert('Gagal hapus apresiasi: ' + error.message, 'error');
+            await cmsLoadAchievements();
+            await cmsRenderPublicAchievements();
+            cmsAlert('Apresiasi dihapus.');
+        }
+
+        function cmsRenderAchievementList() {
+            const box = document.getElementById('cms-achievement-list');
+            if (!box) return;
+            if (!cmsState.achievements.length) {
+                box.innerHTML = `<div class="glass-panel p-5 rounded-2xl text-gray-400">Belum ada apresiasi CMS.</div>`;
+                return;
+            }
+            box.innerHTML = cmsState.achievements.map(item => `
+                <div class="glass-panel rounded-2xl overflow-hidden flex gap-4 p-4">
+                    <img src="${cmsSafeUrl(item.foto_url)}" class="w-24 h-24 rounded-xl object-cover bg-gray-800" onerror="this.src='https://images.unsplash.com/photo-1532094349884-543bc11b234d?q=80&w=600&auto=format&fit=crop'">
+                    <div class="flex-1 min-w-0">
+                        <p class="text-xs text-tipYellow font-bold uppercase">${cmsEscape(item.kategori || 'Prestasi')} ${item.is_active === false ? '• Nonaktif' : ''}</p>
+                        <h4 class="text-white font-bold line-clamp-2">${cmsEscape(item.nama)}</h4>
+                        <p class="text-xs text-gray-500 mt-1">/${cmsEscape(item.slug)}</p>
+                    </div>
+                    <div class="flex flex-col gap-2">
+                        <button type="button" onclick="cmsEditAchievement('${item.id}')" class="w-9 h-9 rounded-lg bg-white/10 text-white"><i class="fa-solid fa-pen"></i></button>
+                        <button type="button" onclick="cmsDeleteAchievement('${item.id}')" class="w-9 h-9 rounded-lg bg-red-500/10 text-red-300"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                </div>`).join('');
+        }
+
+        async function cmsSaveAchievement(event) {
+            event.preventDefault();
+            const id = document.getElementById('cms-achievement-id').value;
+            const payload = {
+                slug: document.getElementById('cms-achievement-slug').value.trim().toLowerCase().replace(/[^a-z0-9-]/g, '-'),
+                nama: document.getElementById('cms-achievement-name').value.trim(),
+                kategori: document.getElementById('cms-achievement-category').value.trim(),
+                foto_url: document.getElementById('cms-achievement-photo').value.trim() || 'https://images.unsplash.com/photo-1532094349884-543bc11b234d?q=80&w=800&auto=format&fit=crop',
+                warna: document.getElementById('cms-achievement-color').value.trim() || 'from-yellow-500 to-orange-500',
+                quote: document.getElementById('cms-achievement-quote').value.trim(),
+                prestasi_json: cmsParseAchievementLines(document.getElementById('cms-achievement-items').value),
+                is_active: document.getElementById('cms-achievement-active').checked
+            };
+            const query = id ? cmsDb.from('apresiasi').update(payload).eq('id', id) : cmsDb.from('apresiasi').insert(payload);
+            const { error } = await query;
+            if (error) return cmsAlert('Gagal simpan apresiasi: ' + error.message, 'error');
+            cmsResetAchievementForm();
+            await cmsLoadAchievements();
+            await cmsRenderPublicAchievements();
+            cmsAlert('Apresiasi berhasil disimpan.');
+        }
+
+        async function cmsRenderPublicAchievements() {
+            if (!cmsDb) return;
+            const { data, error } = await cmsDb.from('apresiasi').select('*').eq('is_active', true).order('created_at', { ascending: false });
+            const section = document.querySelector('#apresiasi .grid');
+            if (!section || error || !data || !data.length) return;
+            let container = document.getElementById('cms-apresiasi-cards');
+            if (!container) {
+                container = document.createElement('div');
+                container.id = 'cms-apresiasi-cards';
+                container.className = 'contents';
+                section.prepend(container);
+            }
+            container.innerHTML = data.map(item => {
+                const slug = item.slug;
+                achievers[slug] = {
+                    name: item.nama,
+                    category: item.kategori || 'Prestasi',
+                    quote: item.quote || '“Terus bertumbuh, terus menginspirasi.”',
+                    achievements: item.prestasi_json || [],
+                    gradient: item.warna || 'from-yellow-500 to-orange-500',
+                    image: item.foto_url || 'https://images.unsplash.com/photo-1532094349884-543bc11b234d?q=80&w=800&auto=format&fit=crop'
+                };
+                return `<div onclick="openApresiasiModal('${cmsEscape(slug)}')" class="group relative aspect-[4/5] rounded-3xl overflow-hidden cursor-pointer shadow-lg hover:shadow-2xl transition-all duration-500 ring-1 ring-white/10 hover:ring-yellow-500/50"><img src="${cmsSafeUrl(item.foto_url)}" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" onerror="this.src='https://images.unsplash.com/photo-1532094349884-543bc11b234d?q=80&w=800&auto=format&fit=crop'" alt="${cmsEscape(item.nama)}"><div class="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent opacity-90 group-hover:opacity-70 transition-opacity"></div><div class="absolute top-4 right-4"><span class="bg-yellow-600/80 backdrop-blur-md text-white text-[10px] font-bold px-3 py-1 rounded-full border border-yellow-400/30 shadow-[0_0_10px_rgba(234,179,8,0.5)]"><i class="fa-solid fa-trophy"></i> CMS</span></div><div class="absolute bottom-4 left-4 right-4 translate-y-2 group-hover:translate-y-0 transition-transform duration-300"><div class="bg-black/40 backdrop-blur-xl border-l-4 border-yellow-500 p-4 rounded-xl"><h3 class="font-bold text-white text-lg leading-tight truncate">${cmsEscape(item.nama)}</h3><p class="text-yellow-200 text-xs mt-1 line-clamp-1 font-medium"><i class="fa-solid fa-star mr-1"></i>${cmsEscape(item.kategori || 'Prestasi')}</p></div></div></div>`;
+            }).join('');
+        }
+
+        async function cmsLoadStudents() {
+            const { data, error } = await cmsDb.from('mahasiswa').select('*').order('nama');
+            if (error) throw error;
+            cmsState.students = data || [];
+            cmsRenderStudentList();
+            cmsUpdateCounts();
+        }
+
+        function cmsResetStudentForm() {
+            ['cms-student-id','cms-student-name','cms-student-dob','cms-student-pob','cms-student-nim'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+            const prodi = document.getElementById('cms-student-prodi'); if (prodi) prodi.value = 'Teknologi Industri Pertanian';
+            const angkatan = document.getElementById('cms-student-angkatan'); if (angkatan) angkatan.value = '2025';
+            const active = document.getElementById('cms-student-active'); if (active) active.checked = true;
+        }
+
+        function cmsEditStudent(id) {
+            const item = cmsState.students.find(row => row.id === id);
+            if (!item) return;
+            document.getElementById('cms-student-id').value = item.id;
+            document.getElementById('cms-student-name').value = item.nama || '';
+            document.getElementById('cms-student-dob').value = item.tanggal_lahir || '';
+            document.getElementById('cms-student-pob').value = item.tempat_lahir || '';
+            document.getElementById('cms-student-nim').value = item.nim || '';
+            document.getElementById('cms-student-prodi').value = item.prodi || 'Teknologi Industri Pertanian';
+            document.getElementById('cms-student-angkatan').value = item.angkatan || '2025';
+            document.getElementById('cms-student-active').checked = item.is_active !== false;
+            document.getElementById('cms-student-form')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        async function cmsDeleteStudent(id) {
+            if (!confirm('Hapus data mahasiswa ini?')) return;
+            const { error } = await cmsDb.from('mahasiswa').delete().eq('id', id);
+            if (error) return cmsAlert('Gagal hapus mahasiswa: ' + error.message, 'error');
+            await cmsLoadStudents();
+            cmsAlert('Data mahasiswa dihapus.');
+        }
+
+        function cmsRenderStudentList() {
+            const box = document.getElementById('cms-student-list');
+            if (!box) return;
+            if (!cmsState.students.length) {
+                box.innerHTML = `<div class="glass-panel p-5 rounded-2xl text-gray-400">Belum ada data mahasiswa CMS.</div>`;
+                return;
+            }
+            box.innerHTML = cmsState.students.map(item => `
+                <div class="glass-panel p-5 rounded-2xl flex justify-between gap-3">
+                    <div>
+                        <p class="text-xs text-green-400 font-bold uppercase">${cmsEscape(item.nim || 'Tanpa NIM')} ${item.is_active === false ? '• Nonaktif' : ''}</p>
+                        <h4 class="text-white font-bold">${cmsEscape(item.nama)}</h4>
+                        <p class="text-sm text-gray-400">${cmsEscape(item.tempat_lahir || '-')} • ${cmsEscape(item.tanggal_lahir || '-')}</p>
+                    </div>
+                    <div class="flex gap-2 shrink-0">
+                        <button type="button" onclick="cmsEditStudent('${item.id}')" class="w-9 h-9 rounded-lg bg-white/10 text-white"><i class="fa-solid fa-pen"></i></button>
+                        <button type="button" onclick="cmsDeleteStudent('${item.id}')" class="w-9 h-9 rounded-lg bg-red-500/10 text-red-300"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                </div>`).join('');
+        }
+
+        async function cmsSaveStudent(event) {
+            event.preventDefault();
+            const id = document.getElementById('cms-student-id').value;
+            const payload = {
+                nama: document.getElementById('cms-student-name').value.trim(),
+                tanggal_lahir: document.getElementById('cms-student-dob').value,
+                tempat_lahir: document.getElementById('cms-student-pob').value.trim(),
+                nim: document.getElementById('cms-student-nim').value.trim(),
+                prodi: document.getElementById('cms-student-prodi').value.trim() || 'Teknologi Industri Pertanian',
+                angkatan: document.getElementById('cms-student-angkatan').value.trim() || '2025',
+                is_active: document.getElementById('cms-student-active').checked
+            };
+            const query = id ? cmsDb.from('mahasiswa').update(payload).eq('id', id) : cmsDb.from('mahasiswa').insert(payload);
+            const { error } = await query;
+            if (error) return cmsAlert('Gagal simpan mahasiswa: ' + error.message, 'error');
+            cmsResetStudentForm();
+            await cmsLoadStudents();
+            cmsAlert('Data mahasiswa berhasil disimpan.');
+        }
+
+        const legacyHandleLogin = window.handleLogin;
+        window.handleLogin = async function(e) {
+            e.preventDefault();
+            const inputName = document.getElementById('username').value.trim();
+            const inputDob = document.getElementById('password').value;
+            const errorMsg = document.getElementById('login-error');
+
+            if (cmsDb) {
+                try {
+                    const { data, error } = await cmsDb.from('mahasiswa').select('*').eq('is_active', true).ilike('nama', inputName).eq('tanggal_lahir', inputDob).maybeSingle();
+                    if (!error && data) {
+                        const user = { name: data.nama, dob: data.tanggal_lahir, pob: data.tempat_lahir || '-', nim: data.nim || '' };
+                        currentUser = user;
+                        localStorage.setItem('agronity_user', JSON.stringify(user));
+                        document.getElementById('login-container').classList.add('hidden');
+                        document.getElementById('profile-card').classList.remove('hidden');
+                        document.getElementById('profile-name').innerText = user.name;
+                        document.getElementById('profile-pob').innerText = user.pob;
+                        document.getElementById('profile-dob').innerText = user.dob;
+                        errorMsg.classList.add('hidden');
+                        document.getElementById('doc-locked')?.classList.add('hidden');
+                        document.getElementById('doc-content')?.classList.remove('hidden');
+                        requestNotificationPermission();
+                        alert(`Selamat datang kembali, ${user.name}!`);
+                        return;
+                    }
+                } catch (err) { console.warn('CMS mahasiswa fallback:', err.message); }
+            }
+            if (legacyHandleLogin) return legacyHandleLogin(e);
+        };
+
+        async function cmsLoadConfig() {
+            const { data, error } = await cmsDb.from('site_config').select('*');
+            if (error) throw error;
+            cmsState.config = {};
+            (data || []).forEach(row => { cmsState.config[row.key] = row.value || ''; });
+            const map = { hero_badge: 'cms-config-badge', hero_title: 'cms-config-title', hero_subtitle: 'cms-config-subtitle', hero_bg: 'cms-config-bg' };
+            Object.entries(map).forEach(([key, id]) => { const el = document.getElementById(id); if (el) el.value = cmsState.config[key] || ''; });
+        }
+
+        async function cmsSaveConfig(event) {
+            event.preventDefault();
+            const rows = [
+                { key: 'hero_badge', value: document.getElementById('cms-config-badge').value.trim() },
+                { key: 'hero_title', value: document.getElementById('cms-config-title').value.trim() },
+                { key: 'hero_subtitle', value: document.getElementById('cms-config-subtitle').value.trim() },
+                { key: 'hero_bg', value: document.getElementById('cms-config-bg').value.trim() }
+            ];
+            const { error } = await cmsDb.from('site_config').upsert(rows, { onConflict: 'key' });
+            if (error) return cmsAlert('Gagal simpan beranda: ' + error.message, 'error');
+            await cmsLoadConfig();
+            await cmsApplySiteConfig();
+            cmsAlert('Teks beranda berhasil diperbarui.');
+        }
+
+        async function cmsApplySiteConfig() {
+            if (!cmsDb) return;
+            const { data, error } = await cmsDb.from('site_config').select('*');
+            if (error || !data) return;
+            const config = {};
+            data.forEach(row => { config[row.key] = row.value || ''; });
+            if (config.hero_badge) {
+                const badge = document.querySelector('#main-hero-banner .inline-block');
+                if (badge) badge.textContent = config.hero_badge;
+            }
+            if (config.hero_title) {
+                const h1 = document.querySelector('#main-hero-banner h1');
+                if (h1) h1.innerHTML = cmsEscape(config.hero_title).replace(/\n/g, '<br>');
+            }
+            if (config.hero_subtitle) {
+                const subtitle = document.querySelector('#main-hero-banner p.text-base');
+                if (subtitle) subtitle.textContent = config.hero_subtitle;
+            }
+            if (config.hero_bg) {
+                const img = document.querySelector('#main-hero-banner img');
+                if (img) img.src = config.hero_bg;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('cms-login-form')?.addEventListener('submit', cmsLogin);
+            document.getElementById('cms-schedule-form')?.addEventListener('submit', cmsSaveSchedule);
+            document.getElementById('cms-news-form')?.addEventListener('submit', cmsSaveNews);
+            document.getElementById('cms-achievement-form')?.addEventListener('submit', cmsSaveAchievement);
+            document.getElementById('cms-student-form')?.addEventListener('submit', cmsSaveStudent);
+            document.getElementById('cms-config-form')?.addEventListener('submit', cmsSaveConfig);
+            document.querySelectorAll('.cms-tab-btn').forEach(btn => btn.addEventListener('click', () => cmsShowPanel(btn.dataset.cmsPanel)));
+            cmsBoot();
+        });
 
     </script>
 </body>
