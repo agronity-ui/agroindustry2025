@@ -897,7 +897,374 @@
             .bottom-nav-item { min-width: 54px !important; }
         }
 
-    </style>
+    
+
+        /* FIX: Semua nama menu bottom navigation selalu tampil */
+        .bottom-nav-item {
+            height: 60px !important;
+            min-width: 64px !important;
+            gap: 2px !important;
+        }
+        .bottom-nav-item .nav-label {
+            display: block !important;
+            max-height: 20px !important;
+            opacity: 1 !important;
+            margin-top: 0.25rem !important;
+            overflow: visible !important;
+            line-height: 1 !important;
+            white-space: nowrap !important;
+        }
+        nav.md\:hidden.fixed.bottom-4 > div {
+            border-radius: 28px !important;
+        }
+
+
+        /* ============================================================
+           PREMIUM NAVIGATION ANIMATION UPGRADE
+           Tujuan: menu terlihat elegan, hidup, dan SEMUA nama menu
+           selalu tampil penuh di mobile maupun desktop.
+           ============================================================ */
+        @keyframes premiumNavFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-3px); }
+        }
+        @keyframes premiumNavSheen {
+            0% { transform: translateX(-130%) skewX(-18deg); opacity: 0; }
+            18% { opacity: .95; }
+            45%, 100% { transform: translateX(145%) skewX(-18deg); opacity: 0; }
+        }
+        @keyframes premiumDockAura {
+            0% { transform: translate3d(-14%, -8%, 0) rotate(0deg); opacity: .42; }
+            50% { transform: translate3d(10%, 10%, 0) rotate(9deg); opacity: .72; }
+            100% { transform: translate3d(-14%, -8%, 0) rotate(0deg); opacity: .42; }
+        }
+        @keyframes premiumItemEnter {
+            from { opacity: 0; transform: translateY(18px) scale(.94); filter: blur(10px); }
+            to { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+        }
+        @keyframes premiumActivePulse {
+            0%, 100% { box-shadow: 0 14px 34px rgba(182,255,29,.24), inset 0 1px 0 rgba(255,255,255,.42); }
+            50% { box-shadow: 0 18px 44px rgba(182,255,29,.36), 0 0 26px rgba(40,242,125,.18), inset 0 1px 0 rgba(255,255,255,.50); }
+        }
+        @keyframes premiumMicroBounce {
+            0% { transform: translateY(0) scale(1); }
+            35% { transform: translateY(-4px) scale(1.12); }
+            100% { transform: translateY(0) scale(1); }
+        }
+        @keyframes premiumBorderFlow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        @keyframes premiumLabelGlow {
+            0%, 100% { text-shadow: 0 0 0 rgba(182,255,29,0); }
+            50% { text-shadow: 0 0 16px rgba(182,255,29,.40); }
+        }
+
+        body > nav.fixed.top-0 {
+            isolation: isolate !important;
+            animation: premiumNavFloat 6.5s ease-in-out infinite !important;
+        }
+        body > nav.fixed.top-0::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            background:
+                linear-gradient(90deg, transparent, rgba(255,255,255,.20), transparent),
+                linear-gradient(120deg, rgba(182,255,29,.16), transparent 30%, rgba(40,242,125,.11) 72%, transparent);
+            transform: translateX(-130%) skewX(-18deg);
+            animation: premiumNavSheen 7.5s cubic-bezier(.2,.8,.2,1) infinite;
+            mix-blend-mode: screen;
+        }
+        body > nav.fixed.top-0 > div { position: relative !important; z-index: 2 !important; }
+        body > nav.fixed.top-0 .ml-10 {
+            align-items: center !important;
+            overflow-x: auto !important;
+            overflow-y: hidden !important;
+            padding-block: 8px !important;
+            padding-inline: 2px !important;
+            scrollbar-width: none !important;
+            mask-image: linear-gradient(90deg, transparent, #000 16px, #000 calc(100% - 16px), transparent);
+        }
+        body > nav.fixed.top-0 .ml-10::-webkit-scrollbar { display: none !important; }
+        .nav-btn {
+            position: relative !important;
+            isolation: isolate !important;
+            overflow: hidden !important;
+            flex: 0 0 auto !important;
+            min-height: 42px !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            gap: 7px !important;
+            padding: 10px 13px !important;
+            border-radius: 16px !important;
+            letter-spacing: -0.01em !important;
+            white-space: nowrap !important;
+            transform: translateZ(0) !important;
+            transition:
+                transform .34s cubic-bezier(.2,.8,.2,1),
+                color .34s ease,
+                background .34s ease,
+                border-color .34s ease,
+                box-shadow .34s ease !important;
+        }
+        .nav-btn::before {
+            content: "";
+            position: absolute;
+            inset: -1px;
+            z-index: -1;
+            background:
+                radial-gradient(circle at 20% 0%, rgba(255,255,255,.22), transparent 30%),
+                linear-gradient(135deg, rgba(255,255,255,.065), rgba(255,255,255,.018));
+            opacity: .85;
+            transition: opacity .34s ease, transform .34s ease;
+        }
+        .nav-btn::after {
+            content: "";
+            position: absolute;
+            left: 14px;
+            right: 14px;
+            bottom: 7px;
+            height: 2px;
+            border-radius: 99px;
+            background: linear-gradient(90deg, transparent, var(--neo-lime), var(--neo-green), transparent);
+            transform: scaleX(0);
+            opacity: 0;
+            transition: transform .34s cubic-bezier(.2,.8,.2,1), opacity .34s ease;
+        }
+        .nav-btn:hover,
+        .nav-btn.desktop-active-nav,
+        .nav-btn.nav-press {
+            color: #061006 !important;
+            border-color: rgba(182,255,29,.55) !important;
+            background: linear-gradient(135deg, rgba(182,255,29,.98), rgba(40,242,125,.92)) !important;
+            transform: translateY(-2px) scale(1.015) !important;
+            box-shadow: 0 16px 38px rgba(182,255,29,.20), 0 0 26px rgba(40,242,125,.12), inset 0 1px 0 rgba(255,255,255,.50) !important;
+        }
+        .nav-btn:hover::after,
+        .nav-btn.desktop-active-nav::after,
+        .nav-btn.nav-press::after {
+            transform: scaleX(1);
+            opacity: .95;
+        }
+        .nav-btn i { transition: transform .34s cubic-bezier(.2,.8,.2,1), filter .34s ease !important; }
+        .nav-btn:hover i,
+        .nav-btn.desktop-active-nav i,
+        .nav-btn.nav-press i {
+            transform: translateY(-1px) scale(1.10) rotate(-3deg) !important;
+            filter: drop-shadow(0 4px 12px rgba(0,0,0,.22));
+        }
+
+        nav.md\:hidden.fixed.bottom-4 {
+            max-width: min(96vw, 520px) !important;
+            animation: premiumNavFloat 5.8s ease-in-out infinite !important;
+        }
+        nav.md\:hidden.fixed.bottom-4 > div {
+            position: relative !important;
+            isolation: isolate !important;
+            overflow: hidden !important;
+            border-radius: 26px !important;
+            background:
+                linear-gradient(180deg, rgba(255,255,255,.105), rgba(255,255,255,.035)),
+                rgba(7, 9, 12, .86) !important;
+            border: 1px solid rgba(255,255,255,.14) !important;
+            box-shadow:
+                0 26px 80px rgba(0,0,0,.64),
+                0 0 0 1px rgba(182,255,29,.06),
+                inset 0 1px 0 rgba(255,255,255,.12) !important;
+        }
+        nav.md\:hidden.fixed.bottom-4 > div::before {
+            content: "";
+            position: absolute;
+            inset: -90px -140px;
+            z-index: 0;
+            pointer-events: none;
+            background:
+                radial-gradient(circle at 20% 40%, rgba(182,255,29,.24), transparent 25%),
+                radial-gradient(circle at 70% 42%, rgba(40,242,125,.18), transparent 28%),
+                conic-gradient(from 90deg, transparent, rgba(182,255,29,.18), transparent, rgba(40,242,125,.12), transparent);
+            filter: blur(18px);
+            animation: premiumDockAura 8s ease-in-out infinite;
+        }
+        nav.md\:hidden.fixed.bottom-4 > div::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+            pointer-events: none;
+            border-radius: inherit;
+            padding: 1px;
+            background: linear-gradient(115deg, rgba(255,255,255,.28), rgba(182,255,29,.28), rgba(40,242,125,.12), rgba(255,255,255,.10));
+            background-size: 220% 220%;
+            animation: premiumBorderFlow 6s ease infinite;
+            -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+        }
+        nav.md\:hidden.fixed.bottom-4 .flex.overflow-x-auto {
+            position: relative !important;
+            z-index: 3 !important;
+            gap: 8px !important;
+            padding: 10px 12px !important;
+            scroll-padding-inline: 18px !important;
+        }
+        .bottom-nav-item {
+            position: relative !important;
+            isolation: isolate !important;
+            overflow: hidden !important;
+            min-width: 92px !important;
+            height: 64px !important;
+            padding: 7px 10px !important;
+            border-radius: 20px !important;
+            border: 1px solid rgba(255,255,255,.08) !important;
+            background: rgba(255,255,255,.045) !important;
+            color: rgba(241,245,249,.72) !important;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,.06), 0 8px 22px rgba(0,0,0,.18) !important;
+            transform: translateZ(0) !important;
+            animation: premiumItemEnter .56s cubic-bezier(.2,.8,.2,1) both !important;
+            transition:
+                transform .34s cubic-bezier(.2,.8,.2,1),
+                background .34s ease,
+                color .34s ease,
+                border-color .34s ease,
+                box-shadow .34s ease,
+                filter .34s ease !important;
+        }
+        .bottom-nav-item:nth-child(1) { animation-delay: .02s !important; }
+        .bottom-nav-item:nth-child(2) { animation-delay: .05s !important; }
+        .bottom-nav-item:nth-child(3) { animation-delay: .08s !important; }
+        .bottom-nav-item:nth-child(4) { animation-delay: .11s !important; }
+        .bottom-nav-item:nth-child(5) { animation-delay: .14s !important; }
+        .bottom-nav-item:nth-child(6) { animation-delay: .17s !important; }
+        .bottom-nav-item:nth-child(7) { animation-delay: .20s !important; }
+        .bottom-nav-item:nth-child(8) { animation-delay: .23s !important; }
+        .bottom-nav-item:nth-child(9) { animation-delay: .26s !important; }
+        .bottom-nav-item:nth-child(10) { animation-delay: .29s !important; }
+        .bottom-nav-item:nth-child(11) { animation-delay: .32s !important; }
+        .bottom-nav-item::before {
+            content: "";
+            position: absolute;
+            inset: -1px;
+            z-index: -1;
+            background:
+                linear-gradient(135deg, rgba(255,255,255,.13), rgba(255,255,255,.02)),
+                radial-gradient(circle at 50% -10%, rgba(182,255,29,.20), transparent 42%);
+            opacity: .62;
+            transition: opacity .34s ease, transform .34s ease;
+        }
+        .bottom-nav-item::after {
+            content: "";
+            position: absolute;
+            left: 16px;
+            right: 16px;
+            bottom: 6px;
+            height: 2px;
+            border-radius: 99px;
+            background: linear-gradient(90deg, transparent, currentColor, transparent);
+            opacity: .22;
+            transform: scaleX(.5);
+            transition: transform .34s ease, opacity .34s ease;
+        }
+        .bottom-nav-item:hover,
+        .bottom-nav-item.nav-press {
+            transform: translateY(-4px) scale(1.02) !important;
+            border-color: rgba(182,255,29,.24) !important;
+            color: #f8fff0 !important;
+            background: rgba(255,255,255,.075) !important;
+            box-shadow: 0 16px 36px rgba(0,0,0,.30), 0 0 24px rgba(182,255,29,.10), inset 0 1px 0 rgba(255,255,255,.10) !important;
+        }
+        .bottom-nav-item.active-nav {
+            color: #061006 !important;
+            background: linear-gradient(135deg, var(--neo-lime), var(--neo-green) 62%, var(--neo-yellow)) !important;
+            border-color: rgba(255,255,255,.34) !important;
+            transform: translateY(-5px) scale(1.035) !important;
+            animation: premiumItemEnter .56s cubic-bezier(.2,.8,.2,1) both, premiumActivePulse 2.8s ease-in-out infinite !important;
+        }
+        .bottom-nav-item.active-nav::before {
+            opacity: 1;
+            transform: scale(1.08);
+            background:
+                radial-gradient(circle at 22% 0%, rgba(255,255,255,.60), transparent 25%),
+                linear-gradient(135deg, rgba(255,255,255,.20), rgba(255,255,255,.04));
+        }
+        .bottom-nav-item.active-nav::after {
+            opacity: .70;
+            transform: scaleX(1);
+        }
+        .bottom-nav-item i {
+            font-size: 18px !important;
+            line-height: 1 !important;
+            margin-bottom: 3px !important;
+            transition: transform .34s cubic-bezier(.2,.8,.2,1), filter .34s ease !important;
+        }
+        .bottom-nav-item:hover i,
+        .bottom-nav-item.nav-press i {
+            transform: translateY(-2px) scale(1.10) rotate(-4deg) !important;
+            filter: drop-shadow(0 8px 15px rgba(0,0,0,.32));
+        }
+        .bottom-nav-item.active-nav i {
+            animation: premiumMicroBounce .58s cubic-bezier(.2,.8,.2,1) both !important;
+            color: #061006 !important;
+        }
+        .bottom-nav-item .nav-label {
+            display: block !important;
+            max-height: 24px !important;
+            opacity: 1 !important;
+            margin-top: 1px !important;
+            overflow: visible !important;
+            white-space: nowrap !important;
+            text-overflow: clip !important;
+            color: inherit !important;
+            font-size: 9.2px !important;
+            line-height: 1.05 !important;
+            font-weight: 900 !important;
+            letter-spacing: -0.025em !important;
+            transform: translateZ(0) !important;
+        }
+        .bottom-nav-item.active-nav .nav-label {
+            color: #061006 !important;
+            animation: premiumLabelGlow 1.8s ease-in-out infinite !important;
+        }
+        nav.md\:hidden.fixed.bottom-4 .absolute.top-0.right-0,
+        nav.md\:hidden.fixed.bottom-4 .absolute.top-0.left-0 {
+            z-index: 4 !important;
+            width: 18px !important;
+            opacity: .72 !important;
+        }
+
+        @media (max-width: 420px) {
+            nav.md\:hidden.fixed.bottom-4 { left: 10px !important; right: 10px !important; bottom: 12px !important; }
+            .bottom-nav-item {
+                min-width: 86px !important;
+                height: 62px !important;
+                padding-inline: 8px !important;
+            }
+            .bottom-nav-item .nav-label { font-size: 8.6px !important; letter-spacing: -0.04em !important; }
+        }
+
+        @media (max-width: 360px) {
+            .bottom-nav-item { min-width: 82px !important; }
+            .bottom-nav-item .nav-label { font-size: 8.1px !important; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            body > nav.fixed.top-0,
+            nav.md\:hidden.fixed.bottom-4,
+            nav.md\:hidden.fixed.bottom-4 > div::before,
+            nav.md\:hidden.fixed.bottom-4 > div::after,
+            body > nav.fixed.top-0::after,
+            .bottom-nav-item,
+            .bottom-nav-item.active-nav,
+            .bottom-nav-item.active-nav i,
+            .bottom-nav-item.active-nav .nav-label {
+                animation: none !important;
+            }
+        }
+
+</style>
 </head>
 <body class="relative min-h-screen loading-active">
 
@@ -1006,57 +1373,57 @@
                 
                 <button onclick="switchTab('beranda')" class="bottom-nav-item active-nav flex flex-col items-center justify-center min-w-[60px] px-2 h-[50px] rounded-full transition-all duration-500 ease-out shrink-0 snap-center text-[#10b981] bg-[#10b981]/10 focus:outline-none">
                     <i class="fa-solid fa-house text-lg transition-transform duration-500"></i>
-                    <span class="nav-label text-[10px] font-bold transition-all duration-500 ease-out overflow-hidden max-h-[20px] opacity-100 mt-1">Beranda</span>
+                    <span class="nav-label text-[10px] font-bold transition-all duration-500 ease-out overflow-visible max-h-[20px] opacity-100 mt-1">Beranda</span>
                 </button>
 
                 <button onclick="window.open('https://simari.ulm.ac.id/login/', '_blank')" class="bottom-nav-item flex flex-col items-center justify-center min-w-[60px] px-2 h-[50px] rounded-full transition-all duration-500 ease-out shrink-0 snap-center text-blue-400 hover:bg-white/5 focus:outline-none">
                     <i class="fa-solid fa-graduation-cap text-lg transition-transform duration-500"></i>
-                    <span class="nav-label text-[10px] font-bold transition-all duration-500 ease-out overflow-hidden max-h-0 opacity-0 mt-0">SIMARI</span>
+                    <span class="nav-label text-[10px] font-bold transition-all duration-500 ease-out overflow-visible max-h-[20px] opacity-100 mt-1">SIMARI</span>
                 </button>
 
                 <button onclick="switchTab('agronews')" class="bottom-nav-item flex flex-col items-center justify-center min-w-[60px] px-2 h-[50px] rounded-full transition-all duration-500 ease-out shrink-0 snap-center text-gray-500 hover:bg-white/5 focus:outline-none">
                     <i class="fa-solid fa-newspaper text-lg transition-transform duration-500"></i>
-                    <span class="nav-label text-[10px] font-bold transition-all duration-500 ease-out overflow-hidden max-h-0 opacity-0 mt-0">News</span>
+                    <span class="nav-label text-[10px] font-bold transition-all duration-500 ease-out overflow-visible max-h-[20px] opacity-100 mt-1">AgroNEWS</span>
                 </button>
                 
                 <button onclick="switchTab('apresiasi')" class="bottom-nav-item flex flex-col items-center justify-center min-w-[60px] px-2 h-[50px] rounded-full transition-all duration-500 ease-out shrink-0 snap-center text-gray-500 hover:bg-white/5 focus:outline-none">
                     <i class="fa-solid fa-trophy text-lg transition-transform duration-500"></i>
-                    <span class="nav-label text-[10px] font-bold transition-all duration-500 ease-out overflow-hidden max-h-0 opacity-0 mt-0">Prestasi</span>
+                    <span class="nav-label text-[10px] font-bold transition-all duration-500 ease-out overflow-visible max-h-[20px] opacity-100 mt-1">Apresiasi</span>
                 </button>
 
                 <button onclick="switchTab('mengenal')" class="bottom-nav-item flex flex-col items-center justify-center min-w-[60px] px-2 h-[50px] rounded-full transition-all duration-500 ease-out shrink-0 snap-center text-gray-500 hover:bg-white/5 focus:outline-none">
                     <i class="fa-solid fa-seedling text-lg transition-transform duration-500"></i>
-                    <span class="nav-label text-[10px] font-bold transition-all duration-500 ease-out overflow-hidden max-h-0 opacity-0 mt-0">Profil</span>
+                    <span class="nav-label text-[10px] font-bold transition-all duration-500 ease-out overflow-visible max-h-[20px] opacity-100 mt-1">Mengenal</span>
                 </button>
 
                 <button onclick="switchTab('mahasiswa')" class="bottom-nav-item flex flex-col items-center justify-center min-w-[60px] px-2 h-[50px] rounded-full transition-all duration-500 ease-out shrink-0 snap-center text-gray-500 hover:bg-white/5 focus:outline-none">
                     <i class="fa-solid fa-user-graduate text-lg transition-transform duration-500"></i>
-                    <span class="nav-label text-[10px] font-bold transition-all duration-500 ease-out overflow-hidden max-h-0 opacity-0 mt-0">Mhs</span>
+                    <span class="nav-label text-[10px] font-bold transition-all duration-500 ease-out overflow-visible max-h-[20px] opacity-100 mt-1">Mahasiswa</span>
                 </button>
 
                 <button onclick="switchTab('jadwal')" class="bottom-nav-item flex flex-col items-center justify-center min-w-[60px] px-2 h-[50px] rounded-full transition-all duration-500 ease-out shrink-0 snap-center text-gray-500 hover:bg-white/5 focus:outline-none">
                     <i class="fa-regular fa-calendar-days text-lg transition-transform duration-500"></i>
-                    <span class="nav-label text-[10px] font-bold transition-all duration-500 ease-out overflow-hidden max-h-0 opacity-0 mt-0">Jadwal</span>
+                    <span class="nav-label text-[10px] font-bold transition-all duration-500 ease-out overflow-visible max-h-[20px] opacity-100 mt-1">Jadwal</span>
                 </button>
 
                 <button onclick="switchTab('simulasi')" class="bottom-nav-item flex flex-col items-center justify-center min-w-[60px] px-2 h-[50px] rounded-full transition-all duration-500 ease-out shrink-0 snap-center text-gray-500 hover:bg-white/5 focus:outline-none">
                     <i class="fa-solid fa-calculator text-lg transition-transform duration-500"></i>
-                    <span class="nav-label text-[10px] font-bold transition-all duration-500 ease-out overflow-hidden max-h-0 opacity-0 mt-0">IPK</span>
+                    <span class="nav-label text-[10px] font-bold transition-all duration-500 ease-out overflow-visible max-h-[20px] opacity-100 mt-1">Simulasi</span>
                 </button>
 
                 <button onclick="switchTab('dokumentasi')" class="bottom-nav-item flex flex-col items-center justify-center min-w-[60px] px-2 h-[50px] rounded-full transition-all duration-500 ease-out shrink-0 snap-center text-gray-500 hover:bg-white/5 focus:outline-none">
                     <i class="fa-solid fa-camera-retro text-lg transition-transform duration-500"></i>
-                    <span class="nav-label text-[10px] font-bold transition-all duration-500 ease-out overflow-hidden max-h-0 opacity-0 mt-0">Dokum</span>
+                    <span class="nav-label text-[10px] font-bold transition-all duration-500 ease-out overflow-visible max-h-[20px] opacity-100 mt-1">Dokumentasi</span>
                 </button>
 
                 <button onclick="switchTab('links')" class="bottom-nav-item flex flex-col items-center justify-center min-w-[60px] px-2 h-[50px] rounded-full transition-all duration-500 ease-out shrink-0 snap-center text-gray-500 hover:bg-white/5 focus:outline-none">
                     <i class="fa-solid fa-link text-lg transition-transform duration-500"></i>
-                    <span class="nav-label text-[10px] font-bold transition-all duration-500 ease-out overflow-hidden max-h-0 opacity-0 mt-0">Link</span>
+                    <span class="nav-label text-[10px] font-bold transition-all duration-500 ease-out overflow-visible max-h-[20px] opacity-100 mt-1">Layanan</span>
                 </button>
 
                 <button onclick="switchTab('admin')" class="bottom-nav-item flex flex-col items-center justify-center min-w-[60px] px-2 h-[50px] rounded-full transition-all duration-500 ease-out shrink-0 snap-center text-gray-500 hover:bg-white/5 focus:outline-none">
                     <i class="fa-solid fa-user-shield text-lg transition-transform duration-500"></i>
-                    <span class="nav-label text-[10px] font-bold transition-all duration-500 ease-out overflow-hidden max-h-0 opacity-0 mt-0">Admin</span>
+                    <span class="nav-label text-[10px] font-bold transition-all duration-500 ease-out overflow-visible max-h-[20px] opacity-100 mt-1">Admin</span>
                 </button>
                 
             </div>
@@ -1093,7 +1460,7 @@
                     </div>
 
                     <h2 class="neo-main-title">Welcome Back,<span>TIP ULM 2025</span></h2>
-                    <p class="neo-subtitle">Portal mahasiswa TIP 2025: jadwal, AgroNEWS, apresiasi, simulasi IPK, dokumentasi, layanan.</p>
+                    <p class="neo-subtitle">Portal mahasiswa TIP ULM 2025: jadwal, AgroNEWS, apresiasi, simulasi IPK, dokumentasi, layanan, dan dashboard.</p>
 
                     <div class="neo-quick-grid">
                         <button class="neo-action-tile" onclick="showSchedule(2)">
@@ -1145,9 +1512,9 @@
                         <div class="neo-progress-line"><span></span></div>
                         <div class="neo-chip-row">
                             <span class="neo-chip">Kuliah</span>
-                            <span class="neo-chip">News</span>
-                            <span class="neo-chip">Prestasi</span>
-                            <span class="neo-chip">IPK</span>
+                            <span class="neo-chip">AgroNEWS</span>
+                            <span class="neo-chip">Apresiasi</span>
+                            <span class="neo-chip">Simulasi</span>
                             <span class="neo-chip">Admin</span>
                         </div>
                     </div>
@@ -2480,6 +2847,15 @@
                 if(tabId === 'admin') initAdminPage();
             }
             
+            // Update Active State for Desktop Top Nav
+            document.querySelectorAll('body > nav.fixed.top-0 .nav-btn').forEach(btn => {
+                btn.classList.remove('desktop-active-nav');
+                const action = btn.getAttribute('onclick') || '';
+                if(action.includes(`switchTab('${tabId}')`)) {
+                    btn.classList.add('desktop-active-nav');
+                }
+            });
+
             // Update Active State for Mobile Bottom Nav
             document.querySelectorAll('.bottom-nav-item').forEach(btn => {
                 
@@ -2491,10 +2867,10 @@
                     btn.classList.add('text-gray-500', 'hover:bg-white/5');
                 }
                 
-                // Sembunyikan Label
+                // Label menu harus selalu terlihat, bukan hanya saat aktif.
                 if(label) {
-                    label.classList.remove('max-h-[20px]', 'opacity-100', 'mt-1');
-                    label.classList.add('max-h-0', 'opacity-0', 'mt-0');
+                    label.classList.remove('max-h-0', 'opacity-0', 'mt-0', 'overflow-hidden');
+                    label.classList.add('max-h-[20px]', 'opacity-100', 'mt-1', 'overflow-visible');
                 }
                 
                 // Cek Apakah Tombol Ini yang Sedang Aktif
@@ -2503,10 +2879,10 @@
                     btn.classList.add('active-nav', 'text-[#10b981]', 'bg-[#10b981]/10');
                     btn.classList.remove('text-gray-500', 'hover:bg-white/5');
                     
-                    // Tampilkan Label Teks dengan Halus
+                    // Label tetap terlihat saat aktif, cukup status warna/background yang berubah.
                     if(label) {
-                        label.classList.remove('max-h-0', 'opacity-0', 'mt-0');
-                        label.classList.add('max-h-[20px]', 'opacity-100', 'mt-1');
+                        label.classList.remove('max-h-0', 'opacity-0', 'mt-0', 'overflow-hidden');
+                        label.classList.add('max-h-[20px]', 'opacity-100', 'mt-1', 'overflow-visible');
                     }
                     
                     // Eksekusi Auto-Center Scroll dengan sangat mulus
@@ -2519,6 +2895,20 @@
             });
         }
         switchTab('beranda');
+
+        // Premium press feedback untuk navigasi tanpa mengubah fungsi onclick lama.
+        function initPremiumNavigationMotion() {
+            document.querySelectorAll('.bottom-nav-item, .nav-btn').forEach(btn => {
+                if (btn.dataset.premiumNavReady === 'true') return;
+                btn.dataset.premiumNavReady = 'true';
+                btn.addEventListener('pointerdown', () => {
+                    btn.classList.add('nav-press');
+                    window.setTimeout(() => btn.classList.remove('nav-press'), 420);
+                }, { passive: true });
+            });
+        }
+        initPremiumNavigationMotion();
+        document.addEventListener('DOMContentLoaded', initPremiumNavigationMotion);
 
         // --- LOGIN SYSTEM ---
         function handleLogin(e) {
