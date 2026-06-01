@@ -1258,7 +1258,14 @@
                                     <input id="admin-berita-tipe" type="text" placeholder="Kategori, contoh: Event" class="custom-input p-3 rounded-xl" required>
                                     <input id="admin-berita-waktu" type="text" placeholder="Waktu, contoh: 1 Juni 2026" class="custom-input p-3 rounded-xl">
                                 </div>
-                                <input id="admin-berita-poster" type="url" placeholder="URL Gambar/Poster" class="custom-input p-3 rounded-xl" required>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                    <input id="admin-berita-poster" type="url" placeholder="URL Gambar/Poster otomatis dari upload, atau tempel manual" class="custom-input p-3 rounded-xl">
+                                    <label class="custom-input p-3 rounded-xl cursor-pointer flex items-center justify-between gap-3 text-gray-400 hover:border-tipYellow">
+                                        <span><i class="fa-solid fa-upload mr-2 text-newsRed"></i>Upload Poster Berita</span>
+                                        <input id="admin-berita-file" type="file" accept="image/*" class="hidden">
+                                    </label>
+                                </div>
+                                <p id="admin-berita-upload-status" class="hidden text-xs text-gray-400 -mt-1"></p>
                                 <input id="admin-berita-link" type="url" placeholder="Link berita/detail, boleh kosong" class="custom-input p-3 rounded-xl">
                                 <textarea id="admin-berita-ringkasan" placeholder="Ringkasan berita" class="custom-input p-3 h-24 rounded-xl" required></textarea>
                                 <button class="bg-newsRed text-white font-black p-3 rounded-xl hover:bg-red-700 transition-all" type="submit">Publish Berita</button>
@@ -1278,7 +1285,14 @@
                             <input id="admin-apresiasi-name" type="text" placeholder="Nama Mahasiswa/Tim" class="custom-input p-3 rounded-xl" required>
                             <input id="admin-apresiasi-category" type="text" placeholder="Kategori, contoh: LIDM" class="custom-input p-3 rounded-xl" required>
                             <input id="admin-apresiasi-badge" type="text" placeholder="Badge kartu, contoh: LIDM 2026" class="custom-input p-3 rounded-xl">
-                            <input id="admin-apresiasi-image" type="url" placeholder="URL Foto/Gambar" class="custom-input p-3 rounded-xl md:col-span-2" required>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 md:col-span-2">
+                                <input id="admin-apresiasi-image" type="url" placeholder="URL Foto otomatis dari upload, atau tempel manual" class="custom-input p-3 rounded-xl">
+                                <label class="custom-input p-3 rounded-xl cursor-pointer flex items-center justify-between gap-3 text-gray-400 hover:border-tipYellow">
+                                    <span><i class="fa-solid fa-upload mr-2 text-tipYellow"></i>Upload Foto Apresiasi</span>
+                                    <input id="admin-apresiasi-file" type="file" accept="image/*" class="hidden">
+                                </label>
+                            </div>
+                            <p id="admin-apresiasi-upload-status" class="hidden text-xs text-gray-400 -mt-1 md:col-span-2"></p>
                             <input id="admin-apresiasi-gradient" type="text" value="from-yellow-400 to-orange-500" placeholder="Gradient Tailwind" class="custom-input p-3 rounded-xl md:col-span-2">
                             <textarea id="admin-apresiasi-quote" placeholder="Quote/kalimat apresiasi" class="custom-input p-3 h-20 rounded-xl md:col-span-2"></textarea>
                             <textarea id="admin-apresiasi-achievements" placeholder="Detail prestasi, satu baris satu item. Format: Judul prestasi | Label\nContoh: Lolos Seleksi Nasional LIDM 2026 | Nasional" class="custom-input p-3 h-32 rounded-xl md:col-span-2"></textarea>
@@ -2698,7 +2712,86 @@
             const hidden = document.getElementById(`admin-${type}-id`);
             if (hidden) hidden.value = '';
             if (type === 'apresiasi') document.getElementById('admin-apresiasi-gradient').value = 'from-yellow-400 to-orange-500';
+            const fileInput = document.getElementById(`admin-${type}-file`);
+            if (fileInput) fileInput.value = '';
+            setAdminUploadStatus(type, '');
         }
+
+        const AGRONITY_STORAGE_BUCKET = 'agronity-images';
+
+        function setAdminUploadStatus(type, message = '', statusType = 'info') {
+            const el = document.getElementById(`admin-${type}-upload-status`);
+            if (!el) return;
+            if (!message) {
+                el.classList.add('hidden');
+                el.textContent = '';
+                return;
+            }
+            el.classList.remove('hidden', 'text-red-400', 'text-green-400', 'text-gray-400', 'text-yellow-400');
+            el.classList.add(statusType === 'error' ? 'text-red-400' : statusType === 'success' ? 'text-green-400' : statusType === 'warning' ? 'text-yellow-400' : 'text-gray-400');
+            el.textContent = message;
+        }
+
+        function safeFileName(name = 'image') {
+            return String(name)
+                .toLowerCase()
+                .replace(/\s+/g, '-')
+                .replace(/[^a-z0-9._-]/g, '')
+                .slice(-80) || 'image.jpg';
+        }
+
+        async function uploadAgronityImage(file, folder = 'uploads') {
+            if (!file) return '';
+            if (!agronityDb) throw new Error('Supabase belum terhubung.');
+            if (!file.type.startsWith('image/')) throw new Error('File harus berupa gambar.');
+            if (file.size > 5 * 1024 * 1024) throw new Error('Ukuran gambar maksimal 5 MB. Kompres foto dulu atau pilih foto lain.');
+
+            const ext = (file.name.split('.').pop() || 'jpg').toLowerCase();
+            const cleanName = safeFileName(file.name.replace(/\.[^.]+$/, ''));
+            const path = `${folder}/${Date.now()}-${Math.random().toString(36).slice(2)}-${cleanName}.${ext}`;
+
+            const { error } = await agronityDb.storage
+                .from(AGRONITY_STORAGE_BUCKET)
+                .upload(path, file, {
+                    cacheControl: '3600',
+                    upsert: false,
+                    contentType: file.type
+                });
+
+            if (error) throw error;
+
+            const { data } = agronityDb.storage
+                .from(AGRONITY_STORAGE_BUCKET)
+                .getPublicUrl(path);
+
+            return data.publicUrl;
+        }
+
+        async function getUploadedOrManualImage(type, folder) {
+            const urlInput = document.getElementById(`admin-${type === 'berita' ? 'berita-poster' : 'apresiasi-image'}`);
+            const fileInput = document.getElementById(`admin-${type}-file`);
+            let imageUrl = urlInput?.value.trim() || '';
+            const file = fileInput?.files?.[0];
+
+            if (file) {
+                setAdminUploadStatus(type, 'Mengupload gambar ke Supabase Storage...', 'info');
+                imageUrl = await uploadAgronityImage(file, folder);
+                if (urlInput) urlInput.value = imageUrl;
+                setAdminUploadStatus(type, 'Upload gambar berhasil. URL otomatis disimpan.', 'success');
+            }
+
+            return imageUrl;
+        }
+
+        document.getElementById('admin-berita-file')?.addEventListener('change', (e) => {
+            const file = e.target.files?.[0];
+            setAdminUploadStatus('berita', file ? `File dipilih: ${file.name}. Akan diupload saat klik Publish Berita.` : '');
+        });
+
+        document.getElementById('admin-apresiasi-file')?.addEventListener('change', (e) => {
+            const file = e.target.files?.[0];
+            setAdminUploadStatus('apresiasi', file ? `File dipilih: ${file.name}. Akan diupload saat klik Simpan Apresiasi.` : '');
+        });
 
         document.getElementById('admin-form-jadwal')?.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -2722,10 +2815,18 @@
             e.preventDefault();
             if (!agronityDb) return;
             const id = document.getElementById('admin-berita-id').value;
+            let posterUrl = '';
+            try {
+                posterUrl = await getUploadedOrManualImage('berita', 'berita');
+            } catch (uploadError) {
+                setAdminUploadStatus('berita', 'Upload gagal: ' + uploadError.message, 'error');
+                return alert('Gagal upload poster: ' + uploadError.message);
+            }
+            if (!posterUrl) return alert('Isi URL gambar/poster atau upload poster berita dulu.');
             const payload = {
                 judul: document.getElementById('admin-berita-judul').value.trim(),
                 tipe: document.getElementById('admin-berita-tipe').value.trim(),
-                poster: document.getElementById('admin-berita-poster').value.trim(),
+                poster: posterUrl,
                 link: document.getElementById('admin-berita-link').value.trim() || '#',
                 ringkasan: document.getElementById('admin-berita-ringkasan').value.trim(),
                 waktu: document.getElementById('admin-berita-waktu').value.trim() || new Date().toLocaleDateString('id-ID')
@@ -2786,6 +2887,9 @@
             document.getElementById('admin-berita-link').value = row.link || '';
             document.getElementById('admin-berita-ringkasan').value = row.ringkasan || '';
             document.getElementById('admin-berita-waktu').value = row.waktu || '';
+            const beritaFileInput = document.getElementById('admin-berita-file');
+            if (beritaFileInput) beritaFileInput.value = '';
+            setAdminUploadStatus('berita', '');
             document.getElementById('admin-form-berita').scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
 
@@ -2802,6 +2906,9 @@
             document.getElementById('admin-apresiasi-quote').value = row.quote || '';
             const achievements = Array.isArray(row.achievements) ? row.achievements : [];
             document.getElementById('admin-apresiasi-achievements').value = achievements.map(a => `${a.title || ''} | ${a.medal || 'Apresiasi'}`).join('\n');
+            const apresiasiFileInput = document.getElementById('admin-apresiasi-file');
+            if (apresiasiFileInput) apresiasiFileInput.value = '';
+            setAdminUploadStatus('apresiasi', '');
             document.getElementById('admin-form-apresiasi').scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
 
